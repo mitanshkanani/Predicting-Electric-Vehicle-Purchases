@@ -1,0 +1,45 @@
+EXPERIMENT: CATBOOST_GPU_EXACT_VALUE_IDENTITIES
+============================================================================
+
+HYPOTHESIS
+Exact Annual_Income_USD and Daily_Commute_km values may behave
+as synthetic-generator identities beyond their numeric magnitude.
+
+CONTROL
+Same raw CatBoost GPU baseline configuration.
+Only two exact-value categorical copies were added.
+Value-ID columns: ['Annual_Income_USD_id', 'Daily_Commute_km_id']
+
+RESULTS
+Raw CatBoost GPU OOF AUC: 0.94123888
+Value-ID CatBoost OOF AUC: 0.94536428
+Delta vs raw CatBoost: +0.00412540
+Raw depth-4 XGBoost OOF AUC: 0.94206547
+Delta vs depth-4 XGBoost: +0.00329881
+Folds beating raw CatBoost: 5/5
+Folds beating depth-4 XGBoost: 5/5
+OOF probability correlation vs XGBoost: 0.984932
+OOF rank correlation vs XGBoost: 0.990748
+Total runtime: 650.92 seconds
+
+DECISION: MAJOR_BREAKTHROUGH
+
+VALUE-ID DIAGNOSTICS
+- Annual_Income_USD: train_unique=13214, mean_rows_per_value=50.60, median_rows_per_value=8.00, test_seen_in_train=0.994225
+- Daily_Commute_km: train_unique=805, mean_rows_per_value=830.64, median_rows_per_value=576.00, test_seen_in_train=0.999885
+
+FOLD DELTAS VS RAW CATBOOST
+Fold 0: 0.94002197 -> 0.94445487 (+0.00443290)
+Fold 1: 0.94091230 -> 0.94496094 (+0.00404864)
+Fold 2: 0.94223842 -> 0.94635642 (+0.00411800)
+Fold 3: 0.94179317 -> 0.94572402 (+0.00393085)
+Fold 4: 0.94126778 -> 0.94535674 (+0.00408895)
+
+VALUE-ID FEATURE IMPORTANCES
+Annual_Income_USD_id: 5.933631
+Daily_Commute_km_id: 1.660013
+
+INTERPRETATION
+This is different from the rejected binned target-encoding run.
+Here the exact numeric values themselves are preserved as category
+identities and CatBoost learns ordered target statistics internally.
