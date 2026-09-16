@@ -1,0 +1,66 @@
+EXPERIMENT: LIGHTGBM_RAW_BASELINE
+============================================================================
+
+QUESTION
+Can LightGBM capture useful structure that differs from our
+current best depth-4 XGBoost model?
+
+DEVICE
+LightGBM version: 4.7.0
+Selected device_type: 'cpu'
+Device probe message: GPU probe failed; using CPU. Reason: GPU Tree Learner was not enabled in this build. Please recompile with CMake option -DUSE_GPU=1
+
+VALIDATION
+Same frozen 5-fold competition split.
+
+FEATURE POLICY
+Excluded ID: 'id'
+Raw features: 13
+Numeric features: ['Age', 'Annual_Income_USD', 'Daily_Commute_km', 'Number_of_Cars_Owned', 'Charging_Stations_Near_Home', 'Charging_Stations_Near_Work', 'Environmental_Concern_Level']
+Categorical features: ['Gender', 'City_Type', 'Current_Car_Type', 'Home_Charging_Possible', 'Subsidy_Available', 'Range_Anxiety_Level']
+
+MODEL
+LGBMClassifier
+n_estimators=5000
+learning_rate=0.03
+num_leaves=31
+min_child_samples=100
+subsample=0.90
+colsample_bytree=0.90
+reg_lambda=2.0
+max_bin=63
+early_stopping_rounds=200
+
+RESULTS
+LightGBM OOF AUC: 0.94065201
+Mean fold AUC: 0.94066468
+Fold AUC std: 0.00084782
+Depth-4 XGBoost OOF AUC: 0.94206547
+Delta vs XGBoost: -0.00141346
+Folds beating XGBoost: 0/5
+OOF probability correlation vs XGBoost: 0.994823
+OOF rank correlation vs XGBoost: 0.994869
+Total runtime: 107.46 seconds
+
+DIVERSITY VS CATBOOST
+CatBoost OOF AUC: 0.94123888
+OOF probability correlation vs CatBoost: 0.997252
+OOF rank correlation vs CatBoost: 0.995106
+
+TOP MEAN GAIN IMPORTANCES
+Environmental_Concern_Level: 0.508775
+Subsidy_Available: 0.346759
+Annual_Income_USD: 0.092677
+Range_Anxiety_Level: 0.025901
+Daily_Commute_km: 0.008322
+Age: 0.007073
+Charging_Stations_Near_Home: 0.003072
+Charging_Stations_Near_Work: 0.002831
+Home_Charging_Possible: 0.001655
+Number_of_Cars_Owned: 0.000921
+
+INTERPRETATION
+A LightGBM model can still be useful even if it is slightly below
+XGBoost, provided its OOF rankings are sufficiently different.
+
+This is a raw baseline, not tuned LightGBM.
