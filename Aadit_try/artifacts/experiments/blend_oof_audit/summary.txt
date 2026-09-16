@@ -1,0 +1,31 @@
+EXPERIMENT: LEAKAGE_AWARE_OOF_BLEND_AUDIT
+============================================================================
+
+BASE MODELS
+XGBoost OOF AUC: 0.94189926
+CatBoost OOF AUC: 0.94123888
+Logistic OOF AUC: 0.93809448
+
+METHOD
+For each held-out frozen fold, blend weights were selected using
+the other four folds only, then evaluated on the held-out fold.
+
+This meta-CV result is more trustworthy than searching weights on
+all OOF rows and reporting the score on those same rows.
+
+META-CV BLEND RESULTS
+- rank_xgb_cat: AUC=0.94190437, delta_vs_XGB=+0.00000512, folds_won=5/5, mean_weights=(XGB=0.920, CAT=0.080, LOG=0.000)
+- rank_three: AUC=0.94190403, delta_vs_XGB=+0.00000477, folds_won=5/5, mean_weights=(XGB=0.900, CAT=0.100, LOG=0.000)
+- prob_xgb_cat: AUC=0.94190312, delta_vs_XGB=+0.00000386, folds_won=5/5, mean_weights=(XGB=0.924, CAT=0.076, LOG=0.000)
+- prob_three: AUC=0.94190266, delta_vs_XGB=+0.00000340, folds_won=4/5, mean_weights=(XGB=0.940, CAT=0.060, LOG=0.000)
+
+DECISION: BLENDING_LOOKS_USEFUL
+
+PROVISIONAL FULL-OOF WEIGHTS
+These weights are useful later for generating a test blend,
+but their full-OOF search AUC is optimistic because those weights
+were selected and scored on the same OOF rows.
+- prob_xgb_cat: XGB=0.930, CAT=0.070, LOG=0.000, search_AUC=0.94190321
+- rank_xgb_cat: XGB=0.920, CAT=0.080, LOG=0.000, search_AUC=0.94190437
+- prob_three: XGB=0.950, CAT=0.050, LOG=0.000, search_AUC=0.94190283
+- rank_three: XGB=0.900, CAT=0.100, LOG=0.000, search_AUC=0.94190403
