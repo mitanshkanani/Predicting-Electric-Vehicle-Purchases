@@ -1,0 +1,29 @@
+EXPERIMENT: XGBOOST_GPU_MAX_DEPTH_SWEEP
+============================================================================
+
+HYPOTHESIS
+Does changing XGBoost tree depth improve the bias/variance trade-off?
+
+CONTROL
+Everything except max_depth was held fixed.
+Official depth=6 baseline OOF AUC: 0.94189926
+
+DEPTH RESULTS
+- depth=4: OOF=0.94206547, delta=+0.00016621, folds_won=5/5, fold_std=0.00086071, mean_best_iter=1990.0
+- depth=5: OOF=0.94199563, delta=+0.00009637, folds_won=5/5, fold_std=0.00082798, mean_best_iter=1194.6
+- depth=6: OOF=0.94189926, delta=+0.00000000, folds_won=0/5, fold_std=0.00081808, mean_best_iter=901.6
+- depth=7: OOF=0.94177069, delta=-0.00012857, folds_won=0/5, fold_std=0.00080314, mean_best_iter=654.2
+- depth=8: OOF=0.94165158, delta=-0.00024768, folds_won=0/5, fold_std=0.00079539, mean_best_iter=515.6
+
+BEST RESULT
+Best depth: 4
+Best OOF AUC: 0.94206547
+Delta vs official baseline: +0.00016621
+Total experiment runtime: 245.89 seconds
+
+DECISION RULE
+If a different depth produces a consistent meaningful gain,
+that depth becomes the base for the next tuning experiment.
+
+If depth=6 remains best, we freeze depth and tune another
+hyperparameter family instead of repeatedly retesting it.
