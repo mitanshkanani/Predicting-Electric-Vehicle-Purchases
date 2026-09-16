@@ -1,0 +1,36 @@
+VALIDATION STRATEGY AUDIT
+========================================================================
+Train shape: (668665, 15)
+Test shape: (286571, 14)
+Target: 'Will_Buy_EV'
+Positive label used for diagnostics: 'Yes'
+Overall positive rate: 0.174645
+Detected ID: 'id'
+
+ID / ORDER DIAGNOSTICS
+Train ID range: 0 → 668664
+Test ID range: 668665 → 955235
+Test IDs begin after train IDs: True
+ID univariate ROC-AUC: 0.499990
+ID AUC strength: 0.500010
+Positive-rate range across 20 contiguous ID bins: 0.007263
+Std. dev. of ID-bin positive rates: 0.001703
+First 10% positive rate: 0.174663
+Last 10% positive rate: 0.175261
+Last-minus-first 10% rate gap: +0.000598
+Cramer's V(target, ID-bin): 0.004485
+Chi-square p-value: 0.814695
+
+CANDIDATE CV
+Splitter: StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+Fold positive-rate range: 0.00000748
+
+INTERPRETATION
+STATUS: NO PRACTICALLY LARGE ID-ORDER TARGET DRIFT DETECTED.
+The candidate stratified folds are plausible, but we will inspect this report before declaring them frozen.
+
+IMPORTANT:
+- This script does not train a model.
+- candidate_folds.csv is not considered frozen until we review these results.
+- A tiny chi-square p-value alone is not evidence of useful drift when N is huge;
+  effect size and practical target-rate differences matter more here.
