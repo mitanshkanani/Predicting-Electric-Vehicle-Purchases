@@ -1,0 +1,14 @@
+feature,competition_train_missing_pct,competition_test_missing_pct,original_missing_pct
+Age,0.0,0.0,0.0
+Annual_Income_USD,0.0,0.0,0.0178
+Daily_Commute_km,0.0,0.0,0.0181
+Number_of_Cars_Owned,0.0,0.0,0.0
+Charging_Stations_Near_Home,0.0,0.0,0.0
+Charging_Stations_Near_Work,0.0,0.0,0.0
+Environmental_Concern_Level,0.0,0.0,0.0184
+Gender,0.0,0.0,0.0
+City_Type,0.0,0.0,0.0
+Current_Car_Type,0.0,0.0,0.0
+Home_Charging_Possible,0.0,0.0,0.0
+Subsidy_Available,0.0,0.0,0.0
+Range_Anxiety_Level,0.0,0.0,0.0

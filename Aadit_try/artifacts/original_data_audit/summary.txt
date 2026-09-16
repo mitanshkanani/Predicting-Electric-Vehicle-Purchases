@@ -1,0 +1,46 @@
+ORIGINAL / SOURCE DATASET AUDIT
+========================================================================
+Competition train shape: (668665, 15)
+Competition test shape: (286571, 14)
+Original shape: (10000, 15)
+Competition target: 'Will_Buy_EV'
+Competition positive label: 'Yes'
+Original positive label: 'Yes'
+Competition ID: 'id'
+Original ID: 'Buyer_ID'
+Shared modeling features: 13
+
+Competition positive rate: 0.174645
+Original positive rate: 0.175000
+Original-minus-competition rate gap: +0.000355
+
+Largest source-vs-competition distribution shifts:
+- Daily_Commute_km: 0.166835 (continuous_numeric)
+- Annual_Income_USD: 0.067619 (continuous_numeric)
+- Number_of_Cars_Owned: 0.009857 (discrete)
+- Range_Anxiety_Level: 0.009769 (categorical)
+- Age: 0.007223 (continuous_numeric)
+- Current_Car_Type: 0.006706 (categorical)
+- Gender: 0.005320 (categorical)
+- Home_Charging_Possible: 0.004567 (categorical)
+
+Feature→target relationship agreement:
+- Range_Anxiety_Level: pattern_corr=0.9956, rate_RMSE=0.0144, competition_AUC_strength=NA, original_AUC_strength=NA
+- Environmental_Concern_Level: pattern_corr=0.9907, rate_RMSE=0.0511, competition_AUC_strength=NA, original_AUC_strength=NA
+- Annual_Income_USD: pattern_corr=0.9860, rate_RMSE=0.0305, competition_AUC_strength=0.670367, original_AUC_strength=0.629506
+- Current_Car_Type: pattern_corr=0.9716, rate_RMSE=0.0045, competition_AUC_strength=NA, original_AUC_strength=NA
+- City_Type: pattern_corr=0.9606, rate_RMSE=0.0057, competition_AUC_strength=NA, original_AUC_strength=NA
+- Number_of_Cars_Owned: pattern_corr=0.8369, rate_RMSE=0.0105, competition_AUC_strength=NA, original_AUC_strength=NA
+- Gender: pattern_corr=0.8201, rate_RMSE=0.0047, competition_AUC_strength=NA, original_AUC_strength=NA
+- Age: pattern_corr=0.7820, rate_RMSE=0.0085, competition_AUC_strength=0.505535, original_AUC_strength=0.503423
+- Daily_Commute_km: pattern_corr=0.5954, rate_RMSE=0.0192, competition_AUC_strength=0.533757, original_AUC_strength=0.520467
+- Charging_Stations_Near_Home: pattern_corr=0.3865, rate_RMSE=0.0167, competition_AUC_strength=NA, original_AUC_strength=NA
+- Charging_Stations_Near_Work: pattern_corr=0.0827, rate_RMSE=0.0155, competition_AUC_strength=NA, original_AUC_strength=NA
+- Home_Charging_Possible: pattern_corr=NA, rate_RMSE=0.0058, competition_AUC_strength=NA, original_AUC_strength=NA
+- Subsidy_Available: pattern_corr=NA, rate_RMSE=0.0138, competition_AUC_strength=NA, original_AUC_strength=NA
+
+DECISION RULE:
+Do not use the source labels just because marginal distributions match.
+We want strong agreement in feature→target relationships first.
+If that holds, the next experiment will add the source rows only to each
+training fold and measure the OOF delta on untouched competition rows.
