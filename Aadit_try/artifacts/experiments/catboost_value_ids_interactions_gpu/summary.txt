@@ -1,0 +1,40 @@
+EXPERIMENT: CATBOOST_VALUE_IDS_PLUS_INTERACTIONS_GPU
+============================================================================
+
+HYPOTHESIS
+Do three explicit subsidy interactions improve the exact-value
+identity CatBoost champion?
+
+CONTROL
+Same exact-value CatBoost pipeline.
+Only three target-free subsidy interactions were added.
+Interactions: ['Subsidy_x_EnvConcern', 'Subsidy_x_Income', 'Subsidy_x_HomeCharging']
+
+RESULTS
+Value-ID champion OOF AUC: 0.94536428
+Value-ID + interactions OOF AUC: 0.94534221
+OOF AUC delta: -0.00002207
+Folds improved: 2/5
+OOF probability correlation vs champion: 0.999448
+OOF rank correlation vs champion: 0.992399
+Total runtime: 494.37 seconds
+
+DECISION: REJECT_FOR_NOW
+
+FOLD DELTAS
+Fold 0: 0.94445487 -> 0.94435840 (-0.00009647)
+Fold 1: 0.94496094 -> 0.94502363 (+0.00006269)
+Fold 2: 0.94635642 -> 0.94638284 (+0.00002642)
+Fold 3: 0.94572402 -> 0.94569063 (-0.00003339)
+Fold 4: 0.94535674 -> 0.94528532 (-0.00007142)
+
+EXPLICIT INTERACTION IMPORTANCES
+Subsidy_x_Income: 23.704859
+Subsidy_x_EnvConcern: 23.001366
+Subsidy_x_HomeCharging: 1.293538
+
+INTERPRETATION
+If this improves consistently, these interactions become part
+of the champion representation before seed averaging/tuning.
+
+If it does not, we keep the simpler value-ID champion.

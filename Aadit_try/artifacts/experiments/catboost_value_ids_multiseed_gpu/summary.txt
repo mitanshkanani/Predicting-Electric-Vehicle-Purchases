@@ -1,0 +1,37 @@
+EXPERIMENT: CATBOOST_VALUE_IDS_MULTI_SEED_GPU
+============================================================================
+
+HYPOTHESIS
+Does equal averaging across seeds 42, 7, and 2026 reduce
+GPU CatBoost ranking noise and improve the exact-value champion?
+
+CONTROL
+Same frozen folds, exact same value-ID feature representation,
+same model hyperparameters. Only random_seed changes.
+
+RESULTS
+- avg3_rank: OOF=0.94543956, delta_vs_seed42=+0.00007527
+- avg3_probability: OOF=0.94543837, delta_vs_seed42=+0.00007408
+- seed_2026: OOF=0.94540629, delta_vs_seed42=+0.00004201
+- seed_7: OOF=0.94538642, delta_vs_seed42=+0.00002214
+- seed_42: OOF=0.94536428, delta_vs_seed42=+0.00000000
+
+BEST EQUAL AVERAGE
+Candidate: avg3_rank
+OOF AUC: 0.94543956
+Delta vs seed42: +0.00007527
+Folds improved: 5/5
+Training runtime for new seeds only: 1199.85 seconds
+
+DECISION: KEEP
+
+SEED CORRELATIONS
+- 42 vs 7: prob_corr=0.999385, rank_corr=0.998865
+- 42 vs 2026: prob_corr=0.999402, rank_corr=0.998860
+- 7 vs 2026: prob_corr=0.999365, rank_corr=0.998766
+
+INTERPRETATION
+Averaging is retained only if the equal-weight ensemble beats
+the saved seed-42 champion and improves at least 3/5 folds.
+
+No blend weights were fitted on OOF labels.
