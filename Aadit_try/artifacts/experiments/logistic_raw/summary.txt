@@ -1,0 +1,33 @@
+EXPERIMENT: LOGISTIC_RAW_BASELINE
+========================================================================
+
+QUESTION
+How much ROC-AUC can a simple additive linear model extract from
+the raw features before nonlinear tree models or feature engineering?
+
+VALIDATION
+Frozen 5-fold StratifiedKFold assignment from validation_setup.py
+Fold-file SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+
+FEATURE POLICY
+Excluded ID: 'id'
+Raw model features: 13
+Numeric features: 7
+Categorical/binary one-hot features: 6
+Numeric: ['Age', 'Annual_Income_USD', 'Daily_Commute_km', 'Number_of_Cars_Owned', 'Charging_Stations_Near_Home', 'Charging_Stations_Near_Work', 'Environmental_Concern_Level']
+Categorical/binary: ['Gender', 'City_Type', 'Current_Car_Type', 'Home_Charging_Possible', 'Subsidy_Available', 'Range_Anxiety_Level']
+
+MODEL
+LogisticRegression(C=1.0, L2 penalty, solver='lbfgs')
+Numeric preprocessing: StandardScaler
+Categorical preprocessing: OneHotEncoder(handle_unknown='ignore')
+
+RESULTS
+Mean fold AUC: 0.93809562
+Fold AUC std: 0.00090419
+OOF AUC: 0.93809448
+Total CV + test inference time: 10.29 seconds
+
+NOTE
+test_predictions.csv is saved only so this model can later be compared
+or blended consistently. It is NOT a Kaggle submission.

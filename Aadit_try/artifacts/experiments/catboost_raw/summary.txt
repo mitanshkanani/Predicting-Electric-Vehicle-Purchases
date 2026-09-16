@@ -1,0 +1,62 @@
+EXPERIMENT: CATBOOST_RAW_BASELINE
+========================================================================
+
+QUESTION
+Does a nonlinear tree model with native categorical handling
+materially improve ROC-AUC over the raw logistic baseline?
+
+EXPERIMENTAL CONTROL
+Same frozen folds.
+Same 13 raw model features.
+Same current feature-type policy.
+Only the model family changes.
+
+VALIDATION
+Frozen 5-fold StratifiedKFold assignment from validation_setup.py
+Fold-file SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+
+FEATURE POLICY
+Excluded ID: 'id'
+Numeric features: ['Age', 'Annual_Income_USD', 'Daily_Commute_km', 'Number_of_Cars_Owned', 'Charging_Stations_Near_Home', 'Charging_Stations_Near_Work', 'Environmental_Concern_Level']
+Native categorical/binary features: ['Gender', 'City_Type', 'Current_Car_Type', 'Home_Charging_Possible', 'Subsidy_Available', 'Range_Anxiety_Level']
+
+MODEL
+CatBoostClassifier
+iterations=2000
+learning_rate=0.05
+depth=6
+loss_function='Logloss'
+eval_metric='AUC'
+early_stopping_rounds=150
+
+RESULTS
+Mean fold AUC: 0.94178174
+Fold AUC std: 0.00084719
+OOF AUC: 0.94177658
+Mean best iteration: 1543.0
+Mean tree count: 1544.0
+Total CV + test inference time: 1804.55 seconds
+
+DIRECT COMPARISON VS LOGISTIC RAW
+Logistic OOF AUC: 0.93809448
+CatBoost OOF AUC: 0.94177658
+AUC delta: +0.00368210
+OOF probability correlation: 0.985548
+OOF rank correlation: 0.986683
+
+TOP MEAN FEATURE IMPORTANCES
+Subsidy_Available: 53.733305
+Environmental_Concern_Level: 22.285364
+Annual_Income_USD: 10.565797
+Range_Anxiety_Level: 3.903031
+Daily_Commute_km: 2.776839
+Age: 2.598345
+Charging_Stations_Near_Home: 1.111759
+Charging_Stations_Near_Work: 1.020955
+Home_Charging_Possible: 0.700064
+Number_of_Cars_Owned: 0.433210
+
+NOTE
+This is a baseline, not tuned CatBoost.
+Low-cardinality numeric columns remain numeric deliberately.
+test_predictions.csv is NOT a Kaggle submission.
