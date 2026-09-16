@@ -1,0 +1,76 @@
+EXPERIMENT: CATBOOST_SOURCE_AUGMENTATION_GPU
+============================================================================
+
+QUESTION
+Does appending all 10,000 original labeled rows to every CatBoost
+training fold improve ROC-AUC on untouched competition validation rows?
+
+EXPERIMENTAL CONTROL
+Same frozen folds.
+Same 13 model features.
+Same feature-type policy.
+Same CatBoost hyperparameters.
+Same GPU training mode.
+Only source-data augmentation changed.
+
+LEAKAGE SAFETY
+Source rows are appended only to fold training data.
+Every validation fold contains competition rows only.
+
+DATA
+Competition rows: 668665
+Source rows added per fold: 10000
+Competition positive rate: 0.174645
+Source positive rate: 0.175000
+
+VALIDATION
+Frozen competition 5-fold split.
+Fold-file SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+
+MODEL
+CatBoostClassifier
+task_type='GPU'
+devices='0'
+iterations=2000
+learning_rate=0.05
+depth=6
+early_stopping_rounds=150
+
+RESULTS
+GPU baseline OOF AUC: 0.94123888
+Source-augmented GPU OOF AUC: 0.94121076
+OOF AUC delta: -0.00002812
+Mean augmented fold AUC: 0.94121838
+Fold AUC std: 0.00082290
+Folds improved: 3/5
+OOF probability correlation vs baseline: 0.998657
+OOF rank correlation vs baseline: 0.998316
+Total CV + test inference time: 334.16 seconds
+
+DECISION: REJECT_FOR_NOW
+
+FOLD DELTAS
+Fold 0: 0.94002197 -> 0.94006297 (+0.00004100)
+Fold 1: 0.94091230 -> 0.94099206 (+0.00007976)
+Fold 2: 0.94223842 -> 0.94228750 (+0.00004908)
+Fold 3: 0.94179317 -> 0.94163018 (-0.00016299)
+Fold 4: 0.94126778 -> 0.94111918 (-0.00014860)
+
+TOP MEAN FEATURE IMPORTANCES
+Subsidy_Available: 53.238379
+Environmental_Concern_Level: 23.238903
+Annual_Income_USD: 9.493975
+Range_Anxiety_Level: 4.017679
+Age: 2.758249
+Daily_Commute_km: 2.671540
+Charging_Stations_Near_Work: 1.376501
+Charging_Stations_Near_Home: 1.267071
+Home_Charging_Possible: 0.711376
+Current_Car_Type: 0.412404
+
+INTERPRETATION
+A positive score alone is not enough; we also care whether the gain
+is consistent across folds.
+
+If full-weight source augmentation helps, we keep it provisionally.
+If it hurts, we reject it or later test a lower source sample weight.
