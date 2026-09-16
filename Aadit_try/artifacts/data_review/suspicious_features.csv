@@ -1,0 +1,10 @@
+column,severity,flags,feature_kind,n_unique,unique_ratio,missing_pct
+id,2,likely_id; strong_rounding_pattern_0dp; train_test_shift,continuous_numeric,668665,1.0,0.0
+Age,1,numeric_but_category_candidate; strong_rounding_pattern_0dp,discrete_numeric,45,6.729827342540735e-05,0.0
+Annual_Income_USD,1,strong_rounding_pattern_0dp,continuous_numeric,13214,0.01976176411207406,0.0
+Charging_Stations_Near_Home,1,numeric_but_category_candidate,discrete_numeric,15,2.2432757808469115e-05,0.0
+Charging_Stations_Near_Work,1,numeric_but_category_candidate,discrete_numeric,20,2.9910343744625486e-05,0.0
+Daily_Commute_km,1,strong_rounding_pattern_1dp,continuous_numeric,805,0.0012038913357211758,0.0
+Environmental_Concern_Level,1,numeric_but_category_candidate; ordinal_name_hint,discrete_numeric,5,7.477585936156372e-06,0.0
+Number_of_Cars_Owned,1,numeric_but_category_candidate,discrete_numeric,4,5.982068748925097e-06,0.0
+Range_Anxiety_Level,1,ordinal_name_hint,categorical,3,4.486551561693823e-06,0.0

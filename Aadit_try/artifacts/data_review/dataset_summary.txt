@@ -1,0 +1,76 @@
+DATASET REVIEW — EXECUTIVE REPORT
+========================================================================
+Train shape: (668665, 15)
+Test shape: (286571, 14)
+Sample submission shape: (286571, 2)
+Train memory: 276.47 MB
+Test memory: 104.50 MB
+
+Detected target: 'Will_Buy_EV'
+Likely ID: 'id'
+  - Only column present in train but absent from test: 'Will_Buy_EV'.
+  - Likely ID: 'id' (heuristic score 18.00).
+
+Target values: ['No', 'Yes']
+Target counts: {'No': 551886, 'Yes': 116779}
+Encoded positive label for diagnostics: 'Yes'
+Positive rate (descriptive): 0.174645
+
+Feature type counts: {'discrete_numeric': 5, 'categorical': 4, 'continuous_numeric': 3, 'binary': 2}
+Columns with missing values: 0 / 15
+Constant features: 0; near-constant features: 0
+Integer/category candidates: 5; high-cardinality categoricals: 0
+
+DUPLICATE / LEAKAGE-STRUCTURE CHECKS
+  train_duplicate_full_rows: 0
+  test_duplicate_full_rows: 0
+  train_duplicate_feature_rows_excluding_id: 0
+  test_duplicate_feature_rows_excluding_id: 0
+  train_rows_with_feature_match_in_test: 0
+  test_rows_with_feature_match_in_train: 0
+  conflicting_duplicate_feature_groups: 0
+  rows_in_conflicting_duplicate_feature_groups: 0
+  feature_hash_excluded_id: id
+  feature_hash_column_count: 13
+
+TOP TRAIN/TEST SHIFT CANDIDATES
+  id: kind=continuous_numeric, method=numeric, score=1.0000, flag=True
+  Daily_Commute_km: kind=continuous_numeric, method=numeric, score=0.0061, flag=False
+  Annual_Income_USD: kind=continuous_numeric, method=numeric, score=0.0031, flag=False
+  Age: kind=discrete_numeric, method=categorical_or_discrete, score=0.0001, flag=False
+  Charging_Stations_Near_Home: kind=discrete_numeric, method=categorical_or_discrete, score=0.0000, flag=False
+  Charging_Stations_Near_Work: kind=discrete_numeric, method=categorical_or_discrete, score=0.0000, flag=False
+  Number_of_Cars_Owned: kind=discrete_numeric, method=categorical_or_discrete, score=0.0000, flag=False
+  Subsidy_Available: kind=binary, method=categorical_or_discrete, score=0.0000, flag=False
+  Range_Anxiety_Level: kind=categorical, method=categorical_or_discrete, score=0.0000, flag=False
+  Environmental_Concern_Level: kind=discrete_numeric, method=categorical_or_discrete, score=0.0000, flag=False
+  Gender: kind=categorical, method=categorical_or_discrete, score=0.0000, flag=False
+  Current_Car_Type: kind=categorical, method=categorical_or_discrete, score=0.0000, flag=False
+
+TOP FEATURE ↔ TARGET DIAGNOSTICS
+  Environmental_Concern_Level: kind=discrete_numeric, auc_strength=0.844785110617688, smoothed_rate_range=0.512336669809032
+  Annual_Income_USD: kind=continuous_numeric, auc_strength=0.6709859983508164, smoothed_rate_range=0.5701127232142856
+  Daily_Commute_km: kind=continuous_numeric, auc_strength=0.5322599899577336, smoothed_rate_range=0.36581179678033576
+  Subsidy_Available: kind=binary, auc_strength=NA, smoothed_rate_range=0.2669300440410661
+  Range_Anxiety_Level: kind=categorical, auc_strength=NA, smoothed_rate_range=0.17986405500673297
+  Age: kind=discrete_numeric, auc_strength=0.5080876357412971, smoothed_rate_range=0.09824049295203133
+  Home_Charging_Possible: kind=binary, auc_strength=NA, smoothed_rate_range=0.07011047377699281
+  Charging_Stations_Near_Home: kind=discrete_numeric, auc_strength=0.5174945221550326, smoothed_rate_range=0.043412694519559814
+  Charging_Stations_Near_Work: kind=discrete_numeric, auc_strength=0.5116398584203795, smoothed_rate_range=0.03507886586181744
+  City_Type: kind=categorical, auc_strength=NA, smoothed_rate_range=0.030769004523998417
+  Current_Car_Type: kind=categorical, auc_strength=NA, smoothed_rate_range=0.019221667548486143
+  Gender: kind=categorical, auc_strength=NA, smoothed_rate_range=0.008367653861667546
+
+SUSPICIOUS FEATURES
+  severity=2 | id: likely_id; strong_rounding_pattern_0dp; train_test_shift
+  severity=1 | Age: numeric_but_category_candidate; strong_rounding_pattern_0dp
+  severity=1 | Annual_Income_USD: strong_rounding_pattern_0dp
+  severity=1 | Charging_Stations_Near_Home: numeric_but_category_candidate
+  severity=1 | Charging_Stations_Near_Work: numeric_but_category_candidate
+  severity=1 | Daily_Commute_km: strong_rounding_pattern_1dp
+  severity=1 | Environmental_Concern_Level: numeric_but_category_candidate; ordinal_name_hint
+  severity=1 | Number_of_Cars_Owned: numeric_but_category_candidate
+  severity=1 | Range_Anxiety_Level: ordinal_name_hint
+
+IMPORTANT INTERPRETATION NOTE
+Feature-target diagnostics in this report are exploratory only. They are NOT validation scores. In particular, category target-rate summaries are computed only to inspect structure and must not be used as model encodings until we implement leakage-safe out-of-fold logic.

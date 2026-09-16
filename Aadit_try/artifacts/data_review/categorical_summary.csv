@@ -1,0 +1,12 @@
+column,feature_kind,train_n_unique,test_n_unique,train_top_value,train_top_count,train_top_pct,test_top_value,test_top_count,test_top_pct
+Age,discrete_numeric,45,45,36,17818,2.664712524208684,36,7694,2.6848494788377053
+Number_of_Cars_Owned,discrete_numeric,4,4,2,298287,44.60933352276551,2,127869,44.62035586294496
+Charging_Stations_Near_Home,discrete_numeric,15,15,2,101547,15.18652838117742,2,43297,15.10864672280168
+Charging_Stations_Near_Work,discrete_numeric,20,20,3,79739,11.925104499263457,3,34559,12.059489620373311
+Environmental_Concern_Level,discrete_numeric,5,5,1.0,147476,22.05528927041194,1.0,63125,22.027699941724737
+Gender,categorical,3,3,Male,367954,55.028153111049626,Male,157647,55.01149802317751
+City_Type,categorical,3,3,Urban,289305,43.266059985194374,Urban,123602,43.131370585299976
+Current_Car_Type,categorical,4,4,Sedan,303459,45.38281501200153,Sedan,130185,45.42853254516333
+Home_Charging_Possible,binary,2,2,Yes,462677,69.19414056366044,Yes,198480,69.26032292171922
+Subsidy_Available,binary,2,2,Yes,419909,62.798112657309716,Yes,180378,62.94356372417307
+Range_Anxiety_Level,categorical,3,3,Low,603972,90.3250506606447,Low,259247,90.46519012740298

@@ -1,0 +1,15 @@
+column,feature_kind,is_likely_id,id_like,shift_method,train_mean,test_mean,train_std,test_std,train_median,test_median,train_min,test_min,train_max,test_max,ks_statistic,ks_pvalue,standardized_mean_difference,psi,js_divergence,sample_test_unseen_row_pct,shift_score,shift_flag,train_n_unique,test_n_unique,cardinality_difference,sample_train_only_levels,sample_test_only_levels
+id,continuous_numeric,True,True,numeric,334332.0,811950.0,193027.10321135388,82726.06633341151,334332.0,811950.0,0.0,668665.0,668664.0,955235.0,1.0,0.0,3.214379190008591,12.433838077649373,,,1.0,True,,,,,
+Daily_Commute_km,continuous_numeric,False,False,numeric,32.15829750323405,32.15930502388588,18.730473878848997,18.724435888369076,33.6,33.6,5.0,5.0,98.7,103.9,0.006119999999999959,0.30506070202724844,0.007819238529021185,3.126023372842372e-05,,,0.006119999999999959,False,,,,,
+Annual_Income_USD,continuous_numeric,False,False,numeric,84769.26698870136,84799.50843246526,28648.029042434417,28626.85109752554,84880.0,84926.0,30000.0,30000.0,188549.0,186936.0,0.0031399999999999206,0.9655052868673508,-0.0014044437335727264,4.127972726638137e-05,,,0.0031399999999999206,False,,,,,
+Age,discrete_numeric,False,False,categorical_or_discrete,,,,,,,,,,,,,,,0.00011531345457165748,0.0,0.00011531345457165748,False,45.0,45.0,0.0,0.0,0.0
+Charging_Stations_Near_Home,discrete_numeric,False,False,categorical_or_discrete,,,,,,,,,,,,,,,4.100104762207959e-05,0.0,4.100104762207959e-05,False,15.0,15.0,0.0,0.0,0.0
+Charging_Stations_Near_Work,discrete_numeric,False,False,categorical_or_discrete,,,,,,,,,,,,,,,3.3452905487753975e-05,0.0,3.3452905487753975e-05,False,20.0,20.0,0.0,0.0,0.0
+Number_of_Cars_Owned,discrete_numeric,False,False,categorical_or_discrete,,,,,,,,,,,,,,,1.186576900757397e-05,0.0,1.186576900757397e-05,False,4.0,4.0,0.0,0.0,0.0
+Subsidy_Available,binary,False,False,categorical_or_discrete,,,,,,,,,,,,,,,1.0432434579207345e-05,0.0,1.0432434579207345e-05,False,2.0,2.0,0.0,0.0,0.0
+Range_Anxiety_Level,categorical,False,False,categorical_or_discrete,,,,,,,,,,,,,,,8.635462541107164e-06,0.0,8.635462541107164e-06,False,3.0,3.0,0.0,0.0,0.0
+Environmental_Concern_Level,discrete_numeric,False,False,categorical_or_discrete,,,,,,,,,,,,,,,7.162836069958852e-06,0.0,7.162836069958852e-06,False,5.0,5.0,0.0,0.0,0.0
+Gender,categorical,False,False,categorical_or_discrete,,,,,,,,,,,,,,,6.609337951363177e-06,0.0,6.609337951363177e-06,False,3.0,3.0,0.0,0.0,0.0
+Current_Car_Type,categorical,False,False,categorical_or_discrete,,,,,,,,,,,,,,,5.2942082620778065e-06,0.0,5.2942082620778065e-06,False,4.0,4.0,0.0,0.0,0.0
+City_Type,categorical,False,False,categorical_or_discrete,,,,,,,,,,,,,,,4.432476978138574e-06,0.0,4.432476978138574e-06,False,3.0,3.0,0.0,0.0,0.0
+Home_Charging_Possible,binary,False,False,categorical_or_discrete,,,,,,,,,,,,,,,6.543036764986055e-07,0.0,6.543036764986055e-07,False,2.0,2.0,0.0,0.0,0.0

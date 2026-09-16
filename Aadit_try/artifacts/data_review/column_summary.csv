@@ -1,0 +1,16 @@
+column,in_test,is_target,is_likely_id,id_heuristic_score,pandas_dtype,feature_kind,n_unique,unique_ratio,missing_count,missing_pct,top_frequency_ratio,constant,near_constant,high_cardinality,integer_like,integer_category_candidate,ordinal_name_hint,id_like
+id,True,False,True,18.0,int64,continuous_numeric,668665,1.0,0,0.0,1.4955171872312742e-06,False,False,False,True,False,False,True
+Age,True,False,False,0.0,int64,discrete_numeric,45,6.729827342540735e-05,0,0.0,0.026647125242086844,False,False,False,True,True,False,False
+Annual_Income_USD,True,False,False,0.0,float64,continuous_numeric,13214,0.01976176411207406,0,0.0,0.09213133631938265,False,False,False,True,False,False,False
+Daily_Commute_km,True,False,False,0.0,float64,continuous_numeric,805,0.0012038913357211758,0,0.0,0.21577321977372824,False,False,False,False,False,False,False
+Number_of_Cars_Owned,True,False,False,0.0,int64,discrete_numeric,4,5.982068748925097e-06,0,0.0,0.4460933352276551,False,False,False,True,True,False,False
+Charging_Stations_Near_Home,True,False,False,0.0,int64,discrete_numeric,15,2.2432757808469115e-05,0,0.0,0.1518652838117742,False,False,False,True,True,False,False
+Charging_Stations_Near_Work,True,False,False,0.0,int64,discrete_numeric,20,2.9910343744625486e-05,0,0.0,0.11925104499263457,False,False,False,True,True,False,False
+Environmental_Concern_Level,True,False,False,0.0,float64,discrete_numeric,5,7.477585936156372e-06,0,0.0,0.2205528927041194,False,False,False,True,True,True,False
+Gender,True,False,False,0.0,object,categorical,3,4.486551561693823e-06,0,0.0,0.5502815311104963,False,False,False,False,False,False,False
+City_Type,True,False,False,0.0,object,categorical,3,4.486551561693823e-06,0,0.0,0.4326605998519438,False,False,False,False,False,False,False
+Current_Car_Type,True,False,False,0.0,object,categorical,4,5.982068748925097e-06,0,0.0,0.45382815012001526,False,False,False,False,False,False,False
+Home_Charging_Possible,True,False,False,0.0,object,binary,2,2.9910343744625484e-06,0,0.0,0.6919414056366043,False,False,False,False,False,False,False
+Subsidy_Available,True,False,False,2.0,object,binary,2,2.9910343744625484e-06,0,0.0,0.6279811265730971,False,False,False,False,False,False,False
+Range_Anxiety_Level,True,False,False,0.0,object,categorical,3,4.486551561693823e-06,0,0.0,0.9032505066064471,False,False,False,False,False,True,False
+Will_Buy_EV,False,True,False,,object,target,2,2.9910343744625484e-06,0,0.0,0.8253549983923191,False,False,False,False,False,False,False
