@@ -1,0 +1,57 @@
+EXPERIMENT: XGBOOST_GPU_LEAKAGE_SAFE_TARGET_ENCODING
+============================================================================
+
+HYPOTHESIS
+Can leakage-safe target encodings of high-signal features and
+interactions improve the depth-4 XGBoost baseline?
+
+LEAKAGE SAFETY
+For each outer validation fold:
+- validation targets are never used in encoding
+- each outer-training row is encoded from the other three training folds
+- validation/test mappings are fit from all four outer-training folds
+
+MODEL CONTROL
+Same depth-4 XGBoost settings as the current best baseline.
+Bayesian smoothing strength: 50
+Base features: 13
+Added TE features: 18
+
+RESULTS
+Depth-4 baseline OOF AUC: 0.94206547
+Target-encoded OOF AUC: 0.94186245
+OOF AUC delta: -0.00020301
+Mean fold AUC: 0.94187270
+Fold AUC std: 0.00083215
+Folds improved: 0/5
+Total runtime: 112.15 seconds
+
+DECISION: REJECT_FOR_NOW
+
+FOLD DELTAS
+Fold 0: 0.94087066 -> 0.94069808 (-0.00017258)
+Fold 1: 0.94173015 -> 0.94149071 (-0.00023944)
+Fold 2: 0.94313675 -> 0.94286827 (-0.00026847)
+Fold 3: 0.94258993 -> 0.94237199 (-0.00021794)
+Fold 4: 0.94203681 -> 0.94193443 (-0.00010238)
+
+TOP TARGET-ENCODING IMPORTANCES
+TE__subsidy_env_range: 0.570977
+TE__subsidy_env: 0.262035
+TE__env_income: 0.049819
+TE__subsidy_range: 0.028659
+TE__env_range: 0.015564
+TE__income_bin: 0.007435
+TE__range: 0.005752
+TE__subsidy_income: 0.003819
+TE__subsidy_homecharge: 0.002009
+TE__age_bin: 0.001739
+TE__env_commute: 0.001633
+TE__home_charge: 0.001352
+
+NEXT DECISION
+If this produces a meaningful consistent gain, target encoding
+becomes part of the main pipeline and we will ablate/tune the TE set.
+
+If it does not help, we will not force target encoding just because
+public notebooks use it; we move to another model/feature family.
