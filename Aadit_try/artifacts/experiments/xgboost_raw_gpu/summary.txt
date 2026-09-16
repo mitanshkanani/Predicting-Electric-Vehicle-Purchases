@@ -1,0 +1,66 @@
+EXPERIMENT: XGBOOST_RAW_GPU_BASELINE
+============================================================================
+
+QUESTION
+Can XGBoost capture useful structure that differs from CatBoost
+while using the same raw features and frozen folds?
+
+VALIDATION
+Same frozen 5-fold competition split.
+Fold-file SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+
+FEATURE POLICY
+Excluded ID: 'id'
+Raw model features: 13
+Numeric features: ['Age', 'Annual_Income_USD', 'Daily_Commute_km', 'Number_of_Cars_Owned', 'Charging_Stations_Near_Home', 'Charging_Stations_Near_Work', 'Environmental_Concern_Level']
+Native categorical/binary features: ['Gender', 'City_Type', 'Current_Car_Type', 'Home_Charging_Possible', 'Subsidy_Available', 'Range_Anxiety_Level']
+
+MODEL
+XGBoost version: 3.1.1
+XGBClassifier
+tree_method='hist'
+device='cuda'
+enable_categorical=True
+n_estimators=5000
+learning_rate=0.03
+max_depth=6
+min_child_weight=8
+subsample=0.90
+colsample_bytree=0.90
+reg_lambda=2.0
+early_stopping_rounds=200
+
+RESULTS
+XGBoost OOF AUC: 0.94189926
+Mean fold AUC: 0.94190707
+Fold AUC std: 0.00081808
+CatBoost GPU OOF AUC: 0.94123888
+Delta vs CatBoost: +0.00066037
+Folds beating CatBoost: 5/5
+OOF probability correlation vs CatBoost: 0.996846
+OOF rank correlation vs CatBoost: 0.995481
+Total runtime: 39.44 seconds
+
+DIVERSITY VS LOGISTIC
+Logistic OOF AUC: 0.93809448
+OOF probability correlation vs Logistic: 0.983483
+OOF rank correlation vs Logistic: 0.986045
+
+TOP MEAN GAIN IMPORTANCES
+Subsidy_Available: 0.751266
+Environmental_Concern_Level: 0.202825
+Range_Anxiety_Level: 0.023643
+Annual_Income_USD: 0.009557
+Home_Charging_Possible: 0.003010
+Daily_Commute_km: 0.001678
+Age: 0.001494
+Charging_Stations_Near_Home: 0.001229
+City_Type: 0.001149
+Charging_Stations_Near_Work: 0.001136
+
+INTERPRETATION
+Do not judge XGBoost only by whether it beats CatBoost.
+If its OOF predictions are meaningfully different while its AUC
+is competitive, it may be useful later for blending.
+
+This is a baseline, not tuned XGBoost.
