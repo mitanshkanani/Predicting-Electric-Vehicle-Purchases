@@ -1,0 +1,45 @@
+EXPERIMENT: CATBOOST_XGBOOST_EXACT_TE_BLEND_AUDIT
+============================================================================
+
+QUESTION
+Does the strong XGBoost exact-value Bayesian-TE model add useful
+OOF ranking diversity to the current CatBoost champion?
+
+BASE MODELS
+CatBoost champion OOF AUC: 0.94543956
+XGBoost exact-TE OOF AUC: 0.94441818
+Probability correlation: 0.807862
+Rank correlation: 0.994133
+
+PRIMARY EVIDENCE: META-CV WEIGHT SELECTION
+Each held fold uses a blend weight chosen only on the other 4 folds.
+Meta-CV blended OOF AUC: 0.94549841
+Delta vs CatBoost champion: +0.00005886
+Held folds beating CatBoost: 5/5
+Mean selected CatBoost weight: 0.8120
+Std selected CatBoost weight: 0.0130
+Selected weights: [0.81, 0.82, 0.82, 0.79, 0.82]
+
+DEPLOYMENT WEIGHT
+Rounded mean meta-selected CatBoost weight: 0.81
+XGBoost weight: 0.19
+Deployment-weight full OOF AUC (diagnostic): 0.94550031
+
+FULL-OOF OPTIMUM — DIAGNOSTIC ONLY
+Best full-OOF CatBoost weight: 0.81
+Best full-OOF AUC: 0.94550031
+This full-OOF optimum is NOT used as promotion evidence.
+
+DECISION: KEEP
+
+META-FOLD RESULTS
+Fold 0: w_cat=0.81, CAT=0.94452265, blend=0.94458094, delta=+0.00005829
+Fold 1: w_cat=0.82, CAT=0.94506962, blend=0.94515872, delta=+0.00008910
+Fold 2: w_cat=0.82, CAT=0.94645179, blend=0.94652129, delta=+0.00006950
+Fold 3: w_cat=0.79, CAT=0.94577216, blend=0.94577889, delta=+0.00000673
+Fold 4: w_cat=0.82, CAT=0.94541010, blend=0.94548208, delta=+0.00007198
+
+INTERPRETATION
+A blend is kept only if out-of-fold weight selection generalizes
+to held folds. Full-OOF weight optimization is reported only as
+a diagnostic and cannot by itself justify a submission.
