@@ -1,0 +1,6 @@
+feature,is_income_digit_feature,is_commute_digit_feature,is_exact_te_feature,mean_gain_importance,std_gain_importance
+FE__commute_integer_km,False,True,False,0.0011828907183371485,0.00017196258669680852
+FE__commute_digit_ones,False,True,False,0.0010579463792964815,9.886761126060856e-05
+FE__commute_digit_tens,False,True,False,0.0010573838371783495,0.00010895247388770583
+FE__commute_last2_scaled,False,True,False,0.000962989788968116,4.914197415660596e-05
+FE__commute_digit_tenths,False,True,False,0.0009263965766876936,4.1854468191898095e-05

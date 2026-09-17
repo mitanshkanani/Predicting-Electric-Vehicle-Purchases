@@ -1,0 +1,63 @@
+EXPERIMENT: XGBOOST m=2 + INCOME DIGIT DECOMPOSITION
+==============================================================================
+
+HYPOTHESIS
+Can explicit decimal structure in Annual_Income_USD expose additional
+synthetic-generator signal beyond raw income + exact-value m=2 TE?
+
+ONLY CHANGE
+Added target-free Annual_Income_USD digit-decomposition features:
+- FE__income_digit_ones
+- FE__income_digit_tens
+- FE__income_digit_hundreds
+- FE__income_digit_thousands
+- FE__income_digit_ten_thousands
+- FE__income_digit_hundred_thousands
+- FE__income_last2
+- FE__income_last3
+
+HELD FIXED
+- frozen 5 folds
+- frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+- original raw features
+- exact-value TE of income + commute
+- nested leakage-safe TE
+- smoothing m=2
+- depth-4 XGBoost hyperparameters
+- seed 42
+
+RESULTS
+XGB m=2 baseline OOF: 0.94558384
+Digit candidate OOF: 0.94571130
+Delta vs m=2: +0.00012746
+Folds improved vs m=2: 5/5
+Folds worse vs m=2: 0/5
+
+CatBoost 3-seed OOF: 0.94543956
+Delta vs CatBoost: +0.00027174
+
+Probability corr vs m=2 XGB: 0.999186
+Rank corr vs m=2 XGB: 0.998748
+Probability corr vs CatBoost: 0.808323
+Rank corr vs CatBoost: 0.995130
+
+Runtime: 55.48 seconds
+
+DECISION: KEEP_INCOME_DIGIT_REPRESENTATION
+
+FOLD RESULTS
+Fold 0: m2=0.94462517 -> digits=0.94476307 (+0.00013790)
+Fold 1: m2=0.94523745 -> digits=0.94538838 (+0.00015094)
+Fold 2: m2=0.94658568 -> digits=0.94663849 (+0.00005281)
+Fold 3: m2=0.94581067 -> digits=0.94595056 (+0.00013989)
+Fold 4: m2=0.94568133 -> digits=0.94584488 (+0.00016355)
+
+INCOME DIGIT FEATURE IMPORTANCE
+FE__income_digit_hundred_thousands: 0.079606
+FE__income_digit_ten_thousands: 0.001270
+FE__income_digit_thousands: 0.001268
+FE__income_digit_hundreds: 0.001244
+FE__income_last3: 0.001086
+FE__income_digit_ones: 0.000956
+FE__income_last2: 0.000953
+FE__income_digit_tens: 0.000915
