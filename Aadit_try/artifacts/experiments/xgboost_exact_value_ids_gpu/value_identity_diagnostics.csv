@@ -1,0 +1,3 @@
+feature,train_unique_values,test_unique_values,mean_train_rows_per_value,median_train_rows_per_value,min_train_rows_per_value,max_train_rows_per_value,test_values_seen_in_train_rate
+Annual_Income_USD,13214,10526,50.60276978961707,8.0,1,61605,0.9942248168865656
+Daily_Commute_km,805,781,830.639751552795,576.0,1,144280,0.9998848452913938

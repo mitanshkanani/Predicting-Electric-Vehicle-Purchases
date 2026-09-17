@@ -1,0 +1,48 @@
+EXPERIMENT: XGBOOST_GPU_EXACT_VALUE_IDENTITIES
+============================================================================
+
+HYPOTHESIS
+Do the same exact-value identity features that transformed CatBoost
+also improve our depth-4 XGBoost model?
+
+CONTROL
+Same frozen folds and same winning depth-4 XGBoost configuration.
+Only two exact-value categorical copies were added.
+Value-ID columns: ['Annual_Income_USD_id', 'Daily_Commute_km_id']
+
+RESULTS
+Raw depth-4 XGBoost OOF AUC: 0.94206547
+Value-ID XGBoost OOF AUC: 0.94141117
+Delta vs raw XGBoost: -0.00065430
+Folds beating raw XGBoost: 0/5
+
+CatBoost 3-seed rank champion OOF AUC: 0.94543956
+Delta vs CatBoost champion: -0.00402839
+Folds beating CatBoost champion: 0/5
+
+Probability correlation vs CatBoost champion: 0.808285
+Rank correlation vs CatBoost champion: 0.988741
+Probability correlation vs raw XGBoost: 0.984638
+Rank correlation vs raw XGBoost: 0.990703
+
+Total runtime: 114.19 seconds
+
+DECISION: REJECT_FOR_NOW
+
+FOLD RESULTS
+Fold 0: raw_XGB=0.94087066, valueID_XGB=0.94022363 (-0.00064702), CAT3=0.94452265
+Fold 1: raw_XGB=0.94173015, valueID_XGB=0.94132063 (-0.00040951), CAT3=0.94506962
+Fold 2: raw_XGB=0.94313675, valueID_XGB=0.94248267 (-0.00065408), CAT3=0.94645179
+Fold 3: raw_XGB=0.94258993, valueID_XGB=0.94167733 (-0.00091260), CAT3=0.94577216
+Fold 4: raw_XGB=0.94203681, valueID_XGB=0.94145251 (-0.00058430), CAT3=0.94541010
+
+VALUE-ID FEATURE IMPORTANCE
+Annual_Income_USD_id: 0.012626
+Daily_Commute_km_id: 0.007740
+
+INTERPRETATION
+If XGBoost improves strongly but remains below CatBoost, its
+rank correlation determines whether it is worth blending later.
+
+If it approaches or beats CatBoost, we will build a rigorous
+cross-model blend audit using the aligned OOF predictions.
