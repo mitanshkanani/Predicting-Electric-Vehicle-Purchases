@@ -1,0 +1,40 @@
+EXPERIMENT: CATBOOST_VALUE_IDS_DEPTH5_MORE_TREES_GPU
+============================================================================
+
+HYPOTHESIS
+Was depth=5 artificially limited by the 2000-tree iteration budget?
+
+CONTROL
+Same frozen folds, same exact-value features, same seed=42,
+same depth=5, learning_rate=0.05, GPU, and early stopping.
+Only iterations changed: 2000 -> 3500.
+
+RESULTS
+Depth-5 / 2000-tree OOF AUC: 0.94539185
+Depth-5 / 3500-tree OOF AUC: 0.94540554
+Delta vs 2000-tree depth 5: +0.00001369
+Folds improved: 5/5
+
+3-seed depth-6 rank champion OOF AUC: 0.94543956
+Delta vs current champion: -0.00003402
+Folds beating current champion: 1/5
+
+Folds whose best iteration hit the new 3500-tree ceiling: 0/5
+Runtime: 638.75 seconds
+
+DECISION: KEEP
+
+FOLD RESULTS
+Fold 0: 0.94446117 -> 0.94449980 (+0.00003862), best_iter=2580
+Fold 1: 0.94500250 -> 0.94501002 (+0.00000752), best_iter=1905
+Fold 2: 0.94635222 -> 0.94635891 (+0.00000668), best_iter=2406
+Fold 3: 0.94572948 -> 0.94573891 (+0.00000943), best_iter=1817
+Fold 4: 0.94544003 -> 0.94544360 (+0.00000358), best_iter=2621
+
+INTERPRETATION
+If the extra tree budget improves depth=5 consistently, the
+3500-tree configuration becomes the depth-5 base for any later
+multi-seed experiment.
+
+If the gain disappears or remains negligible, we stop spending
+compute on the depth/iteration axis and move to a new idea.

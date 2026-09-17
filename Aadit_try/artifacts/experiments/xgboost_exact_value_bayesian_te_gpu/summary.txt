@@ -1,0 +1,51 @@
+EXPERIMENT: XGBOOST_EXACT_VALUE_BAYESIAN_TE_GPU
+============================================================================
+
+HYPOTHESIS
+Can XGBoost exploit exact income/commute identities when they are
+expressed as leakage-safe Bayesian target statistics?
+
+LEAKAGE SAFETY
+For every outer fold, validation targets are never used in TE.
+Outer-training rows receive inner-OOF encodings from the other
+three outer-training folds.
+
+CONTROL
+Same raw depth-4 XGBoost setup.
+Only two numeric TE features are added.
+Smoothing m: 100
+
+RESULTS
+Raw depth-4 XGBoost OOF AUC: 0.94206547
+Exact-value TE XGBoost OOF AUC: 0.94441818
+Delta vs raw XGBoost: +0.00235271
+Folds improved vs raw XGBoost: 5/5
+
+CatBoost 3-seed champion OOF AUC: 0.94543956
+Delta vs CatBoost champion: -0.00102138
+Folds beating CatBoost champion: 0/5
+
+Probability correlation vs CatBoost: 0.807862
+Rank correlation vs CatBoost: 0.994133
+Probability correlation vs raw XGBoost: 0.986751
+Rank correlation vs raw XGBoost: 0.992885
+
+Runtime: 63.70 seconds
+
+DECISION: KEEP_FOR_DIVERSITY
+
+FOLD RESULTS
+Fold 0: raw=0.94087066 -> exact_TE=0.94349914 (+0.00262849)
+Fold 1: raw=0.94173015 -> exact_TE=0.94422804 (+0.00249789)
+Fold 2: raw=0.94313675 -> exact_TE=0.94545577 (+0.00231902)
+Fold 3: raw=0.94258993 -> exact_TE=0.94451452 (+0.00192460)
+Fold 4: raw=0.94203681 -> exact_TE=0.94442622 (+0.00238940)
+
+EXACT-TE FEATURE IMPORTANCES
+TE__Annual_Income_USD_exact: 0.016527
+TE__Daily_Commute_km_exact: 0.002302
+
+INTERPRETATION
+This experiment specifically tests whether manual leakage-safe
+Bayesian statistics unlock the exact-value signal for XGBoost
+that its native categorical split handling failed to use.
