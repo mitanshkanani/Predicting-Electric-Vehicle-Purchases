@@ -1,0 +1,9 @@
+feature,is_income_digit_feature,is_exact_te_feature,mean_gain_importance,std_gain_importance
+FE__income_digit_hundred_thousands,True,False,0.1978178560733795,0.029018043684884264
+FE__income_digit_ten_thousands,True,False,0.02140628397464752,0.0012290831935746456
+FE__income_digit_thousands,True,False,0.016290079988539218,0.0012326161475955943
+FE__income_digit_hundreds,True,False,0.01491067986935377,0.002079114532636757
+FE__income_last3,True,False,0.013289610482752323,0.0008840833637514156
+FE__income_last2,True,False,0.011689987033605576,0.0007052276549141624
+FE__income_digit_ones,True,False,0.01161153931170702,0.000957879339705424
+FE__income_digit_tens,True,False,0.011379064992070198,0.00033378411910283355

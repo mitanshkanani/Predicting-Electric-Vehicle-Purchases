@@ -1,0 +1,59 @@
+EXPERIMENT: XGBOOST m=2 + INCOME DIGITS + DISCRETE-NUMERIC CATEGORICAL COPIES
+==============================================================================
+
+HYPOTHESIS
+Can categorical copies of low-cardinality discrete numeric variables
+add level-specific signal on top of the validated income-digit XGBoost?
+
+ONLY CHANGE
+Added categorical copies while keeping original numeric columns:
+- FE__Age__cat
+- FE__Number_of_Cars_Owned__cat
+- FE__Charging_Stations_Near_Home__cat
+- FE__Charging_Stations_Near_Work__cat
+- FE__Environmental_Concern_Level__cat
+
+HELD FIXED
+- frozen 5 folds
+- frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+- original raw features
+- exact-value TE of income + commute
+- nested leakage-safe TE
+- smoothing m=2
+- depth-4 XGBoost hyperparameters
+- seed 42
+
+RESULTS
+XGB m=2 baseline OOF: 0.94558384
+Income-digit baseline OOF: 0.94571130
+Candidate OOF: 0.94545821
+Delta vs income-digit baseline: -0.00025309
+Delta vs plain m=2: -0.00012563
+Folds improved vs income digits: 0/5
+Folds worse vs income digits: 5/5
+
+CatBoost 3-seed OOF: 0.94543956
+Delta vs CatBoost: +0.00001865
+
+Probability corr vs m=2 XGB: 0.998463
+Rank corr vs m=2 XGB: 0.997581
+Probability corr vs CatBoost: 0.808232
+Rank corr vs CatBoost: 0.994472
+
+Runtime: 47.45 seconds
+
+DECISION: REJECT_DISCRETE_NUMERIC_CATEGORICAL_COPIES
+
+FOLD RESULTS
+Fold 0: income_digits=0.94476307 -> +discrete_cats=0.94457271 (-0.00019036)
+Fold 1: income_digits=0.94538838 -> +discrete_cats=0.94508361 (-0.00030477)
+Fold 2: income_digits=0.94663849 -> +discrete_cats=0.94640305 (-0.00023544)
+Fold 3: income_digits=0.94595056 -> +discrete_cats=0.94576905 (-0.00018150)
+Fold 4: income_digits=0.94584488 -> +discrete_cats=0.94548622 (-0.00035866)
+
+DISCRETE CATEGORICAL-COPY FEATURE IMPORTANCE
+FE__Environmental_Concern_Level__cat: 0.141864
+FE__Age__cat: 0.002211
+FE__Charging_Stations_Near_Home__cat: 0.001247
+FE__Charging_Stations_Near_Work__cat: 0.001241
+FE__Number_of_Cars_Owned__cat: 0.000778

@@ -1,0 +1,6 @@
+feature,is_income_digit_feature,is_discrete_cat_copy,is_exact_te_feature,mean_gain_importance,std_gain_importance
+FE__Environmental_Concern_Level__cat,False,True,False,0.14186350405216216,0.007188420498721387
+FE__Age__cat,False,True,False,0.00221083820797503,0.00020890631742374654
+FE__Charging_Stations_Near_Home__cat,False,True,False,0.0012468589702621102,7.329161623386698e-05
+FE__Charging_Stations_Near_Work__cat,False,True,False,0.0012409092858433723,5.5392097331163434e-05
+FE__Number_of_Cars_Owned__cat,False,True,False,0.0007784291403368116,5.367462419329298e-05

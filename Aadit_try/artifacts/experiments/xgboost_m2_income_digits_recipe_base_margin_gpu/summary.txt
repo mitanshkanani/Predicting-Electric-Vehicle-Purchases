@@ -1,0 +1,60 @@
+EXPERIMENT: XGBOOST m=2 + INCOME DIGITS + RECIPE BASE MARGIN
+==============================================================================
+
+HYPOTHESIS
+Can the original-dataset recipe help the validated income-digit XGBoost
+when used as a base margin rather than as an ordinary feature?
+
+ONLY CHANGE
+Recipe-implied log-odds supplied as XGBoost base_margin.
+
+HELD FIXED
+- frozen 5 folds
+- frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+- original raw features
+- exact-value TE of income + commute
+- nested leakage-safe TE
+- smoothing m=2
+- depth-4 XGBoost hyperparameters
+- seed 42
+
+RESULTS
+XGB m=2 baseline OOF: 0.94558384
+Income-digit baseline OOF: 0.94571130
+Recipe-only AUC: 0.93769041
+Income digits + recipe base-margin OOF: 0.94574952
+Delta vs income-digit baseline: +0.00003822
+Delta vs plain m=2: +0.00016568
+Folds improved vs income digits: 4/5
+Folds worse vs income digits: 1/5
+
+CatBoost 3-seed OOF: 0.94543956
+Delta vs CatBoost: +0.00030996
+
+Probability corr vs income-digit XGB: 0.999567
+Rank corr vs income-digit XGB: 0.997017
+Probability corr vs m=2 XGB: 0.998941
+Rank corr vs m=2 XGB: 0.996458
+Probability corr vs CatBoost: 0.809863
+Rank corr vs CatBoost: 0.994868
+
+Runtime: 52.96 seconds
+
+DECISION: KEEP_RECIPE_BASE_MARGIN
+
+FOLD RESULTS
+Fold 0: income_digits=0.94476307 -> +base_margin=0.94487577 (+0.00011270)
+Fold 1: income_digits=0.94538838 -> +base_margin=0.94541892 (+0.00003053)
+Fold 2: income_digits=0.94663849 -> +base_margin=0.94669564 (+0.00005716)
+Fold 3: income_digits=0.94595056 -> +base_margin=0.94592498 (-0.00002558)
+Fold 4: income_digits=0.94584488 -> +base_margin=0.94585638 (+0.00001151)
+
+INCOME DIGIT FEATURE IMPORTANCE (BASE-MARGIN MODEL)
+FE__income_digit_hundred_thousands: 0.197818
+FE__income_digit_ten_thousands: 0.021406
+FE__income_digit_thousands: 0.016290
+FE__income_digit_hundreds: 0.014911
+FE__income_last3: 0.013290
+FE__income_last2: 0.011690
+FE__income_digit_ones: 0.011612
+FE__income_digit_tens: 0.011379
