@@ -1,0 +1,2 @@
+feature,is_income_digit_feature,is_exact_frequency_feature,is_income_subsidy_interaction_te,is_exact_te_feature,mean_gain_importance,std_gain_importance
+TE__Annual_Income_USD_exact_x_Subsidy_Available,False,False,True,True,0.09874428212642669,0.005188769381821226

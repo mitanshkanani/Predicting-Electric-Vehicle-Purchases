@@ -1,0 +1,36 @@
+EXPERIMENT: CATBOOST + EXACT-FREQUENCY XGBOOST RANK-BLEND AUDIT
+==============================================================================
+
+HYPOTHESIS
+Does replacing recipe-margin XGBoost with the stronger exact-frequency
+XGBoost improve the leakage-safe CatBoost/XGBoost rank ensemble?
+
+ONLY CHANGE
+XGBoost component: recipe margin -> recipe margin + exact frequencies
+
+CONTROL
+Recipe-margin control meta-CV expected: 0.94580529
+Recipe-margin control meta-CV reproduced: 0.94580529
+Recipe-margin control weights reproduced: [0.3, 0.3, 0.28, 0.26, 0.32]
+CONTROL: PASS
+
+SINGLE MODELS
+CatBoost 3-seed OOF: 0.94543956
+Exact-frequency XGBoost OOF: 0.94580644
+
+NEW META-CV BLEND
+Meta-CV OOF: 0.94583385
+Delta vs current recipe-margin blend: +0.00002856
+Delta vs exact-frequency XGB single: +0.00002741
+Folds blend > CatBoost: 5/5
+Folds blend > exact-frequency XGB: 5/5
+Selected CAT weights: [0.22, 0.23, 0.21, 0.18, 0.23]
+Mean CAT weight: 0.2140
+Std CAT weight: 0.0185
+Deployment blend: 0.21 CAT / 0.79 XGB
+Full-OOF deployment diagnostic: 0.94583559
+Selected weights hit a search boundary: NO
+
+DECISION: KEEP_EXACT_FREQUENCY_BLEND
+
+Do not submit to Kaggle yet. Analyze the local result first.

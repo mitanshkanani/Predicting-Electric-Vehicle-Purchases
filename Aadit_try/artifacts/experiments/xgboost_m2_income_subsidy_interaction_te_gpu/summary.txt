@@ -1,0 +1,62 @@
+EXPERIMENT: XGBOOST m=2 + INCOME X SUBSIDY EXACT INTERACTION TE
+==============================================================================
+
+HYPOTHESIS
+Does leakage-safe exact Annual_Income_USD × Subsidy_Available target
+encoding add conditional purchase signal on top of the current champion?
+
+ONLY CHANGE
+Added ONE nested Bayesian TE feature:
+TE__Annual_Income_USD_exact_x_Subsidy_Available
+
+HELD FIXED
+- frozen 5 folds
+- frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+- original raw features
+- exact-value TE of income + commute
+- nested leakage-safe TE
+- smoothing m=2
+- depth-4 XGBoost hyperparameters
+- seed 42
+
+RESULTS
+XGB m=2 baseline OOF: 0.94558384
+Income-digit baseline OOF: 0.94571130
+Recipe-margin baseline OOF: 0.94574952
+Exact-frequency baseline OOF: 0.94580644
+Recipe-only AUC: 0.93769041
+Candidate OOF: 0.94576142
+Delta vs exact-frequency baseline: -0.00004502
+Delta vs recipe-margin baseline: +0.00001191
+Delta vs income-digit baseline: +0.00005012
+Delta vs plain m=2: +0.00017758
+Folds improved vs exact-frequency baseline: 0/5
+Folds worse vs exact-frequency baseline: 5/5
+
+CatBoost 3-seed OOF: 0.94543956
+Delta vs CatBoost: +0.00032187
+
+Probability corr vs exact-frequency XGB: 0.999663
+Rank corr vs exact-frequency XGB: 0.999184
+Probability corr vs recipe-margin XGB: 0.999217
+Rank corr vs recipe-margin XGB: 0.998829
+Probability corr vs income-digit XGB: 0.998987
+Rank corr vs income-digit XGB: 0.996144
+Probability corr vs m=2 XGB: 0.998429
+Rank corr vs m=2 XGB: 0.995653
+Probability corr vs CatBoost: 0.809763
+Rank corr vs CatBoost: 0.994812
+
+Runtime: 65.39 seconds
+
+DECISION: REJECT_INCOME_X_SUBSIDY_INTERACTION_TE
+
+FOLD RESULTS
+Fold 0: exact_frequency=0.94490277 -> +income_x_subsidy_te=0.94479903 (-0.00010373)
+Fold 1: exact_frequency=0.94550287 -> +income_x_subsidy_te=0.94543774 (-0.00006513)
+Fold 2: exact_frequency=0.94680814 -> +income_x_subsidy_te=0.94677621 (-0.00003193)
+Fold 3: exact_frequency=0.94600041 -> +income_x_subsidy_te=0.94598797 (-0.00001243)
+Fold 4: exact_frequency=0.94584201 -> +income_x_subsidy_te=0.94582542 (-0.00001659)
+
+INCOME×SUBSIDY INTERACTION-TE FEATURE IMPORTANCE
+TE__Annual_Income_USD_exact_x_Subsidy_Available: 0.098744

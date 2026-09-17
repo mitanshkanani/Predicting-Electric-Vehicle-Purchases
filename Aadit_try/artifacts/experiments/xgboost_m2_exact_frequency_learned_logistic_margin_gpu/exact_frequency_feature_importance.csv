@@ -1,0 +1,7 @@
+feature,is_income_digit_feature,is_exact_frequency_feature,is_exact_te_feature,mean_gain_importance,std_gain_importance
+FE__income_exact_frequency_log1p,False,True,False,0.018377957120537757,0.0023668174461190113
+FE__income_exact_frequency_rate,False,True,False,0.017860983312129975,0.0022494226477674756
+FE__commute_exact_frequency_rate,False,True,False,0.01733590606600046,0.005760211974825402
+FE__income_exact_frequency_count,False,True,False,0.017204660922288895,0.0017363034987698325
+FE__commute_exact_frequency_count,False,True,False,0.01274373084306717,0.0014159316161109362
+FE__commute_exact_frequency_log1p,False,True,False,0.012537403590977192,0.001069013958940138
