@@ -1,0 +1,32 @@
+EXPERIMENT: CATBOOST_VALUE_IDS_DEPTH_SWEEP_GPU
+============================================================================
+
+HYPOTHESIS
+Does the exact-value CatBoost representation prefer a different
+tree depth than the inherited depth=6 raw baseline?
+
+CONTROL
+Same frozen folds, features, seed, learning rate, iterations, GPU,
+and early stopping. Only depth changes.
+
+Depth-6 single-seed reference: 0.94536428
+3-seed rank champion context: 0.94543956
+
+RESULTS
+- depth=5: OOF=0.94539185, delta_vs_depth6=+0.00002756, folds_beating_depth6=4/5, rank_corr=0.999384
+- depth=6: OOF=0.94536428, delta_vs_depth6=+0.00000000, folds_beating_depth6=0/5, rank_corr=1.000000
+- depth=7: OOF=0.94531607, delta_vs_depth6=-0.00004821, folds_beating_depth6=0/5, rank_corr=0.999200
+
+BEST DEPTH
+Depth: 5
+OOF AUC: 0.94539185
+Delta vs depth 6: +0.00002756
+Decision: PROMOTE_NEW_DEPTH
+Runtime for newly trained depths: 970.23 seconds
+
+NEXT
+If depth 5 or 7 clearly wins, that depth becomes the new
+single-seed base before any further seed averaging.
+
+If depth 6 remains best, we freeze depth and move on rather
+than repeatedly tuning the same axis.
