@@ -1,0 +1,34 @@
+EXPERIMENT: CATBOOST + XGBOOST m=2 RANK-BLEND AUDIT
+==============================================================================
+
+HYPOTHESIS
+Does replacing the old m=100 XGBoost component with the stronger m=2
+exact-TE XGBoost improve the leakage-safe CatBoost/XGBoost ensemble?
+
+CONTROL REPRODUCTION
+Old meta-CV expected: 0.94549841
+Old meta-CV reproduced: 0.94549841
+Old weights reproduced: [0.81, 0.82, 0.82, 0.79, 0.82]
+CONTROL: PASS
+
+SINGLE MODELS
+CatBoost 3-seed OOF: 0.94543956
+XGB m=100 OOF: 0.94441818
+XGB m=2 OOF: 0.94558384
+XGB m=2 delta vs CatBoost: +0.00014428
+
+NEW META-CV BLEND
+Meta-CV OOF: 0.94566049
+Delta vs previous meta-CV blend: +0.00016207
+Delta vs XGB m=2 single: +0.00007665
+Folds blend > CatBoost: 5/5
+Folds blend > XGB m=2: 5/5
+Selected CAT weights: [0.5, 0.5, 0.5, 0.5, 0.5]
+Mean CAT weight: 0.5000
+Std CAT weight: 0.0000
+Deployment blend: 0.50 CAT / 0.50 XGB
+Full-OOF deployment diagnostic: 0.94566049
+
+DECISION: KEEP_NEW_BLEND
+
+Do not submit to Kaggle yet. Analyze these local results first.

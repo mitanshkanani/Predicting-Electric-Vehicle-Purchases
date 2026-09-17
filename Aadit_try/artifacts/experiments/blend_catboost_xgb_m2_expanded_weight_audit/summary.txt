@@ -1,0 +1,37 @@
+EXPERIMENT: CATBOOST + XGBOOST m=2 EXPANDED WEIGHT AUDIT
+==============================================================================
+
+HYPOTHESIS
+The previous blend selected CAT=0.50 on every held fold, but 0.50
+was the lower boundary. Test whether less CatBoost / more XGBoost
+improves leakage-safe meta-CV.
+
+ONLY CHANGE
+CAT weight grid: 0.50..1.00 -> 0.00..1.00 by 0.01
+
+CONTROL
+Restricted meta-CV expected: 0.94566049
+Restricted meta-CV reproduced: 0.94566049
+Restricted weights reproduced: [0.5, 0.5, 0.5, 0.5, 0.5]
+CONTROL: PASS
+
+SINGLE MODELS
+CatBoost 3-seed OOF: 0.94543956
+XGBoost m=2 OOF: 0.94558384
+
+EXPANDED META-CV
+Meta-CV OOF: 0.94566717
+Delta vs restricted blend: +0.00000668
+Delta vs XGB m=2 single: +0.00008333
+Folds blend > CatBoost: 5/5
+Folds blend > XGB m=2: 5/5
+Selected CAT weights: [0.37, 0.39, 0.38, 0.36, 0.41]
+Mean CAT weight: 0.3820
+Std CAT weight: 0.0172
+Deployment blend: 0.38 CAT / 0.62 XGB
+Full-OOF deployment diagnostic: 0.94566862
+Expanded selections hit a search boundary: NO
+
+DECISION: KEEP_EXPANDED_BLEND
+
+Do not submit to Kaggle yet. Analyze the local result first.
