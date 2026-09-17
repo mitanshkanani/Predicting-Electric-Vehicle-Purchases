@@ -1,0 +1,48 @@
+EXPERIMENT: XGBOOST EXACT-VALUE BAYESIAN TE LOW-RANGE SMOOTHING
+==============================================================================
+
+HYPOTHESIS
+The previous sweep improved monotonically down to m=25, which was the
+lowest tested value. This follow-up tests whether the optimum lies below
+25 or turns over in the low-smoothing region.
+
+ONLY VARIABLE CHANGED
+Bayesian smoothing m in: [5.0, 10.0, 15.0, 20.0, 25.0, 30.0]
+
+HELD FIXED
+- frozen 5 folds
+- frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+- original 13 raw features
+- exact TE keys: Annual_Income_USD and Daily_Commute_km
+- same nested leakage-safe TE procedure
+- same depth-4 XGBoost model/hyperparameters
+- same seed 42
+
+REFERENCES
+Raw depth-4 XGBoost OOF: 0.94206547
+CatBoost 3-seed OOF: 0.94543956
+Previous m=25 exact-TE XGB OOF: 0.94498137
+
+M=25 REPRODUCTION
+Reproduced m=25 OOF: 0.94498137
+Gap vs previous m=25: +0.00000000
+
+SWEEP RESULTS
+m=5: OOF=0.94547519 | delta_vs_m25=+0.00049383 | folds_improved=5/5 | rank_corr_vs_CAT=0.995427
+m=10: OOF=0.94533069 | delta_vs_m25=+0.00034932 | folds_improved=5/5 | rank_corr_vs_CAT=0.995182
+m=15: OOF=0.94516828 | delta_vs_m25=+0.00018692 | folds_improved=5/5 | rank_corr_vs_CAT=0.995127
+m=20: OOF=0.94506076 | delta_vs_m25=+0.00007939 | folds_improved=5/5 | rank_corr_vs_CAT=0.994927
+m=25: OOF=0.94498137 | delta_vs_m25=+0.00000000 | folds_improved=0/5 | rank_corr_vs_CAT=0.994853
+m=30: OOF=0.94488223 | delta_vs_m25=-0.00009914 | folds_improved=0/5 | rank_corr_vs_CAT=0.994827
+
+BEST
+Best smoothing: 5
+Best OOF AUC: 0.94547519
+Delta vs reproduced m=25: +0.00049383
+Decision: CANDIDATE_LOWER_SMOOTHING_IMPROVEMENT
+
+Total sweep runtime: 350.36 seconds
+
+IMPORTANT
+Do not submit to Kaggle yet. First inspect whether the best smoothing
+improvement is consistent enough locally to justify replacing m=25.

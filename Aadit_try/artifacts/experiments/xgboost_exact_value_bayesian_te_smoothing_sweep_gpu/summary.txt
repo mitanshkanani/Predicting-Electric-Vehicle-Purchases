@@ -1,0 +1,46 @@
+EXPERIMENT: XGBOOST EXACT-VALUE BAYESIAN TE SMOOTHING SWEEP
+==============================================================================
+
+HYPOTHESIS
+The exact-value TE signal may improve if Bayesian shrinkage strength
+is better matched to the repeated exact income/commute identities.
+
+ONLY VARIABLE CHANGED
+Bayesian smoothing m in: [25.0, 50.0, 100.0, 200.0, 400.0]
+
+HELD FIXED
+- frozen 5 folds
+- frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+- original 13 raw features
+- exact TE keys: Annual_Income_USD and Daily_Commute_km
+- same nested leakage-safe TE procedure
+- same depth-4 XGBoost model/hyperparameters
+- same seed 42
+
+REFERENCES
+Raw depth-4 XGBoost OOF: 0.94206547
+CatBoost 3-seed OOF: 0.94543956
+Historical m=100 exact-TE XGB OOF: 0.94441818
+
+M=100 REPRODUCTION
+Reproduced m=100 OOF: 0.94441818
+Gap vs historical m=100: -0.00000000
+
+SWEEP RESULTS
+m=25: OOF=0.94498137 | delta_vs_m100=+0.00056319 | folds_improved=5/5 | rank_corr_vs_CAT=0.994853
+m=50: OOF=0.94463809 | delta_vs_m100=+0.00021991 | folds_improved=5/5 | rank_corr_vs_CAT=0.994463
+m=100: OOF=0.94441818 | delta_vs_m100=+0.00000000 | folds_improved=0/5 | rank_corr_vs_CAT=0.994133
+m=200: OOF=0.94418659 | delta_vs_m100=-0.00023159 | folds_improved=0/5 | rank_corr_vs_CAT=0.993864
+m=400: OOF=0.94402805 | delta_vs_m100=-0.00039013 | folds_improved=0/5 | rank_corr_vs_CAT=0.993635
+
+BEST
+Best smoothing: 25
+Best OOF AUC: 0.94498137
+Delta vs reproduced m=100: +0.00056319
+Decision: CANDIDATE_SMOOTHING_IMPROVEMENT
+
+Total sweep runtime: 331.81 seconds
+
+IMPORTANT
+Do not submit to Kaggle yet. First inspect whether the best smoothing
+improvement is consistent enough locally to justify replacing m=100.
