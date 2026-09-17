@@ -1,0 +1,4 @@
+feature,is_new_income_bucket,is_exact_value_id,mean_importance,std_importance
+CAT__income_1k_bucket,True,False,3.451717963206923,0.13037011015215613
+CAT__income_10k_bucket,True,False,0.9138470650829446,0.11710025499314294
+CAT__income_100k_bucket,True,False,0.06423647998711805,0.033949504919386184

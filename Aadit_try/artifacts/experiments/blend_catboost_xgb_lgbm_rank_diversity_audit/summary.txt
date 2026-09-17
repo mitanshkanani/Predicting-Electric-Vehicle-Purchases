@@ -1,0 +1,48 @@
+EXPERIMENT: CATBOOST + XGBOOST + LIGHTGBM RANK-BLEND DIVERSITY AUDIT
+==================================================================================
+
+HYPOTHESIS
+Can engineered LightGBM add held-fold ensemble value despite being
+slightly weaker than the current XGBoost champion?
+
+VALIDATION
+Frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+Rank-blend simplex grid step: 0.05
+Weights are selected on 4 frozen folds and evaluated on the held fold.
+No public leaderboard information is used.
+
+SINGLE-MODEL REFERENCES
+CatBoost 3-seed OOF: 0.94543956
+Current XGB champion OOF: 0.94583075
+Engineered LightGBM OOF: 0.94578042
+Previous documented 2-model blend reference: 0.94583385
+
+META-CV RESULTS
+Control CAT+XGB meta-CV AUC: 0.94585660
+Candidate CAT+XGB+LGBM meta-CV AUC: 0.94587435
+Candidate delta vs control: +0.00001775
+Held folds improved: 5/5
+Held folds worse: 0/5
+Held folds tied: 0/5
+Candidate selected nonzero LGBM weight: 5/5 folds
+
+MEAN HELD-FOLD-SELECTED DEPLOYMENT WEIGHTS
+Control CAT: 0.1900
+Control XGB: 0.8100
+Candidate CAT: 0.1600
+Candidate XGB: 0.5300
+Candidate LGBM: 0.3100
+
+FULL-OOF DIAGNOSTICS USING MEAN WEIGHTS
+Control full-OOF diagnostic AUC: 0.94585801
+Candidate full-OOF diagnostic AUC: 0.94587577
+
+Runtime: 151.14 seconds
+DECISION: KEEP_LIGHTGBM_FOR_3MODEL_ENSEMBLE
+
+FOLD DETAILS
+Fold 0: control=0.94492992 (CAT/XGB=0.20/0.80) -> candidate=0.94494896 (CAT/XGB/LGBM=0.15/0.55/0.30) delta=+0.00001904
+Fold 1: control=0.94553203 (CAT/XGB=0.20/0.80) -> candidate=0.94556156 (CAT/XGB/LGBM=0.15/0.55/0.30) delta=+0.00002953
+Fold 2: control=0.94686014 (CAT/XGB=0.20/0.80) -> candidate=0.94686679 (CAT/XGB/LGBM=0.15/0.50/0.35) delta=+0.00000665
+Fold 3: control=0.94609355 (CAT/XGB=0.15/0.85) -> candidate=0.94611851 (CAT/XGB/LGBM=0.15/0.55/0.30) delta=+0.00002496
+Fold 4: control=0.94586723 (CAT/XGB=0.20/0.80) -> candidate=0.94587619 (CAT/XGB/LGBM=0.20/0.50/0.30) delta=+0.00000896

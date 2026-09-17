@@ -1,0 +1,4 @@
+feature,is_hierarchical_income_te,is_exact_te,is_income_digit,is_exact_frequency,mean_gain_importance,std_gain_importance
+HTE__income_10k_bucket,True,False,False,False,0.028215957805514336,0.005775948383037464
+HTE__income_1k_bucket,True,False,False,False,0.021258027106523514,0.0031781057015163854
+HTE__income_100k_bucket,True,False,False,False,0.012433163635432721,0.002560934693629458

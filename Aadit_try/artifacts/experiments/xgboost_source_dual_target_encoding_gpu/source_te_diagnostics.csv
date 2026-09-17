@@ -1,0 +1,6 @@
+feature,smoothing,source_prior,source_positive_label,source_unique_keys,source_min_group_count,source_median_group_count,source_max_group_count,competition_train_unseen_rate,competition_test_unseen_rate,encoded_min,encoded_max
+SOURCE_TE__income_10k_bucket,2.0,0.175,Yes,21,2,394.0,1149,0.0,0.0,0.07505411255411255,0.5944444444444444
+SOURCE_TE__environmental_concern,2.0,0.175,Yes,6,184,1953.0,2013,0.0,0.0,0.021513647642679903,0.4137958115183246
+SOURCE_TE__subsidy,2.0,0.175,Yes,2,3992,5000.0,6008,0.0,0.0,0.025375563345017525,0.27443427620632277
+SOURCE_TE__range_anxiety,2.0,0.175,Yes,3,167,1523.0,8310,0.0,0.0,0.007988165680473374,0.19867059672762272
+SOURCE_TE__behavior_state,2.0,0.175,Yes,35,1,122.0,991,0.0,0.0,0.0005303030303030302,0.681896551724138

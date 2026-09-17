@@ -1,0 +1,49 @@
+EXPERIMENT: HIERARCHICAL-INCOME CATBOOST MULTI-SEED AUDIT
+======================================================================================
+
+HYPOTHESIS
+Does seed averaging improve the already-validated hierarchical-income
+CatBoost representation?
+
+ONLY CHANGE
+Random-seed diversity. Reuse seed 42, train seeds 7 and 2026.
+
+HELD FIXED
+- frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+- exact income + commute categorical IDs
+- hierarchical income categorical buckets
+- raw numeric income + commute
+- iterations=2000
+- learning_rate=0.05
+- depth=6
+- GPU device 0
+- early stopping 150
+
+SINGLE-SEED RESULTS
+Seed 42: 0.94546676
+Seed 7: 0.94548227
+Seed 2026: 0.94549852
+
+ENSEMBLE RESULTS
+3-seed probability average: 0.94553572
+3-seed rank average: 0.94553699
+Best averaging method: rank_average
+Best 3-seed AUC: 0.94553699
+Delta vs hierarchical seed42: +0.00007024
+Delta vs previous exact-value Cat3: +0.00009744
+Best ensemble folds improved vs seed42: 5/5
+Runtime for newly trained seeds: 1615.47 seconds
+
+DECISION: KEEP_HIERARCHICAL_CATBOOST_3SEED
+
+BEST-ENSEMBLE FOLD RESULTS
+Fold 0: seed42=0.94453304 -> best_ensemble=0.94458885 (+0.00005581)
+Fold 1: seed42=0.94506932 -> best_ensemble=0.94515584 (+0.00008652)
+Fold 2: seed42=0.94651310 -> best_ensemble=0.94659841 (+0.00008531)
+Fold 3: seed42=0.94576311 -> best_ensemble=0.94580896 (+0.00004586)
+Fold 4: seed42=0.94548312 -> best_ensemble=0.94555623 (+0.00007311)
+
+SEED PAIR CORRELATIONS
+42 vs 7: prob_corr=0.999363, rank_corr=0.999020
+42 vs 2026: prob_corr=0.999345, rank_corr=0.998978
+7 vs 2026: prob_corr=0.999347, rank_corr=0.998964

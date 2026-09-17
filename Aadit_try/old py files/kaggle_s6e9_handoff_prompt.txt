@@ -1,0 +1,1439 @@
+You are taking over an ongoing Kaggle competition project from another ChatGPT conversation.
+
+Your job is to CONTINUE THE PROJECT RIGOROUSLY WITHOUT HALLUCINATING prior work, results, files, leaderboard scores, or experiments.
+
+============================================================
+PROJECT
+============================================================
+
+Competition:
+Kaggle Playground Series S6E9
+"Predicting Electric Vehicle Purchases"
+
+Task:
+Binary tabular classification
+
+Target:
+Will_Buy_EV
+
+Metric:
+ROC-AUC
+
+Goal:
+Learn properly while trying to improve enough to approach Top 100.
+
+Local Windows repo:
+C:\Users\Admin\OneDrive\Documents\GitHub\Predicting-Electric-Vehicle-Purchases\Aadit_try
+
+Python:
+C:\Users\Admin\AppData\Local\Programs\Python\Python313\python.exe
+
+Hardware:
+ASUS ROG Zephyrus G15 2022
+Ryzen 7 6800HS
+RTX 3060 6GB
+16GB RAM
+
+Use GPU where it actually works and makes sense.
+Current installed LightGBM build was previously CPU-only.
+
+============================================================
+ABSOLUTE WORKFLOW RULES
+============================================================
+
+These rules are mandatory.
+
+1. ONE CODE FILE AT A TIME.
+
+For every experiment:
+- explain the hypothesis
+- explain exactly what changes
+- explain what stays fixed
+- explain what I should learn from it
+- give exactly ONE .py file
+- give the exact PowerShell command
+- STOP and wait for me to run it locally
+
+Do NOT give multiple experiment files at once.
+
+2. If code crashes:
+FIX THE SAME FILE.
+Do not advance to a new experiment.
+
+3. NEVER invent results.
+
+If a result is not explicitly listed in this handoff or supplied by me afterward, it does not exist.
+
+Do not say:
+"we tested X and got..."
+unless that result is explicitly documented here or supplied later.
+
+4. NEVER invent files or paths.
+
+Use only:
+- paths explicitly listed here
+- paths returned by future scripts
+- paths I explicitly provide later
+
+If unsure whether something exists, make the script validate it or ask.
+
+5. FROZEN CROSS-VALIDATION IS THE SOURCE OF TRUTH.
+
+All serious comparable experiments must use the frozen 5-fold split:
+
+StratifiedKFold(
+    n_splits=5,
+    shuffle=True,
+    random_state=42
+)
+
+Frozen fold file:
+artifacts/validation/candidate_folds.csv
+
+SHA256:
+55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+
+Every comparable experiment must read and validate this hash.
+
+Do NOT change folds because another split scores better.
+
+6. DO NOT LEADERBOARD-OVERFIT.
+
+Public Kaggle LB is confirmation, not the experiment optimizer.
+
+Use OOF CV first.
+
+Do not chase tiny public movements blindly.
+
+7. TARGET ENCODING MUST BE LEAKAGE-SAFE.
+
+Validation targets must never participate in the encoding used for validation rows.
+
+Training rows needing target encoding must use nested/OOF encoding.
+
+8. ONE HYPOTHESIS AT A TIME.
+
+Do not simultaneously change:
+- model family
+- feature set
+- hyperparameters
+- validation split
+
+unless the experiment is explicitly designed around exactly one coherent mechanism.
+
+9. OUTSIDE/PUBLIC KAGGLE CLAIMS REQUIRE FRESH SEARCH.
+
+If using public Kaggle discussions/notebooks/GitHub:
+- search fresh
+- cite the source
+- clearly separate external claims/results from OUR local results
+
+Do not trust uncited remembered public scores.
+
+10. TOP 100 CLAIMS REQUIRE REAL CURRENT EVIDENCE.
+
+Do not claim:
+- likely Top 100
+- Top 100 cutoff
+- expected rank
+without actual current leaderboard evidence.
+
+11. I DISLIKE MICRO-POLISHING.
+
+Prefer structural hypotheses over:
+- tiny parameter nudges
+- arbitrary microtuning
+- blend-weight fiddling
+unless there is a clear mechanism.
+
+12. WHEN A RESULT FAILS:
+say clearly:
+REJECT
+and explain what we learned.
+
+When a result is tiny:
+do not hype it.
+
+When a result is meaningful:
+quantify it.
+
+============================================================
+DATASET
+============================================================
+
+Train:
+668,665 rows × 15 columns
+
+Test:
+286,571 rows × 14 columns
+
+Target:
+Will_Buy_EV
+
+Class counts:
+No  = 551,886
+Yes = 116,779
+
+Positive rate:
+0.174645
+
+ID column:
+id
+
+Train IDs:
+0 -> 668664
+
+Test IDs:
+668665 -> 955235
+
+The ID is sequential and must NOT be used as a predictive feature.
+
+13 real features:
+
+Numeric:
+- Age
+- Annual_Income_USD
+- Daily_Commute_km
+- Number_of_Cars_Owned
+- Charging_Stations_Near_Home
+- Charging_Stations_Near_Work
+- Environmental_Concern_Level
+
+Categorical:
+- Gender
+- City_Type
+- Current_Car_Type
+- Home_Charging_Possible
+- Subsidy_Available
+- Range_Anxiety_Level
+
+No missing values.
+
+No exact duplicate feature rows.
+
+No exact train/test feature matches.
+
+No meaningful train/test distribution shift in the ordinary raw features.
+
+Important cardinalities:
+- Age: 45
+- Number_of_Cars_Owned: 4
+- Charging_Stations_Near_Home: 15
+- Charging_Stations_Near_Work: 20
+- Environmental_Concern_Level: 5
+- Gender: 3
+- City_Type: 3
+- Current_Car_Type: 4
+- Home_Charging_Possible: 2
+- Subsidy_Available: 2
+- Range_Anxiety_Level: 3
+
+Important EDA:
+- Environmental_Concern_Level univariate AUC strength ~0.8448
+- Annual_Income_USD ~0.6710
+- Daily_Commute_km raw ~0.4677 but strongly nonlinear
+- Subsidy_Available target-rate range ~0.2669
+- Range_Anxiety_Level target-rate range ~0.1799
+- id has no meaningful target relationship
+
+============================================================
+SOURCE DATASET
+============================================================
+
+Source dataset:
+ev-adoption-behavior-and-range-anxiety
+
+Source file:
+EV_Adoption_and_Range_Anxiety_Dataset.csv
+
+Shape:
+10,000 × 15
+
+Same 13 conceptual features.
+
+Important:
+Full source-row augmentation was already tested and was neutral-negative.
+Do NOT blindly append source rows again.
+
+Source augmentation CatBoost GPU result:
+0.94121076
+
+Delta vs CatBoost GPU raw baseline:
+-0.00002812
+
+Rejected.
+
+============================================================
+EXPERIMENT LEDGER
+============================================================
+
+1. Logistic raw baseline
+OOF:
+0.93809448
+
+2. CatBoost CPU raw
+OOF:
+0.94177658
+
+3. CatBoost GPU raw
+File:
+baseline_catboost_gpu.py
+
+OOF:
+0.94123888
+
+4. Source dataset audit
+Completed.
+Source augmentation later rejected as above.
+
+5. Full source augmentation CatBoost GPU
+OOF:
+0.94121076
+Rejected.
+
+6/7. Raw XGBoost GPU depth sweep
+XGBoost 3.1.1
+
+Depth 4:
+0.94206547
+
+Depth 5:
+0.94199563
+
+Depth 6:
+0.94189926
+
+Depth 7:
+0.94177069
+
+Depth 8:
+0.94165158
+
+Depth 4 won all folds and became raw XGB champion.
+
+Artifacts:
+artifacts/experiments/xgboost_depth_sweep_gpu/best_oof_predictions.csv
+artifacts/experiments/xgboost_depth_sweep_gpu/best_test_predictions.csv
+
+8. First XGB submission
+File:
+submissions/xgb_depth4_first_submission.csv
+
+Local:
+0.94206547
+
+Public:
+0.94196
+
+Rank at screenshot time:
+~1083
+
+9. Old Cat/XGB blend
+Negligible.
+Do not treat as current.
+
+10. Broad leakage-safe target encoding
+File:
+xgboost_target_encoding_gpu.py
+
+Used 18 TEs including binned income/commute.
+
+OOF:
+0.94186245
+
+Worse than raw XGB.
+Rejected.
+
+Important:
+This is NOT evidence that exact-value TE is bad.
+
+11. LightGBM raw baseline
+File:
+baseline_lightgbm_auto_device.py
+
+Installed LightGBM GPU unavailable, so CPU used.
+
+OOF:
+0.94065201
+
+Delta vs raw XGB:
+-0.00141346
+
+Rank correlation vs XGB:
+0.994869
+
+Rejected.
+
+12. MAJOR BREAKTHROUGH:
+CatBoost exact string categorical copies for:
+- Annual_Income_USD
+- Daily_Commute_km
+
+Columns:
+Annual_Income_USD_id
+Daily_Commute_km_id
+
+Raw numeric features kept too.
+
+File:
+catboost_exact_value_ids_gpu.py
+
+Income:
+13,214 unique
+mean rows/value ~50.6
+median rows/value 8
+test seen ~99.42%
+
+Commute:
+805 unique
+mean rows/value ~830.6
+median ~576
+test seen ~99.99%
+
+Raw Cat GPU:
+0.94123888
+
+Exact-value Cat:
+0.94536428
+
+Gain:
++0.00412540
+
+Beat raw XGB by:
++0.00329881
+
+Won 5/5 folds.
+
+13. Exact Cat public submission
+Public:
+0.94552
+
+Rank at screenshot time:
+~765
+
+14. Explicit Cat interactions
+File:
+catboost_value_ids_interactions_gpu.py
+
+OOF:
+0.94534221
+
+Below exact Cat baseline.
+Rejected.
+
+15. CatBoost value-ID multiseed
+File:
+catboost_value_ids_multiseed_gpu.py
+
+Seeds:
+42, 7, 2026
+
+Seed 42:
+0.94536428
+
+Seed 7:
+0.94538642
+
+Seed 2026:
+0.94540629
+
+3-seed probability average:
+0.94543837
+
+3-seed rank average:
+0.94543956
+
+Gain vs seed42:
++0.00007527
+
+Won 5/5 folds.
+
+CatBoost rank ensemble champion:
+0.94543956
+
+Artifacts:
+artifacts/experiments/catboost_value_ids_multiseed_gpu/best_average_oof_predictions.csv
+artifacts/experiments/catboost_value_ids_multiseed_gpu/best_average_test_predictions.csv
+
+16. XGBoost exact IDs as native categoricals
+OOF:
+0.94141117
+
+Worse than raw XGB.
+Rejected.
+
+17. Cat depth sweep with value IDs
+Depth 5:
+0.94539185
+
+Depth 6:
+0.94536428
+
+Depth 7:
+0.94531607
+
+Depth 5 slightly better than d6, but below 3-seed ensemble.
+
+18. Depth 5 / 3500 trees
+OOF:
+0.94540554
+
+Below Cat 3-seed.
+
+Freeze depth/tree tuning for CatBoost.
+
+19. SECOND MAJOR BREAKTHROUGH:
+XGBoost exact-value Bayesian target encoding
+File:
+xgboost_exact_value_bayesian_te_gpu.py
+
+TE keys:
+- exact Annual_Income_USD
+- exact Daily_Commute_km
+
+Nested leakage-safe.
+Initial smoothing m=100.
+
+Raw XGB:
+0.94206547
+
+m100:
+0.94441818
+
+Gain:
++0.00235271
+
+5/5 folds improved.
+
+Below Cat by:
+0.00102138
+
+Correlation vs CAT:
+probability 0.807862
+rank 0.994133
+
+KEEP_FOR_DIVERSITY.
+
+Artifacts:
+artifacts/experiments/xgboost_exact_value_bayesian_te_gpu/oof_predictions.csv
+artifacts/experiments/xgboost_exact_value_bayesian_te_gpu/test_predictions.csv
+
+20. Cat3 + XGB m100 blend audit
+Leakage-safe meta-CV rank blend.
+
+Selected CAT weights:
+[0.81, 0.82, 0.82, 0.79, 0.82]
+
+Mean:
+0.812
+
+Meta-CV:
+0.94549841
+
+Gain vs CAT:
++0.00005886
+
+Deployment:
+81% CAT / 19% XGB
+
+21. Submission packaging
+submissions/catboost_xgb_rank_blend_81_19.csv
+
+22. Public LB 81/19
+Public:
+0.94563
+
+Rank at screenshot:
+~766
+
+23. XGB exact-TE smoothing broad sweep
+m25:
+0.9449813664
+
+m50:
+0.9446380932
+
+m100:
+0.9444181790
+
+m200:
+0.9441865895
+
+m400:
+0.9440280490
+
+m25 beat m100 by:
++0.0005631874
+
+5/5 folds.
+
+24. Low-range smoothing
+m5:
+0.94547519
+
+m10:
+0.94533069
+
+m15:
+0.94516828
+
+m20:
+0.94506076
+
+m25:
+0.94498137
+
+m30:
+0.94488223
+
+m5 was best.
+
+25. Ultra-low smoothing
+m0:
+0.94538522
+
+m1:
+0.94558345
+
+m2:
+0.94558384
+
+m3:
+0.94556108
+
+m4:
+0.94551342
+
+m5:
+0.94547519
+
+m2 best:
+0.94558384
+
+m2 over m5:
++0.00010865
+
+5/5 folds.
+
+Freeze smoothing at m=2.
+Do NOT do fractional microtuning.
+
+m2 artifacts:
+artifacts/experiments/xgboost_exact_value_bayesian_te_smoothing_ultralow_gpu/oof_predictions_m2.csv
+artifacts/experiments/xgboost_exact_value_bayesian_te_smoothing_ultralow_gpu/best_test_predictions.csv
+
+26. Cat3 + m2 blend audit
+Restricted Cat weight 0.50->1.00
+
+Meta-CV:
+0.94566049
+
+Gain vs old blend:
++0.00016207
+
+Gain vs m2:
++0.00007665
+
+Blend beat both on 5/5 folds.
+
+Boundary at 0.50 suggested grid too restricted.
+
+27. Expanded blend Cat weight 0.00->1.00
+
+Control reproduced.
+
+Meta-CV:
+0.94566717
+
+Gain over restricted:
++0.00000668
+
+Gain over m2:
++0.00008333
+
+Beat Cat and m2 on 5/5 folds.
+
+Selected Cat weights:
+[0.37,0.39,0.38,0.36,0.41]
+
+Mean:
+0.382
+
+Std:
+0.0172
+
+Deployment:
+38% CAT / 62% XGB
+
+Full OOF diagnostic:
+0.94566862
+
+Artifact:
+artifacts/experiments/blend_catboost_xgb_m2_expanded_weight_audit/test_predictions.csv
+
+28. Packaging
+make_submission_catboost_xgb_m2_blend_38_62.py
+
+Output:
+submissions/catboost_xgb_m2_rank_blend_38_62.csv
+
+29. Public LB 38/62
+Public:
+0.94583
+
+Rank screenshot:
+~718
+
+Gain vs previous public:
++0.00020
+
+30. STRUCTURAL BREAKTHROUGH:
+Income digit decomposition
+File:
+xgboost_m2_income_digit_decomposition_gpu.py
+
+Added target-free:
+FE__income_digit_ones
+FE__income_digit_tens
+FE__income_digit_hundreds
+FE__income_digit_thousands
+FE__income_digit_ten_thousands
+FE__income_digit_hundred_thousands
+FE__income_last2
+FE__income_last3
+
+Everything else fixed:
+- frozen folds
+- raw features
+- exact income+commute TE
+- m2
+- depth4 XGB
+- seed42
+
+Baseline m2:
+0.94558384
+
+Income-digit candidate:
+0.94571130
+
+Gain:
++0.00012746
+
+Improved 5/5 folds.
+
+Vs Cat3:
++0.00027174
+
+Correlations vs m2:
+probability 0.999186
+rank 0.998748
+
+Vs CAT:
+probability 0.808323
+rank 0.995130
+
+Important feature importances:
+hundred_thousands: 0.079606
+ten_thousands: 0.001270
+thousands: 0.001268
+hundreds: 0.001244
+last3: 0.001086
+ones: 0.000956
+last2: 0.000953
+tens: 0.000915
+
+KEEP.
+
+Artifacts:
+artifacts/experiments/xgboost_m2_income_digit_decomposition_gpu/oof_predictions.csv
+artifacts/experiments/xgboost_m2_income_digit_decomposition_gpu/test_predictions.csv
+artifacts/experiments/xgboost_m2_income_digit_decomposition_gpu/fold_metrics.csv
+artifacts/experiments/xgboost_m2_income_digit_decomposition_gpu/income_digit_feature_importance.csv
+artifacts/experiments/xgboost_m2_income_digit_decomposition_gpu/summary.txt
+
+31. Commute digit decomposition
+File:
+xgboost_m2_income_plus_commute_digit_decomposition_gpu.py
+
+Added commute:
+- tenths
+- ones
+- tens
+- integer_km
+- last2_scaled
+
+Result:
+0.94569485
+
+Income-digit baseline:
+0.94571130
+
+Delta:
+-0.00001645
+
+1/5 improved
+4/5 worse
+
+REJECT.
+
+Lesson:
+digit structure was income-specific, not generic.
+
+32. Source-recipe score as ordinary feature
+File:
+xgboost_m2_income_digits_plus_source_recipe_score_gpu.py
+
+Added:
+1.2*(income/100000)
++0.6*env
++2*subsidy_yes
+-1*anxiety_medium
+-3*anxiety_high
+
+Candidate:
+0.94567139
+
+Income-digit:
+0.94571130
+
+Delta:
+-0.00003991
+
+1/5 improved
+4/5 worse
+
+Feature gain importance:
+0.516838
+
+REJECT.
+
+Important lesson:
+feature importance != generalization.
+
+33. Cat + income-digit XGB blend audit
+Control old Cat+m2:
+0.94566717 reproduced.
+
+New:
+Cat + income-digit XGB
+
+Held-fold Cat weights:
+[0.30,0.32,0.30,0.29,0.34]
+
+Mean:
+0.3100
+
+Meta-CV:
+0.94577587
+
+Gain vs prior m2 blend:
++0.00010871
+
+Gain vs income-digit XGB:
++0.00006457
+
+Beat CAT and XGB:
+5/5
+
+Deployment:
+31% CAT / 69% XGB
+
+Full OOF diagnostic:
+0.94577780
+
+KEEP.
+
+Artifacts:
+artifacts/experiments/blend_catboost_income_digit_xgb_audit/test_predictions.csv
+
+34. Submission
+Output:
+submissions/catboost_income_digit_xgb_rank_blend_31_69.csv
+
+Public:
+0.94591
+
+Rank screenshot:
+~690
+
+This is the CURRENT CONFIRMED PUBLIC BEST in this handoff.
+
+Do NOT assume the rank is still current later.
+Do NOT infer Top100 cutoff without fresh evidence.
+
+35. Discrete numeric categorical copies
+File:
+xgboost_m2_income_digits_discrete_numeric_copies_gpu.py
+
+Added categorical copies of:
+Age
+Number_of_Cars_Owned
+Charging_Stations_Near_Home
+Charging_Stations_Near_Work
+Environmental_Concern_Level
+
+Candidate:
+0.94545821
+
+Income digits:
+0.94571130
+
+Delta:
+-0.00025309
+
+0/5 improved
+5/5 worse
+
+REJECT.
+
+Environmental concern categorical copy importance:
+0.141864
+
+Again:
+high importance != better validation.
+
+36. Source recipe as XGBoost BASE MARGIN
+File:
+xgboost_m2_income_digits_recipe_base_margin_gpu.py
+
+Recipe:
+score =
+1.2*(income/100000)
++0.6*env
++2.0*subsidy_yes
+-1.0*anxiety_medium
+-3.0*anxiety_high
+
+z = score - 5.5
+P = Phi(z)
+base_margin = logit(P)
+
+Income-digit baseline:
+0.94571130
+
+Recipe-only AUC:
+0.93769041
+
+Candidate:
+0.94574952
+
+Gain:
++0.00003822
+
+4/5 improved
+1/5 worse
+
+KEEP.
+
+Artifact dir:
+artifacts/experiments/xgboost_m2_income_digits_recipe_base_margin_gpu
+
+37. Cat + recipe-margin XGB blend
+Control current income-digit blend reproduced:
+0.94577587
+
+New meta-CV:
+0.94580529
+
+Gain:
++0.00002942
+
+Beat CAT and XGB:
+5/5
+
+Selected Cat weights:
+[0.30,0.30,0.28,0.26,0.32]
+
+Mean:
+0.292
+
+Deployment:
+29% CAT / 71% XGB
+
+Full OOF diagnostic:
+0.94580762
+
+KEEP.
+
+38. Exact-value frequency features
+File:
+xgboost_m2_income_digits_recipe_margin_exact_frequency_gpu.py
+
+Added target-free train+test exact-value frequency representations for:
+- Annual_Income_USD
+- Daily_Commute_km
+
+For each:
+- count
+- log1p(count)
+- rate
+
+Recipe-margin baseline:
+0.94574952
+
+Candidate:
+0.94580644
+
+Gain:
++0.00005692
+
+4/5 improved
+1/5 worse
+
+KEEP.
+
+Correlations vs Cat:
+probability 0.809978
+rank 0.995118
+
+Artifacts:
+artifacts/experiments/xgboost_m2_income_digits_recipe_margin_exact_frequency_gpu/oof_predictions.csv
+artifacts/experiments/xgboost_m2_income_digits_recipe_margin_exact_frequency_gpu/test_predictions.csv
+
+39. Cat + exact-frequency XGB blend
+
+Control recipe-margin blend:
+0.94580529 reproduced.
+
+New meta-CV:
+0.94583385
+
+Gain:
++0.00002856
+
+Gain vs exact-frequency XGB:
++0.00002741
+
+Beat CAT and XGB:
+5/5
+
+Selected Cat weights:
+[0.22,0.23,0.21,0.18,0.23]
+
+Mean:
+0.214
+
+Deployment:
+21% CAT / 79% XGB
+
+Full OOF diagnostic:
+0.94583559
+
+KEEP.
+
+Current best validated blend BEFORE any later LightGBM result:
+0.94583385
+
+40. Exact Income × Subsidy interaction TE
+File:
+xgboost_m2_income_subsidy_interaction_te_gpu.py
+
+Added ONE nested Bayesian TE:
+TE__Annual_Income_USD_exact_x_Subsidy_Available
+
+Exact-frequency baseline:
+0.94580644
+
+Candidate:
+0.94576142
+
+Delta:
+-0.00004502
+
+0/5 improved
+5/5 worse
+
+REJECT.
+
+Feature importance:
+0.098744
+
+Lesson:
+splitting exact income groups by subsidy likely creates sparse/noisy target statistics.
+
+41. Competition-learned logistic base margin
+File:
+xgboost_m2_exact_frequency_learned_logistic_margin_gpu.py
+
+Replaced fixed source-recipe base margin with a nested logistic prior learned from competition data using:
+- Annual_Income_USD
+- Environmental_Concern_Level
+- Subsidy_Available
+- Range_Anxiety_Level
+
+Training-row margins are nested OOF.
+Validation/test margins come only from outer-training data.
+
+Fixed recipe-only AUC:
+0.93769041
+
+Learned logistic prior OOF AUC:
+0.93776828
+
+Exact-frequency baseline:
+0.94580644
+
+Candidate:
+0.94583075
+
+Gain:
++0.00002431
+
+5/5 folds improved
+0/5 worse
+
+KEEP.
+
+This is the CURRENT BEST VALIDATED XGBOOST SINGLE MODEL:
+0.94583075
+
+Artifacts:
+artifacts/experiments/xgboost_m2_exact_frequency_learned_logistic_margin_gpu/oof_predictions.csv
+artifacts/experiments/xgboost_m2_exact_frequency_learned_logistic_margin_gpu/test_predictions.csv
+
+42. max_bin 1024
+File:
+xgboost_m2_exact_frequency_learned_margin_maxbin1024_gpu.py
+
+Only change:
+max_bin 256 -> 1024
+
+Baseline:
+0.94583075
+
+Candidate:
+0.94582419
+
+Delta:
+-0.00000656
+
+1/5 improved
+4/5 worse
+
+REJECT.
+
+Lesson:
+current pipeline is not histogram-resolution limited.
+
+43. All-feature frequency extension
+File:
+xgboost_m2_learned_margin_all_feature_frequency_gpu.py
+
+Added target-free log1p exact frequency for all remaining raw features.
+
+Baseline:
+0.94583075
+
+Candidate:
+0.94583249
+
+Delta:
++0.00000174
+
+2/5 improved
+3/5 worse
+
+REJECT as noise.
+
+Largest extension importances:
+Environmental_Concern_Level frequency: 0.085685
+Range_Anxiety_Level frequency: 0.025027
+Home_Charging_Possible frequency: 0.024586
+Age frequency: 0.019834
+
+Again:
+importance != generalization.
+
+44. Generator-helper features
+File:
+xgboost_m2_learned_margin_generator_helpers_gpu.py
+
+Added:
+FE__range_anxiety_ordinal
+FE__total_charging_stations
+FE__income_x_subsidy
+FE__concern_x_subsidy
+
+Baseline:
+0.94583075
+
+Candidate:
+0.94582504
+
+Delta:
+-0.00000572
+
+2/5 improved
+3/5 worse
+
+REJECT.
+
+Importances:
+concern_x_subsidy: 0.040598
+income_x_subsidy: 0.035412
+range_anxiety_ordinal: 0.029071
+total_charging_stations: 0.014792
+
+Again:
+importance != generalization.
+
+============================================================
+CURRENT CONFIRMED CHAMPIONS
+============================================================
+
+Best raw XGB:
+0.94206547
+
+CatBoost 3-seed exact-value rank ensemble:
+0.94543956
+
+XGB exact-TE m2:
+0.94558384
+
+Income-digit XGB:
+0.94571130
+
+Recipe-margin XGB:
+0.94574952
+
+Exact-frequency XGB:
+0.94580644
+
+CURRENT BEST VALIDATED XGB SINGLE:
+0.94583075
+= exact frequency + income digits + exact TE m2 + learned logistic base margin
+
+CURRENT BEST VALIDATED BLEND:
+0.94583385
+= 21% CatBoost / 79% exact-frequency XGB
+NOTE:
+This blend predates the learned-margin XGB 0.94583075.
+A learned-margin blend audit has NOT yet been documented in this handoff.
+
+CURRENT CONFIRMED PUBLIC BEST:
+0.94591
+
+Rank at screenshot time:
+~690
+
+Submission:
+submissions/catboost_income_digit_xgb_rank_blend_31_69.csv
+
+Do not assume the rank is still current.
+
+============================================================
+IMPORTANT LEARNINGS
+============================================================
+
+1. Exact numeric VALUE IDENTITY is extremely important.
+
+CatBoost exact string copies produced the first major jump.
+
+2. Leakage-safe exact-value Bayesian TE is powerful in XGBoost.
+
+3. Very low smoothing was much better than heavy smoothing.
+m=2 is frozen.
+
+4. Income digit decomposition is real signal.
+
+The hundred-thousands digit was the standout.
+
+5. This digit effect is income-specific.
+
+Commute digit decomposition failed.
+
+6. The source recipe is useful as a BASE MARGIN, not as an ordinary feature.
+
+7. Learning the recipe coefficients from competition data gave another small but consistent gain.
+
+8. Exact-value frequency/density for income and commute added real signal.
+
+9. Broadly adding features usually does NOT help.
+
+Rejected recent branches:
+- commute digits
+- recipe ordinary feature
+- discrete numeric categorical copies
+- income×subsidy TE
+- max_bin1024
+- all-feature frequencies
+- generator helpers
+
+10. High XGBoost feature importance is NOT evidence of better generalization.
+
+Several highly important features worsened CV.
+
+11. CatBoost and XGBoost are highly rank-correlated but still blend beneficially.
+
+12. Recent XGBoost improvements are getting small.
+Avoid endless micro-polishing.
+
+13. We need more MODEL DIVERSITY or another structural representation breakthrough.
+
+============================================================
+PENDING EXPERIMENT — VERY IMPORTANT
+============================================================
+
+A new file has ALREADY been created and given to me.
+
+DO NOT CREATE A DIFFERENT FILE BEFORE I RUN IT / GIVE YOU THE RESULT.
+
+Pending file:
+
+lightgbm_engineered_learned_margin_cpu.py
+
+Purpose:
+
+Test LightGBM on the CURRENT VALIDATED ENGINEERED REPRESENTATION rather than raw features.
+
+Why:
+
+The old LightGBM baseline 0.94065201 was only on raw features.
+
+Since then we discovered:
+- income digits
+- exact income/commute TE
+- m=2 smoothing
+- exact income/commute frequencies
+- learned logistic base margin
+
+So the experiment asks:
+
+Was LightGBM weak because LightGBM is bad for this dataset,
+or because the old representation was weak?
+
+The script reuses:
+- frozen folds/hash
+- raw features
+- income digit decomposition
+- exact income/commute frequency features
+- nested exact-value TE m=2
+- nested learned logistic base margin
+- seed 42
+
+Only major change:
+XGBoost model family -> LightGBM.
+
+LightGBM config is fixed/conservative and NOT being tuned in this experiment.
+
+CPU is intentional because the current installed LightGBM build previously did not support GPU.
+
+Expected current XGB comparison baseline:
+0.94583075
+
+Important:
+Even if LightGBM is slightly weaker than XGB, it may still be valuable if rank correlation is lower enough to improve an ensemble.
+
+The LightGBM script should save/produce:
+- summary.txt
+- fold_metrics.csv
+- feature_importance.csv
+- OOF predictions
+- test predictions
+
+The exact artifact directory should be taken from the script terminal output when I provide it.
+Do NOT invent it if missing.
+
+============================================================
+WHAT TO DO WHEN I SEND THE NEXT RESULT
+============================================================
+
+My next message in the new chat will contain the real terminal output and/or artifacts from:
+
+lightgbm_engineered_learned_margin_cpu.py
+
+When I send it:
+
+1. Analyze the result FIRST.
+2. Do NOT invent missing outputs.
+3. Compare LightGBM against:
+   - current XGB champion 0.94583075
+   - CatBoost 0.94543956
+4. Inspect fold consistency.
+5. Inspect correlation vs XGB if reported.
+6. Decide one of:
+   - NEW_SINGLE_MODEL_CHAMPION
+   - KEEP_FOR_DIVERSITY
+   - REJECT
+7. Explain what we learned.
+8. Only after that, choose the next highest-value experiment.
+9. Give exactly ONE new .py file.
+10. Give the exact PowerShell run command.
+11. STOP.
+
+Potential next moves depending on LightGBM result:
+
+A. If LightGBM is competitive and sufficiently diverse:
+run a proper leakage-safe 3-model blend audit using aligned OOF:
+- CatBoost exact-value 3-seed
+- current XGB champion
+- engineered LightGBM
+
+Do NOT blend based on public LB.
+Use frozen-fold meta-CV.
+
+B. If LightGBM is weak and highly correlated:
+REJECT the branch and do NOT microtune it blindly.
+
+Then prioritize a genuinely structural direction, for example:
+- source-derived lookup/statistical features, if mechanism is justified
+- other model family diversity
+- carefully investigated public "triple TE"/multi-scale/grouping mechanisms
+- stronger CatBoost validation/averaging only if worth the compute
+
+Before coding anything from public solutions:
+SEARCH FRESH and cite the source.
+
+============================================================
+ANTI-HALLUCINATION CHECKLIST
+============================================================
+
+Before every answer, verify:
+
+- Did the user actually provide this result?
+- Is this experiment actually listed as completed?
+- Does this artifact path actually exist?
+- Am I confusing external public results with our local results?
+- Am I comparing the same frozen validation folds?
+- Is target encoding leakage-safe?
+- Am I changing only one coherent hypothesis?
+- Am I creating only ONE new code file?
+- Am I accidentally claiming a current leaderboard rank without evidence?
+- Am I hyping a tiny gain?
+- Am I proposing microtuning after the user explicitly asked for structural progress?
+
+If uncertain:
+say you are uncertain.
+Do NOT fill in missing information.
+
+============================================================
+STYLE
+============================================================
+
+Keep explanations educational but compact.
+
+Explain WHY the experiment matters.
+
+Do not drown me in theory.
+
+When something fails:
+say REJECT clearly.
+
+When something works:
+quantify the gain and fold consistency.
+
+Prioritize structural progress over parameter fiddling.
+
+============================================================
+STARTING INSTRUCTION FOR THE NEW CHAT
+============================================================
+
+Acknowledge this handoff as the source of truth.
+
+Do NOT create a new experiment yet.
+
+Wait for my next message containing the result from:
+
+lightgbm_engineered_learned_margin_cpu.py
+
+Then analyze that real result and continue from there.

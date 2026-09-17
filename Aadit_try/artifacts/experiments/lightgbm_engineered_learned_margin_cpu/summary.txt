@@ -1,0 +1,71 @@
+EXPERIMENT: LIGHTGBM + VALIDATED ENGINEERED REPRESENTATION + LEARNED MARGIN
+==============================================================================
+
+HYPOTHESIS
+Can LightGBM's leaf-wise growth exploit the already-validated engineered
+representation strongly enough to become a competitive/diverse model?
+
+ONLY CHANGE
+Model family: XGBoost -> LightGBM.
+
+HELD FIXED
+- frozen 5 folds
+- frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+- original raw features
+- exact-value TE of income + commute
+- nested leakage-safe TE
+- smoothing m=2
+- depth-4 XGBoost hyperparameters
+- seed 42
+
+RESULTS
+XGB m=2 baseline OOF: 0.94558384
+Income-digit baseline OOF: 0.94571130
+Recipe-margin baseline OOF: 0.94574952
+Exact-frequency XGB OOF: 0.94580644
+Current learned-margin XGB champion OOF: 0.94583075
+Fixed recipe-only AUC: 0.93769041
+Learned logistic prior OOF AUC: 0.93776828
+Engineered LightGBM OOF: 0.94578042
+Delta vs current XGB champion: -0.00005033
+Delta vs exact-frequency XGB: -0.00002602
+Delta vs recipe-margin baseline: +0.00003090
+Delta vs income-digit baseline: +0.00006912
+Delta vs plain m=2: +0.00019658
+Folds improved vs current XGB champion: 0/5
+Folds worse vs current XGB champion: 5/5
+
+CatBoost 3-seed OOF: 0.94543956
+Delta vs CatBoost: +0.00034086
+
+Probability corr vs current XGB champion: 0.999203
+Rank corr vs current XGB champion: 0.999276
+Probability corr vs exact-frequency XGB: 0.999137
+Rank corr vs exact-frequency XGB: 0.998172
+Probability corr vs recipe-margin XGB: 0.998811
+Rank corr vs recipe-margin XGB: 0.997950
+Probability corr vs income-digit XGB: 0.998607
+Rank corr vs income-digit XGB: 0.997688
+Probability corr vs m=2 XGB: 0.998170
+Rank corr vs m=2 XGB: 0.997156
+Probability corr vs CatBoost: 0.809126
+Rank corr vs CatBoost: 0.995599
+
+Runtime: 138.07 seconds
+
+DECISION: KEEP_LIGHTGBM_FOR_DIVERSITY_AUDIT
+
+FOLD RESULTS
+Fold 0: exact_frequency=0.94491395 -> +learned_margin=0.94485671 (-0.00005724)
+Fold 1: exact_frequency=0.94550964 -> +learned_margin=0.94548225 (-0.00002739)
+Fold 2: exact_frequency=0.94683145 -> +learned_margin=0.94675246 (-0.00007900)
+Fold 3: exact_frequency=0.94605583 -> +learned_margin=0.94602693 (-0.00002890)
+Fold 4: exact_frequency=0.94586029 -> +learned_margin=0.94580188 (-0.00005841)
+
+EXACT-FREQUENCY FEATURE IMPORTANCE (LIGHTGBM MODEL)
+FE__income_exact_frequency_count: 16756.598496
+FE__commute_exact_frequency_count: 10447.897958
+FE__income_exact_frequency_log1p: 1736.322186
+FE__commute_exact_frequency_log1p: 1075.347229
+FE__income_exact_frequency_rate: 212.759437
+FE__commute_exact_frequency_rate: 95.372943

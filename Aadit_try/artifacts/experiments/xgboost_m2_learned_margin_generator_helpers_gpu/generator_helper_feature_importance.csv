@@ -1,0 +1,5 @@
+feature,is_income_digit_feature,is_exact_frequency_feature,is_generator_helper_feature,is_exact_te_feature,mean_gain_importance,std_gain_importance
+FE__concern_x_subsidy,False,False,True,False,0.04059778451919556,0.0065622176362629715
+FE__income_x_subsidy,False,False,True,False,0.035411518067121506,0.001993974217963485
+FE__range_anxiety_ordinal,False,False,True,False,0.029071494564414026,0.006378337687792295
+FE__total_charging_stations,False,False,True,False,0.01479243915528059,0.0012283696943052517

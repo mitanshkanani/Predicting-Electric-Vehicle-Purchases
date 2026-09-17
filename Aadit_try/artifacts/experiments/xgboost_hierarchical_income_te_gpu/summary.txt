@@ -1,0 +1,47 @@
+EXPERIMENT: XGBOOST + HIERARCHICAL INCOME TARGET ENCODING
+==================================================================================
+
+HYPOTHESIS
+Can nearby income values share useful target information beyond the
+already-validated exact income identity / exact TE / digit representations?
+
+ONLY CHANGE
+Add 3 nested leakage-safe Annual_Income_USD target encodings:
+- floor(income / 1,000)
+- floor(income / 10,000)
+- floor(income / 100,000)
+
+HELD FIXED
+- frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+- exact income + commute TE
+- TE smoothing m=2
+- income digit decomposition
+- exact income + commute frequency features
+- learned nested logistic base margin
+- depth-4 XGBoost configuration
+- seed 42
+- CUDA GPU
+
+RESULTS
+Current XGB champion OOF: 0.94583075
+Hierarchical-income candidate OOF: 0.94587366
+Delta vs champion: +0.00004290
+Folds improved: 5/5
+Folds worse: 0/5
+Probability corr vs champion: 0.999564
+Rank corr vs champion: 0.999532
+Runtime: 93.22 seconds
+
+DECISION: KEEP_HIERARCHICAL_INCOME_TE
+
+FOLD RESULTS
+Fold 0: baseline=0.94491395 -> candidate=0.94492672 (+0.00001277)
+Fold 1: baseline=0.94550964 -> candidate=0.94556653 (+0.00005689)
+Fold 2: baseline=0.94683145 -> candidate=0.94691710 (+0.00008564)
+Fold 3: baseline=0.94605583 -> candidate=0.94606332 (+0.00000749)
+Fold 4: baseline=0.94586029 -> candidate=0.94590806 (+0.00004776)
+
+HIERARCHICAL INCOME TE IMPORTANCE
+HTE__income_10k_bucket: 0.02821596
+HTE__income_1k_bucket: 0.02125803
+HTE__income_100k_bucket: 0.01243316
