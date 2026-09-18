@@ -1,0 +1,19 @@
+EXPERIMENT: XGBOOST JOINT INCOME10K x COMMUTE1KM TE
+==================================================================================
+Baseline: 0.94591178
+Candidate: 0.94588397
+Delta: -0.00002781
+Folds improved: 0/5
+Folds worse: 5/5
+Probability corr: 0.999819
+Rank corr: 0.999836
+Mean joint-TE gain importance: 6.82085342
+Runtime: 107.74s
+Decision: REJECT_JOINT_INCOME_COMMUTE_TE
+
+FOLD RESULTS
+Fold 0: 0.94496766 -> 0.94495788 (-0.00000977)
+Fold 1: 0.94560857 -> 0.94559754 (-0.00001103)
+Fold 2: 0.94692999 -> 0.94687376 (-0.00005623)
+Fold 3: 0.94614519 -> 0.94613619 (-0.00000900)
+Fold 4: 0.94592114 -> 0.94586527 (-0.00005587)
