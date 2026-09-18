@@ -37,7 +37,7 @@ Rank corr vs new XGB: 0.999263
 Probability corr vs CatBoost: 0.809156
 Rank corr vs CatBoost: 0.995545
 
-Runtime: 107.42 seconds
+Runtime: 119.82 seconds
 DECISION: KEEP_HIERARCHICAL_INCOME_TE_FOR_LIGHTGBM
 
 FOLD RESULTS
@@ -49,5 +49,5 @@ Fold 4: baseline=0.94580188 -> candidate=0.94585865 (+0.00005677)
 
 HIERARCHICAL INCOME TE IMPORTANCE
 HTE__income_1k_bucket: 17769.20719278
-HTE__income_10k_bucket: 12150.54434402
+HTE__income_10k_bucket: 12158.39338424
 HTE__income_100k_bucket: 2142.16886172

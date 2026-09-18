@@ -1,0 +1,16 @@
+EXPERIMENT: INCOME+COMMUTE CATBOOST ENSEMBLE UPDATE
+================================================================================
+Control meta-CV: 0.94595446
+Candidate meta-CV: 0.94596441
+Delta: +0.00000995
+Folds improved: 5/5
+Folds worse: 0/5
+Mean weights: CAT=0.2200, XGB=0.5300, LGBM=0.2500
+Decision: KEEP_INCOME_COMMUTE_CATBOOST_IN_3MODEL_ENSEMBLE
+
+FOLD DETAILS
+Fold 0: 0.94500543 -> 0.94501192 (+0.00000648)
+Fold 1: 0.94563763 -> 0.94565120 (+0.00001357)
+Fold 2: 0.94696772 -> 0.94697604 (+0.00000832)
+Fold 3: 0.94619634 -> 0.94621240 (+0.00001606)
+Fold 4: 0.94596457 -> 0.94596996 (+0.00000540)

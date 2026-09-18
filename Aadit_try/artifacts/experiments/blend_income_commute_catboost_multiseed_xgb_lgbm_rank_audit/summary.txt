@@ -1,0 +1,17 @@
+EXPERIMENT: XGBOOST 3-SEED ENSEMBLE UPDATE
+================================================================================
+Control meta-CV: 0.94596441
+Candidate meta-CV: 0.94596652
+Delta: +0.00000211
+Folds improved: 3/5
+Folds worse: 2/5
+Mean weights: CAT=0.2000, XGB=0.5800, LGBM=0.2200
+Runtime: 305.21s
+Decision: REJECT_XGB_3SEED_ENSEMBLE_UPDATE
+
+FOLD DETAILS
+Fold 0: 0.94501192 -> 0.94503100 (+0.00001908)
+Fold 1: 0.94565120 -> 0.94564961 (-0.00000158)
+Fold 2: 0.94697604 -> 0.94698628 (+0.00001024)
+Fold 3: 0.94621240 -> 0.94619490 (-0.00001749)
+Fold 4: 0.94596996 -> 0.94597025 (+0.00000029)

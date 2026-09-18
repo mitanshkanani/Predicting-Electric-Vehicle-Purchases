@@ -1,0 +1,17 @@
+EXPERIMENT: HIERARCHICAL-COMMUTE LIGHTGBM ENSEMBLE UPDATE
+====================================================================================
+Control meta-CV: 0.94596441
+Candidate meta-CV: 0.94596083
+Delta: -0.00000358
+Folds improved: 1/5
+Folds worse: 4/5
+Mean weights: CAT=0.2000, XGB=0.5500, LGBM=0.2500
+Runtime: 282.72s
+Decision: REJECT_HIERARCHICAL_COMMUTE_LGBM_ENSEMBLE_UPDATE
+
+FOLD DETAILS
+Fold 0: 0.94501192 -> 0.94500214 (-0.00000978)
+Fold 1: 0.94565120 -> 0.94564719 (-0.00000401)
+Fold 2: 0.94697604 -> 0.94697895 (+0.00000290)
+Fold 3: 0.94621240 -> 0.94621085 (-0.00000155)
+Fold 4: 0.94596996 -> 0.94596476 (-0.00000520)
