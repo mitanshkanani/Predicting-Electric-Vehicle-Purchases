@@ -1,0 +1,48 @@
+EXPERIMENT: CATBOOST + HIERARCHICAL INCOME + COMMUTE CATEGORICAL BUCKETS
+========================================================================================
+
+HYPOTHESIS
+Does the commute hierarchy that improved XGBoost also improve CatBoost
+when exposed as target-free categorical bucket identities?
+
+ONLY CHANGE
+Add target-free commute bucket categories at 1km / 5km / 10km scales.
+
+HELD FIXED
+- frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+- raw 13 features
+- raw numeric income + commute
+- exact income + commute categorical IDs
+- hierarchical income categorical buckets
+- iterations=2000
+- learning_rate=0.05
+- depth=6
+- loss_function=Logloss
+- eval_metric=AUC
+- random_seed=42
+- GPU device 0
+- early stopping 150
+
+RESULTS
+Hierarchical-income seed42 baseline OOF: 0.94546676
+Income+commute-bucket candidate OOF: 0.94552424
+Delta vs baseline: +0.00005748
+Folds improved: 5/5
+Folds worse: 0/5
+Probability corr vs baseline: 0.999336
+Rank corr vs baseline: 0.999227
+Runtime: 747.86 seconds
+
+DECISION: KEEP_HIERARCHICAL_COMMUTE_BUCKETS_FOR_CATBOOST
+
+FOLD RESULTS
+Fold 0: baseline=0.94453304 -> candidate=0.94457183 (+0.00003879)
+Fold 1: baseline=0.94506932 -> candidate=0.94515965 (+0.00009033)
+Fold 2: baseline=0.94651310 -> candidate=0.94656994 (+0.00005684)
+Fold 3: baseline=0.94576311 -> candidate=0.94584073 (+0.00007762)
+Fold 4: baseline=0.94548312 -> candidate=0.94550991 (+0.00002679)
+
+HIERARCHICAL COMMUTE BUCKET IMPORTANCE
+CAT__commute_1km_bucket: 1.43411717
+CAT__commute_5km_bucket: 0.29466361
+CAT__commute_10km_bucket: 0.17667686
