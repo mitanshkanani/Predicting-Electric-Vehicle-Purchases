@@ -1,0 +1,48 @@
+EXPERIMENT: 3-MODEL UPDATE WITH HIERARCHICAL-COMMUTE XGBOOST
+========================================================================================
+
+HYPOTHESIS
+Does replacing the current hierarchical-income XGB with the stronger
+hierarchical-income+commute XGB improve the current ensemble?
+
+ONLY CHANGE
+Hierarchical-income XGB -> hierarchical-income+commute XGB.
+
+VALIDATION
+Frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+Simplex grid step: 0.05
+Weights selected on 4 folds and evaluated on held fold.
+No public leaderboard optimization.
+
+SINGLE MODEL REFERENCES
+Hierarchical CatBoost 3-seed: 0.94553699
+Hierarchical-income XGB: 0.94587366
+Hierarchical-income+commute XGB: 0.94591178
+Old engineered LightGBM: 0.94578042
+
+META-CV RESULTS
+Control current 3-model meta-CV AUC: 0.94592600
+Candidate updated 3-model meta-CV AUC: 0.94595446
+Delta vs control: +0.00002846
+Held folds improved: 5/5
+Held folds worse: 0/5
+Held folds tied: 0/5
+
+MEAN CANDIDATE DEPLOYMENT WEIGHTS
+Hierarchical CatBoost: 0.1800
+Hierarchical-income+commute XGB: 0.6000
+Old engineered LightGBM: 0.2200
+
+FULL-OOF DIAGNOSTICS USING MEAN WEIGHTS
+Control full-OOF diagnostic AUC: 0.94592709
+Candidate full-OOF diagnostic AUC: 0.94595613
+
+Runtime: 273.14 seconds
+DECISION: KEEP_HIERARCHICAL_COMMUTE_XGB_IN_3MODEL_ENSEMBLE
+
+FOLD DETAILS
+Fold 0: control=0.94497500 (CAT/oldXGB/LGBM=0.20/0.55/0.25) -> candidate=0.94500543 (CAT/newXGB/LGBM=0.20/0.60/0.20) delta=+0.00003044
+Fold 1: control=0.94561119 (CAT/oldXGB/LGBM=0.20/0.55/0.25) -> candidate=0.94563763 (CAT/newXGB/LGBM=0.20/0.60/0.20) delta=+0.00002644
+Fold 2: control=0.94694469 (CAT/oldXGB/LGBM=0.20/0.50/0.30) -> candidate=0.94696772 (CAT/newXGB/LGBM=0.15/0.60/0.25) delta=+0.00002304
+Fold 3: control=0.94614393 (CAT/oldXGB/LGBM=0.20/0.55/0.25) -> candidate=0.94619634 (CAT/newXGB/LGBM=0.15/0.60/0.25) delta=+0.00005241
+Fold 4: control=0.94595561 (CAT/oldXGB/LGBM=0.20/0.50/0.30) -> candidate=0.94596457 (CAT/newXGB/LGBM=0.20/0.60/0.20) delta=+0.00000896
