@@ -1,0 +1,2 @@
+control_auc,candidate_auc,delta,folds_improved,folds_worse,rank_corr_vs_control,primitive
+0.9461125309745088,0.9461279492851047,1.541831059592713e-05,4,1,0.9999380571888425,POSITIVE_FINE_CAT_REPLACEMENT_SIGNAL
