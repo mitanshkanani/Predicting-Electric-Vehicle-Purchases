@@ -1,0 +1,71 @@
+EXPERIMENT: XGBOOST m=2 + EXACT FREQUENCY + LEARNED MARGIN + MAX_BIN 1024
+==============================================================================
+
+HYPOTHESIS
+Does higher histogram resolution preserve useful fine-grained numeric
+structure in the current high-cardinality XGBoost pipeline?
+
+ONLY CHANGE
+XGBoost max_bin: 256 -> 1024
+
+HELD FIXED
+- frozen 5 folds
+- frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+- original raw features
+- exact-value TE of income + commute
+- nested leakage-safe TE
+- smoothing m=2
+- depth-4 XGBoost hyperparameters
+- seed 42
+
+RESULTS
+XGB m=2 baseline OOF: 0.94558384
+Income-digit baseline OOF: 0.94571130
+Recipe-margin baseline OOF: 0.94574952
+Exact-frequency baseline OOF: 0.94580644
+Learned-margin max_bin=256 baseline OOF: 0.94583075
+Fixed recipe-only AUC: 0.93769041
+Learned logistic prior OOF AUC: 0.93776828
+Candidate max_bin=1024 OOF: 0.94582419
+Delta vs learned-margin max_bin=256 baseline: -0.00000656
+Delta vs exact-frequency baseline: +0.00001775
+Delta vs recipe-margin baseline: +0.00007467
+Delta vs income-digit baseline: +0.00011289
+Delta vs plain m=2: +0.00024035
+Folds improved vs learned-margin max_bin=256: 1/5
+Folds worse vs learned-margin max_bin=256: 4/5
+
+CatBoost 3-seed OOF: 0.94543956
+Delta vs CatBoost: +0.00038463
+
+Probability corr vs learned-margin max_bin=256: 0.999708
+Rank corr vs learned-margin max_bin=256: 0.999789
+Probability corr vs exact-frequency XGB: 0.999572
+Rank corr vs exact-frequency XGB: 0.998405
+Probability corr vs recipe-margin XGB: 0.999170
+Rank corr vs recipe-margin XGB: 0.998126
+Probability corr vs income-digit XGB: 0.998945
+Rank corr vs income-digit XGB: 0.998101
+Probability corr vs m=2 XGB: 0.998385
+Rank corr vs m=2 XGB: 0.997432
+Probability corr vs CatBoost: 0.809361
+Rank corr vs CatBoost: 0.995648
+
+Runtime: 79.09 seconds
+
+DECISION: REJECT_MAX_BIN_1024
+
+FOLD RESULTS
+Fold 0: maxbin256=0.94491395 -> maxbin1024=0.94490948 (-0.00000447)
+Fold 1: maxbin256=0.94550964 -> maxbin1024=0.94551425 (+0.00000461)
+Fold 2: maxbin256=0.94683145 -> maxbin1024=0.94682221 (-0.00000924)
+Fold 3: maxbin256=0.94605583 -> maxbin1024=0.94603914 (-0.00001668)
+Fold 4: maxbin256=0.94586029 -> maxbin1024=0.94585540 (-0.00000489)
+
+EXACT-FREQUENCY FEATURE IMPORTANCE (LEARNED-MARGIN MODEL)
+FE__income_exact_frequency_rate: 0.018233
+FE__income_exact_frequency_log1p: 0.017646
+FE__income_exact_frequency_count: 0.016801
+FE__commute_exact_frequency_rate: 0.014650
+FE__commute_exact_frequency_log1p: 0.012641
+FE__commute_exact_frequency_count: 0.012503

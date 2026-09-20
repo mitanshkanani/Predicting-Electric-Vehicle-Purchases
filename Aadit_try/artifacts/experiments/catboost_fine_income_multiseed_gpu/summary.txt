@@ -1,0 +1,59 @@
+EXPERIMENT: CATBOOST + FINE-GRAINED INCOME CATEGORIES (3-SEED)
+============================================================================================
+
+HYPOTHESIS
+Can target-free $50/$250 income categorical buckets transfer the
+validated local-income signal from XGBoost into CatBoost?
+
+ONLY CHANGE
+Add FE__income_50_bucket_cat and FE__income_250_bucket_cat.
+
+HELD FIXED
+- frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+- current exact income/commute categorical IDs
+- current hierarchical income buckets
+- current hierarchical commute buckets
+- seeds 42/7/2026
+- iterations=2000
+- learning_rate=0.05
+- depth=6
+- GPU / early stopping=150
+
+BASELINES
+Current seed42: 0.94552424
+Current Cat3: 0.94558572
+
+CANDIDATE SINGLE-SEED RESULTS
+Seed 42: 0.94573335
+Seed 7: 0.94572616
+Seed 2026: 0.94574553
+Seed42 delta vs current seed42: +0.00020911
+
+CANDIDATE 3-SEED RESULTS
+Probability average: 0.94578536
+Rank average: 0.94578633
+Best averaging method: rank_average
+Best candidate Cat3 AUC: 0.94578633
+Delta vs current Cat3: +0.00020062
+Folds improved vs current Cat3: 5/5
+Folds worse vs current Cat3: 0/5
+Rank corr vs current Cat3: 0.998736
+Runtime: 3616.86 seconds
+
+PRIMITIVE: POSITIVE_FINE_INCOME_CATBOOST_SIGNAL
+
+FOLD RESULTS VS CURRENT CAT3
+Fold 0: 0.94462243 -> 0.94488188 (+0.00025945)
+Fold 1: 0.94524105 -> 0.94550936 (+0.00026831)
+Fold 2: 0.94662487 -> 0.94669341 (+0.00006855)
+Fold 3: 0.94587512 -> 0.94606530 (+0.00019017)
+Fold 4: 0.94559072 -> 0.94580871 (+0.00021798)
+
+FINE INCOME CATEGORY DIAGNOSTICS
+FE__income_50_bucket_cat: width=$50, train_unique=2026, median_count=156.0, test_seen_rate=0.999892
+FE__income_250_bucket_cat: width=$250, train_unique=533, median_count=698.0, test_seen_rate=0.999983
+
+SEED PAIR CORRELATIONS
+42 vs 7: prob_corr=0.999370, rank_corr=0.999143
+42 vs 2026: prob_corr=0.999381, rank_corr=0.999119
+7 vs 2026: prob_corr=0.999390, rank_corr=0.999130

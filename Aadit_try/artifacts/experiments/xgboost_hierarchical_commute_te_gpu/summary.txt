@@ -1,0 +1,46 @@
+EXPERIMENT: XGBOOST + HIERARCHICAL COMMUTE TARGET ENCODING
+====================================================================================
+
+HYPOTHESIS
+Can nearby commute distances share useful target information beyond
+the already-validated exact Daily_Commute_km target encoding?
+
+ONLY CHANGE
+Add nested leakage-safe commute TE at 1km / 5km / 10km scales.
+
+HELD FIXED
+- frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+- current hierarchical-income XGB representation
+- exact income + commute TE
+- hierarchical income TE at 1k/10k/100k
+- income digits
+- exact income + commute frequencies
+- learned nested logistic base margin
+- smoothing m=2
+- depth-4 XGBoost configuration
+- seed 42
+- CUDA GPU
+
+RESULTS
+Current hierarchical-income XGB baseline OOF: 0.94587366
+Hierarchical-commute candidate OOF: 0.94591178
+Delta vs baseline: +0.00003812
+Folds improved: 5/5
+Folds worse: 0/5
+Probability corr vs baseline: 0.999578
+Rank corr vs baseline: 0.999672
+Runtime: 97.69 seconds
+
+DECISION: KEEP_HIERARCHICAL_COMMUTE_TE
+
+FOLD RESULTS
+Fold 0: baseline=0.94492672 -> candidate=0.94496766 (+0.00004094)
+Fold 1: baseline=0.94556653 -> candidate=0.94560857 (+0.00004204)
+Fold 2: baseline=0.94691710 -> candidate=0.94692999 (+0.00001290)
+Fold 3: baseline=0.94606332 -> candidate=0.94614519 (+0.00008187)
+Fold 4: baseline=0.94590806 -> candidate=0.94592114 (+0.00001309)
+
+HIERARCHICAL COMMUTE TE IMPORTANCE
+HTE__commute_1km_bucket: 0.03204696
+HTE__commute_10km_bucket: 0.01043142
+HTE__commute_5km_bucket: 0.01012567

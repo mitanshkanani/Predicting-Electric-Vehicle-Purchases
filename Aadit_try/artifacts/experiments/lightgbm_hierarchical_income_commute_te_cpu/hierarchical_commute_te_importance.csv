@@ -1,0 +1,4 @@
+feature,is_commute_hte,is_income_hte,is_exact_te,is_income_digit,is_exact_frequency,mean_gain_importance,std_gain_importance
+HTE__commute_1km_bucket,True,False,False,False,False,22052.342761421205,1094.9669628803786
+HTE__commute_5km_bucket,True,False,False,False,False,4254.49307320118,1152.2065918645592
+HTE__commute_10km_bucket,True,False,False,False,False,2501.706025505066,650.8092270843562

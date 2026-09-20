@@ -1,0 +1,26 @@
+EXPERIMENT: VALIDATED FINE-INCOME XGB ENSEMBLE SUBMISSION
+====================================================================================
+
+NO TRAINING
+NO WEIGHT SEARCH
+
+Frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+
+MEMBERS
+CatBoost OOF: 0.94558572
+Fine-income XGB OOF: 0.94606664
+LightGBM OOF: 0.94578042
+
+VALIDATED META-CV
+Old champion: 0.94596441
+New champion: 0.94611253
+Delta: +0.00014812
+Folds improved: 5/5
+Folds worse: 0/5
+
+TEST BLEND
+CAT=0.2200
+XGB=0.5300
+LGBM=0.2500
+
+Submission: C:\Users\Admin\OneDrive\Documents\GitHub\Predicting-Electric-Vehicle-Purchases\Aadit_try\artifacts\experiments\blend_fine_income_xgb_validated_submission\submission.csv

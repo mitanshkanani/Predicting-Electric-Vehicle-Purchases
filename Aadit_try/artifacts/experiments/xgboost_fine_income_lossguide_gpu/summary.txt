@@ -1,0 +1,61 @@
+EXPERIMENT: XGBOOST + FINE INCOME TE + HIGH-RESOLUTION LOSSGUIDE
+====================================================================================
+
+HYPOTHESIS
+Can a fixed high-resolution lossguide XGBoost recipe exploit the now-
+validated fine-income representation better than the current model?
+
+ONLY CHANGE
+Replace only the XGBoost parameter recipe with the fixed high-resolution lossguide configuration.
+
+HELD FIXED
+- frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+- current hierarchical-income + hierarchical-commute XGB representation
+- exact income + commute TE
+- hierarchical income TE at 1k/10k/100k
+- hierarchical commute TE at 1km/5km/10km
+- income digits
+- exact income + commute frequencies
+- learned nested logistic base margin
+- smoothing m=2
+- depth-4 XGBoost configuration
+- seed 42
+- CUDA GPU
+
+FIXED CANDIDATE XGBOOST RECIPE
+- max_bin=1024
+- max_leaves=512
+- grow_policy=lossguide
+- learning_rate=0.01
+- max_depth=4
+- gamma=3.673225596759869
+- min_child_weight=4.532387806880492
+- reg_alpha=0.7523885021652775
+- reg_lambda=0.6189949691705282
+- subsample=0.7400402414525654
+- colsample_bytree=0.5695776529558766
+- n_estimators=100000
+- early_stopping_rounds=500
+
+RESULTS
+Current fine-income XGB baseline OOF: 0.94606664
+High-resolution lossguide candidate OOF: 0.94608409
+Delta vs baseline: +0.00001745
+Folds improved: 4/5
+Folds worse: 1/5
+Probability corr vs baseline: 0.999660
+Rank corr vs baseline: 0.999706
+Runtime: 336.41 seconds
+
+DECISION: KEEP_HIGH_RES_LOSSGUIDE
+
+FOLD RESULTS
+Fold 0: baseline=0.94510032 -> candidate=0.94509413 (-0.00000619)
+Fold 1: baseline=0.94580127 -> candidate=0.94581195 (+0.00001069)
+Fold 2: baseline=0.94702068 -> candidate=0.94707292 (+0.00005224)
+Fold 3: baseline=0.94634732 -> candidate=0.94635647 (+0.00000915)
+Fold 4: baseline=0.94607535 -> candidate=0.94609835 (+0.00002300)
+
+FINE INCOME TE IMPORTANCE
+HTE__income_50_bucket: 0.06417465
+HTE__income_250_bucket: 0.02225457

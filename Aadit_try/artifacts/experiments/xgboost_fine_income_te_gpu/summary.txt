@@ -1,0 +1,46 @@
+EXPERIMENT: XGBOOST + FINE-GRAINED INCOME TARGET ENCODING
+====================================================================================
+
+HYPOTHESIS
+Can $50/$250 income neighbourhoods add useful local structure between
+exact income identity and the existing $1k income hierarchy?
+
+ONLY CHANGE
+Add nested leakage-safe income TE at $50 / $250 scales.
+
+HELD FIXED
+- frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+- current hierarchical-income + hierarchical-commute XGB representation
+- exact income + commute TE
+- hierarchical income TE at 1k/10k/100k
+- hierarchical commute TE at 1km/5km/10km
+- income digits
+- exact income + commute frequencies
+- learned nested logistic base margin
+- smoothing m=2
+- depth-4 XGBoost configuration
+- seed 42
+- CUDA GPU
+
+RESULTS
+Current hierarchical-income + commute XGB baseline OOF: 0.94591178
+Fine-income candidate OOF: 0.94606664
+Delta vs baseline: +0.00015486
+Folds improved: 5/5
+Folds worse: 0/5
+Probability corr vs baseline: 0.998907
+Rank corr vs baseline: 0.997992
+Runtime: 100.06 seconds
+
+DECISION: KEEP_FINE_INCOME_TE
+
+FOLD RESULTS
+Fold 0: baseline=0.94496766 -> candidate=0.94510032 (+0.00013266)
+Fold 1: baseline=0.94560857 -> candidate=0.94580127 (+0.00019270)
+Fold 2: baseline=0.94692999 -> candidate=0.94702068 (+0.00009069)
+Fold 3: baseline=0.94614519 -> candidate=0.94634732 (+0.00020213)
+Fold 4: baseline=0.94592114 -> candidate=0.94607535 (+0.00015421)
+
+FINE INCOME TE IMPORTANCE
+HTE__income_50_bucket: 0.05387891
+HTE__income_250_bucket: 0.01754944

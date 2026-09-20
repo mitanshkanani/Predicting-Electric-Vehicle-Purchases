@@ -1,0 +1,5 @@
+model,auc,expected_auc,auc_delta_vs_expected,source,column
+CAT,0.9455857166860613,0.94558572,-3.3139386790281833e-09,artifacts\experiments\catboost_hierarchical_income_commute_multiseed_gpu\rank_average_oof_predictions.csv,oof_prediction
+XGB,0.9459117800755021,0.94591178,7.550216007956578e-11,artifacts\experiments\xgboost_hierarchical_commute_te_gpu\oof_predictions.csv,oof_prediction
+LGBM,0.9457804192236723,0.94578042,-7.763276688166343e-10,artifacts\experiments\lightgbm_engineered_learned_margin_cpu\oof_predictions.csv,oof_prediction
+CHAMPION,0.945964411435839,0.94596441,1.4358390032498392e-09,artifacts\experiments\blend_income_commute_catboost_commute_xgb_lgbm_rank_audit\oof_predictions.csv,candidate_meta_oof_prediction

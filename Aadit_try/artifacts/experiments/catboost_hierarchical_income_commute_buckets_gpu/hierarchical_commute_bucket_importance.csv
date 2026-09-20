@@ -1,0 +1,4 @@
+feature,is_new_commute_bucket,is_income_bucket,is_exact_value_id,mean_importance,std_importance
+CAT__commute_1km_bucket,True,False,False,1.4341171689020995,0.12670792148682317
+CAT__commute_5km_bucket,True,False,False,0.2946636141225959,0.07403874330973889
+CAT__commute_10km_bucket,True,False,False,0.17667686040277003,0.031255270223589725

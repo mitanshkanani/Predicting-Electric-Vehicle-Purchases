@@ -1,0 +1,3 @@
+feature,bucket_width_usd,train_unique_buckets,test_unique_buckets,train_min_count,train_median_count,train_mean_count,train_max_count,test_seen_rate
+FE__income_50_bucket_cat,50.0,2026,1973,1,156.0,330.04195459032576,61605,0.9998918243646426
+FE__income_250_bucket_cat,250.0,533,524,1,698.0,1254.53095684803,61605,0.9999825523168778

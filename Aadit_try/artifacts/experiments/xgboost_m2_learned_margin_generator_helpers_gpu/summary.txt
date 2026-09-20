@@ -1,0 +1,69 @@
+EXPERIMENT: XGBOOST m=2 + LEARNED MARGIN + GENERATOR HELPER FEATURES
+==============================================================================
+
+HYPOTHESIS
+Can four deterministic generator-oriented helper views expose useful
+structure that the current depth-4 XGBoost otherwise reconstructs inefficiently?
+
+ONLY CHANGE
+Added: anxiety ordinal, total chargers, income×subsidy, concern×subsidy.
+
+HELD FIXED
+- frozen 5 folds
+- frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+- original raw features
+- exact-value TE of income + commute
+- nested leakage-safe TE
+- smoothing m=2
+- depth-4 XGBoost hyperparameters
+- seed 42
+
+RESULTS
+XGB m=2 baseline OOF: 0.94558384
+Income-digit baseline OOF: 0.94571130
+Recipe-margin baseline OOF: 0.94574952
+Exact-frequency baseline OOF: 0.94580644
+Learned-margin baseline OOF: 0.94583075
+Fixed recipe-only AUC: 0.93769041
+Learned logistic prior OOF AUC: 0.93776828
+Candidate OOF: 0.94582504
+Delta vs learned-margin baseline: -0.00000572
+Delta vs exact-frequency baseline: +0.00001860
+Delta vs recipe-margin baseline: +0.00007552
+Delta vs income-digit baseline: +0.00011374
+Delta vs plain m=2: +0.00024120
+Folds improved vs learned-margin baseline: 2/5
+Folds worse vs learned-margin baseline: 3/5
+
+CatBoost 3-seed OOF: 0.94543956
+Delta vs CatBoost: +0.00038548
+
+Probability corr vs learned-margin XGB: 0.999788
+Rank corr vs learned-margin XGB: 0.999688
+Probability corr vs exact-frequency XGB: 0.999677
+Rank corr vs exact-frequency XGB: 0.998603
+Probability corr vs recipe-margin XGB: 0.999285
+Rank corr vs recipe-margin XGB: 0.998339
+Probability corr vs income-digit XGB: 0.999052
+Rank corr vs income-digit XGB: 0.998144
+Probability corr vs m=2 XGB: 0.998524
+Rank corr vs m=2 XGB: 0.997545
+Probability corr vs CatBoost: 0.809412
+Rank corr vs CatBoost: 0.995762
+
+Runtime: 75.00 seconds
+
+DECISION: REJECT_GENERATOR_HELPER_FEATURES
+
+FOLD RESULTS
+Fold 0: learned_margin=0.94491395 -> +helpers=0.94490633 (-0.00000762)
+Fold 1: learned_margin=0.94550964 -> +helpers=0.94551627 (+0.00000662)
+Fold 2: learned_margin=0.94683145 -> +helpers=0.94680421 (-0.00002725)
+Fold 3: learned_margin=0.94605583 -> +helpers=0.94606191 (+0.00000609)
+Fold 4: learned_margin=0.94586029 -> +helpers=0.94584627 (-0.00001402)
+
+GENERATOR HELPER FEATURE IMPORTANCE
+FE__concern_x_subsidy: 0.040598
+FE__income_x_subsidy: 0.035412
+FE__range_anxiety_ordinal: 0.029071
+FE__total_charging_stations: 0.014792

@@ -1,0 +1,6 @@
+feature,is_source_te,is_hierarchical_income_te,is_exact_te,is_income_digit,is_exact_frequency,mean_gain_importance,std_gain_importance
+SOURCE_TE__income_10k_bucket,True,False,False,False,False,0.03210174925625324,0.007905940130522053
+SOURCE_TE__environmental_concern,True,False,False,False,False,0.02868211194872856,0.008247107127025335
+SOURCE_TE__behavior_state,True,False,False,False,False,0.02084691934287548,0.0030227413226388113
+SOURCE_TE__range_anxiety,True,False,False,False,False,0.017032616026699542,0.0031058796195319884
+SOURCE_TE__subsidy,True,False,False,False,False,0.01156529700383544,0.00413697258387237

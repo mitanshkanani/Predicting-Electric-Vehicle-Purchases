@@ -1,0 +1,48 @@
+EXPERIMENT: 3-MODEL UPDATE WITH HIERARCHICAL-INCOME LIGHTGBM
+====================================================================================
+
+HYPOTHESIS
+Does the standalone LightGBM gain from hierarchical-income TE survive
+when LightGBM is used as the diversity member in the current ensemble?
+
+ONLY CHANGE
+Old engineered LightGBM -> hierarchical-income LightGBM.
+
+VALIDATION
+Frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+Simplex grid step: 0.05
+Weights selected on 4 folds and evaluated on held fold.
+No public leaderboard optimization.
+
+SINGLE MODEL REFERENCES
+CatBoost: 0.94543956
+Hierarchical-income XGB: 0.94587366
+Old engineered LightGBM: 0.94578042
+Hierarchical-income LightGBM: 0.94582702
+
+META-CV RESULTS
+Control current 3-model meta-CV AUC: 0.94591016
+Candidate updated 3-model meta-CV AUC: 0.94591385
+Delta vs control: +0.00000369
+Held folds improved: 3/5
+Held folds worse: 2/5
+Held folds tied: 0/5
+
+MEAN CANDIDATE DEPLOYMENT WEIGHTS
+CatBoost: 0.1400
+Hierarchical-income XGB: 0.5600
+Hierarchical-income LightGBM: 0.3000
+
+FULL-OOF DIAGNOSTICS USING MEAN WEIGHTS
+Control full-OOF diagnostic AUC: 0.94591289
+Candidate full-OOF diagnostic AUC: 0.94591541
+
+Runtime: 265.32 seconds
+DECISION: KEEP_NEW_LGBM_IN_3MODEL_ENSEMBLE
+
+FOLD DETAILS
+Fold 0: control=0.94496772 (CAT/XGB/oldLGBM=0.15/0.60/0.25) -> candidate=0.94496095 (CAT/XGB/newLGBM=0.15/0.55/0.30) delta=-0.00000677
+Fold 1: control=0.94560232 (CAT/XGB/oldLGBM=0.15/0.60/0.25) -> candidate=0.94559551 (CAT/XGB/newLGBM=0.15/0.55/0.30) delta=-0.00000681
+Fold 2: control=0.94692412 (CAT/XGB/oldLGBM=0.15/0.55/0.30) -> candidate=0.94695134 (CAT/XGB/newLGBM=0.15/0.55/0.30) delta=+0.00002722
+Fold 3: control=0.94612507 (CAT/XGB/oldLGBM=0.10/0.65/0.25) -> candidate=0.94612510 (CAT/XGB/newLGBM=0.10/0.60/0.30) delta=+0.00000003
+Fold 4: control=0.94593289 (CAT/XGB/oldLGBM=0.15/0.60/0.25) -> candidate=0.94593772 (CAT/XGB/newLGBM=0.15/0.55/0.30) delta=+0.00000483

@@ -1,0 +1,53 @@
+EXPERIMENT: LIGHTGBM + HIERARCHICAL INCOME TARGET ENCODING
+==================================================================================
+
+HYPOTHESIS
+Does the hierarchical-income representation that improved XGBoost
+also improve the engineered LightGBM model?
+
+ONLY CHANGE
+Add nested leakage-safe income TE at $1k / $10k / $100k scales.
+
+HELD FIXED
+- frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+- existing engineered LightGBM representation
+- exact income + commute TE
+- smoothing m=2
+- income digits
+- exact income + commute frequencies
+- learned nested logistic base margin
+- fixed LightGBM config
+- seed 42
+- CPU device
+
+RESULTS
+Engineered LightGBM baseline OOF: 0.94578042
+Candidate OOF: 0.94582702
+Delta vs baseline: +0.00004660
+Folds improved: 5/5
+Folds worse: 0/5
+Hierarchical-income XGB reference: 0.94587366
+CatBoost reference: 0.94543956
+
+DIVERSITY DIAGNOSTICS
+Probability corr vs old LightGBM: 0.999310
+Rank corr vs old LightGBM: 0.999310
+Probability corr vs new XGB: 0.999217
+Rank corr vs new XGB: 0.999263
+Probability corr vs CatBoost: 0.809156
+Rank corr vs CatBoost: 0.995545
+
+Runtime: 119.82 seconds
+DECISION: KEEP_HIERARCHICAL_INCOME_TE_FOR_LIGHTGBM
+
+FOLD RESULTS
+Fold 0: baseline=0.94485671 -> candidate=0.94486280 (+0.00000609)
+Fold 1: baseline=0.94548225 -> candidate=0.94549896 (+0.00001670)
+Fold 2: baseline=0.94675246 -> candidate=0.94687542 (+0.00012297)
+Fold 3: baseline=0.94602693 -> candidate=0.94605742 (+0.00003049)
+Fold 4: baseline=0.94580188 -> candidate=0.94585865 (+0.00005677)
+
+HIERARCHICAL INCOME TE IMPORTANCE
+HTE__income_1k_bucket: 17769.20719278
+HTE__income_10k_bucket: 12158.39338424
+HTE__income_100k_bucket: 2142.16886172

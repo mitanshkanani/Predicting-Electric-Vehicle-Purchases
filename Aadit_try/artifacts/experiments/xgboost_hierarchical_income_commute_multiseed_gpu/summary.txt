@@ -1,0 +1,20 @@
+EXPERIMENT: HIERARCHICAL-INCOME+COMMUTE XGBOOST MULTI-SEED
+================================================================================
+Seed 42: 0.94591178
+Seed 7: 0.94591089
+Seed 2026: 0.94589636
+Probability average: 0.94592332
+Rank average: 0.94592339
+Best method: rank_average
+Best 3-seed AUC: 0.94592339
+Delta vs seed42: +0.00001161
+Folds improved vs seed42: 4/5
+Runtime for new seeds: 210.19s
+Decision: KEEP_HIERARCHICAL_INCOME_COMMUTE_XGB_3SEED
+
+FOLD RESULTS
+Fold 0: 0.94496766 -> 0.94500230 (+0.00003464)
+Fold 1: 0.94560857 -> 0.94561089 (+0.00000232)
+Fold 2: 0.94692999 -> 0.94696316 (+0.00003317)
+Fold 3: 0.94614519 -> 0.94612422 (-0.00002098)
+Fold 4: 0.94592114 -> 0.94593123 (+0.00001009)

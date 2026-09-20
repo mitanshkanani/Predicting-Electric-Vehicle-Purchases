@@ -1,0 +1,67 @@
+EXPERIMENT: XGBOOST m=2 + EXACT FREQUENCY + LEARNED LOGISTIC BASE MARGIN
+==============================================================================
+
+HYPOTHESIS
+Can a competition-learned smooth four-variable logistic prior outperform
+the fixed source-recipe base margin as XGBoost's residual starting point?
+
+ONLY CHANGE
+Base margin: fixed original-data recipe -> nested competition logistic prior
+
+HELD FIXED
+- frozen 5 folds
+- frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+- original raw features
+- exact-value TE of income + commute
+- nested leakage-safe TE
+- smoothing m=2
+- depth-4 XGBoost hyperparameters
+- seed 42
+
+RESULTS
+XGB m=2 baseline OOF: 0.94558384
+Income-digit baseline OOF: 0.94571130
+Recipe-margin baseline OOF: 0.94574952
+Exact-frequency baseline OOF: 0.94580644
+Fixed recipe-only AUC: 0.93769041
+Learned logistic prior OOF AUC: 0.93776828
+Candidate OOF: 0.94583075
+Delta vs exact-frequency baseline: +0.00002431
+Delta vs recipe-margin baseline: +0.00008124
+Delta vs income-digit baseline: +0.00011945
+Delta vs plain m=2: +0.00024691
+Folds improved vs exact-frequency baseline: 5/5
+Folds worse vs exact-frequency baseline: 0/5
+
+CatBoost 3-seed OOF: 0.94543956
+Delta vs CatBoost: +0.00039120
+
+Probability corr vs exact-frequency XGB: 0.999736
+Rank corr vs exact-frequency XGB: 0.998497
+Probability corr vs recipe-margin XGB: 0.999307
+Rank corr vs recipe-margin XGB: 0.998191
+Probability corr vs income-digit XGB: 0.999064
+Rank corr vs income-digit XGB: 0.998191
+Probability corr vs m=2 XGB: 0.998498
+Rank corr vs m=2 XGB: 0.997521
+Probability corr vs CatBoost: 0.809438
+Rank corr vs CatBoost: 0.995690
+
+Runtime: 86.98 seconds
+
+DECISION: KEEP_LEARNED_LOGISTIC_BASE_MARGIN
+
+FOLD RESULTS
+Fold 0: exact_frequency=0.94490277 -> +learned_margin=0.94491395 (+0.00001118)
+Fold 1: exact_frequency=0.94550287 -> +learned_margin=0.94550964 (+0.00000678)
+Fold 2: exact_frequency=0.94680814 -> +learned_margin=0.94683145 (+0.00002332)
+Fold 3: exact_frequency=0.94600041 -> +learned_margin=0.94605583 (+0.00005542)
+Fold 4: exact_frequency=0.94584201 -> +learned_margin=0.94586029 (+0.00001828)
+
+EXACT-FREQUENCY FEATURE IMPORTANCE (LEARNED-MARGIN MODEL)
+FE__income_exact_frequency_log1p: 0.018378
+FE__income_exact_frequency_rate: 0.017861
+FE__commute_exact_frequency_rate: 0.017336
+FE__income_exact_frequency_count: 0.017205
+FE__commute_exact_frequency_count: 0.012744
+FE__commute_exact_frequency_log1p: 0.012537

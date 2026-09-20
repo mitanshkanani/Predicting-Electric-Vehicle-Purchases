@@ -1,0 +1,2 @@
+reconstruction_mode,reconstruction_rmse,reconstruction_mae,saved_champion_auc,reconstructed_champion_auc,fine_xgb_replacement_auc,delta,folds_improved,folds_worse,probability_corr,rank_corr,primitive
+foldwise_rank,7.484227868545647e-17,5.076822716830444e-17,0.945964411435839,0.9459644119711488,0.9461125319132402,0.0001481204774012035,5,0,0.9994390373099258,0.9994358950767329,POSITIVE_REPLACEMENT_SIGNAL

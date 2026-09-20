@@ -1,0 +1,53 @@
+EXPERIMENT: XGBOOST + SOURCE-DATA DUAL TARGET ENCODING
+====================================================================================
+
+HYPOTHESIS
+Can source-only target statistics expose generator/original-population
+target structure that complements competition-only target encodings?
+
+ONLY CHANGE
+Add five Bayesian target-statistic features learned ONLY from the
+documented external/original source dataset.
+
+SOURCE FILE
+C:\Users\Admin\.cache\kagglehub\datasets\itzzomkar\ev-adoption-behavior-and-range-anxiety\versions\1\EV_Adoption_and_Range_Anxiety_Dataset.csv
+Source shape: 10000 x 15
+
+HELD FIXED
+- frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+- hierarchical-income XGB champion representation
+- exact income + commute nested TE
+- hierarchical income TE at 1k/10k/100k
+- income digits
+- exact income + commute frequency features
+- learned nested logistic base margin
+- smoothing m=2
+- depth-4 XGBoost configuration
+- seed 42
+- CUDA GPU
+
+RESULTS
+Current hierarchical-XGB baseline OOF: 0.94587366
+Source-dual-TE candidate OOF: 0.94587403
+Delta vs baseline: +0.00000037
+Folds improved: 3/5
+Folds worse: 2/5
+Probability corr vs baseline: 0.999831
+Rank corr vs baseline: 0.999637
+Runtime: 94.09 seconds
+
+DECISION: KEEP_SOURCE_DUAL_TARGET_ENCODING
+
+FOLD RESULTS
+Fold 0: baseline=0.94492672 -> candidate=0.94492112 (-0.00000560)
+Fold 1: baseline=0.94556653 -> candidate=0.94553080 (-0.00003573)
+Fold 2: baseline=0.94691710 -> candidate=0.94692726 (+0.00001016)
+Fold 3: baseline=0.94606332 -> candidate=0.94608325 (+0.00001993)
+Fold 4: baseline=0.94590806 -> candidate=0.94592186 (+0.00001380)
+
+SOURCE-TE FEATURE IMPORTANCE
+SOURCE_TE__income_10k_bucket: 0.03210175
+SOURCE_TE__environmental_concern: 0.02868211
+SOURCE_TE__behavior_state: 0.02084692
+SOURCE_TE__range_anxiety: 0.01703262
+SOURCE_TE__subsidy: 0.01156530

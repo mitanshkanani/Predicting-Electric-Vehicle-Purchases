@@ -1,0 +1,23 @@
+EXPERIMENT: LIGHTGBM + HIERARCHICAL INCOME + COMMUTE TE
+====================================================================================
+Baseline hierarchical-income LightGBM: 0.94582702
+Candidate: 0.94585287
+Delta: +0.00002585
+Folds improved: 4/5
+Folds worse: 1/5
+Probability corr vs baseline: 0.999347
+Rank corr vs baseline: 0.999463
+Runtime: 140.75s
+Decision: KEEP_HIERARCHICAL_COMMUTE_TE_FOR_LIGHTGBM
+
+FOLD RESULTS
+Fold 0: 0.94486280 -> 0.94490063 (+0.00003783)
+Fold 1: 0.94549896 -> 0.94555141 (+0.00005245)
+Fold 2: 0.94687543 -> 0.94685944 (-0.00001598)
+Fold 3: 0.94605742 -> 0.94610020 (+0.00004278)
+Fold 4: 0.94585865 -> 0.94586638 (+0.00000773)
+
+COMMUTE HTE IMPORTANCE
+HTE__commute_1km_bucket: 22052.34276142
+HTE__commute_5km_bucket: 4254.49307320
+HTE__commute_10km_bucket: 2501.70602551

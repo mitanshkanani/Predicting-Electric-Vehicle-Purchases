@@ -1,0 +1,47 @@
+EXPERIMENT: CATBOOST + HIERARCHICAL INCOME CATEGORICAL BUCKETS
+====================================================================================
+
+HYPOTHESIS
+Does the hierarchical income representation that improved XGBoost and
+LightGBM also improve CatBoost when exposed as categorical identities?
+
+ONLY CHANGE
+Add target-free income bucket categories at $1k / $10k / $100k scales.
+
+HELD FIXED
+- frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+- raw 13 features
+- raw numeric income + commute
+- exact income + commute categorical IDs
+- iterations=2000
+- learning_rate=0.05
+- depth=6
+- loss_function=Logloss
+- eval_metric=AUC
+- random_seed=42
+- GPU device 0
+- early stopping 150
+
+RESULTS
+Seed-42 exact-value baseline OOF: 0.94536428
+Hierarchical-bucket candidate OOF: 0.94546676
+Delta vs baseline: +0.00010248
+Folds improved: 5/5
+Folds worse: 0/5
+Probability corr vs baseline: 0.998801
+Rank corr vs baseline: 0.998677
+Runtime: 653.13 seconds
+
+DECISION: KEEP_HIERARCHICAL_INCOME_BUCKETS_FOR_CATBOOST
+
+FOLD RESULTS
+Fold 0: baseline=0.94445487 -> candidate=0.94453304 (+0.00007817)
+Fold 1: baseline=0.94496094 -> candidate=0.94506932 (+0.00010838)
+Fold 2: baseline=0.94635642 -> candidate=0.94651310 (+0.00015668)
+Fold 3: baseline=0.94572402 -> candidate=0.94576311 (+0.00003909)
+Fold 4: baseline=0.94535674 -> candidate=0.94548312 (+0.00012639)
+
+HIERARCHICAL INCOME BUCKET IMPORTANCE
+CAT__income_1k_bucket: 3.45171796
+CAT__income_10k_bucket: 0.91384707
+CAT__income_100k_bucket: 0.06423648

@@ -1,0 +1,63 @@
+EXPERIMENT: XGBOOST m=2 + INCOME DIGITS + RECIPE MARGIN + EXACT FREQUENCY
+==============================================================================
+
+HYPOTHESIS
+Can exact-value occurrence frequencies for income and commute add
+generator-density signal on top of the validated recipe-margin XGBoost?
+
+ONLY CHANGE
+Added target-free train+test exact-value frequency count/log/rate features
+for Annual_Income_USD and Daily_Commute_km.
+
+HELD FIXED
+- frozen 5 folds
+- frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+- original raw features
+- exact-value TE of income + commute
+- nested leakage-safe TE
+- smoothing m=2
+- depth-4 XGBoost hyperparameters
+- seed 42
+
+RESULTS
+XGB m=2 baseline OOF: 0.94558384
+Income-digit baseline OOF: 0.94571130
+Recipe-margin baseline OOF: 0.94574952
+Recipe-only AUC: 0.93769041
+Recipe margin + exact frequency OOF: 0.94580644
+Delta vs recipe-margin baseline: +0.00005692
+Delta vs income-digit baseline: +0.00009514
+Delta vs plain m=2: +0.00022260
+Folds improved vs recipe margin: 4/5
+Folds worse vs recipe margin: 1/5
+
+CatBoost 3-seed OOF: 0.94543956
+Delta vs CatBoost: +0.00036688
+
+Probability corr vs recipe-margin XGB: 0.999427
+Rank corr vs recipe-margin XGB: 0.999535
+Probability corr vs income-digit XGB: 0.999126
+Rank corr vs income-digit XGB: 0.996620
+Probability corr vs m=2 XGB: 0.998559
+Rank corr vs m=2 XGB: 0.996116
+Probability corr vs CatBoost: 0.809978
+Rank corr vs CatBoost: 0.995118
+
+Runtime: 60.30 seconds
+
+DECISION: KEEP_EXACT_FREQUENCY_FEATURES
+
+FOLD RESULTS
+Fold 0: recipe_margin=0.94487577 -> +frequency=0.94490277 (+0.00002700)
+Fold 1: recipe_margin=0.94541892 -> +frequency=0.94550287 (+0.00008395)
+Fold 2: recipe_margin=0.94669564 -> +frequency=0.94680814 (+0.00011249)
+Fold 3: recipe_margin=0.94592498 -> +frequency=0.94600041 (+0.00007543)
+Fold 4: recipe_margin=0.94585638 -> +frequency=0.94584201 (-0.00001437)
+
+EXACT-FREQUENCY FEATURE IMPORTANCE
+FE__income_exact_frequency_rate: 0.015841
+FE__income_exact_frequency_log1p: 0.015667
+FE__income_exact_frequency_count: 0.015020
+FE__commute_exact_frequency_log1p: 0.011125
+FE__commute_exact_frequency_count: 0.010974
+FE__commute_exact_frequency_rate: 0.010422

@@ -1,0 +1,36 @@
+EXPERIMENT: CATBOOST + RECIPE-BASE-MARGIN XGBOOST RANK-BLEND AUDIT
+==============================================================================
+
+HYPOTHESIS
+Does replacing the income-digit XGBoost component with the slightly
+stronger recipe-base-margin XGBoost improve the leakage-safe blend?
+
+ONLY CHANGE
+XGBoost component: income digits -> income digits + recipe base margin
+
+CONTROL
+Income-digit control meta-CV expected: 0.94577587
+Income-digit control meta-CV reproduced: 0.94577587
+Income-digit control weights reproduced: [0.3, 0.32, 0.3, 0.29, 0.34]
+CONTROL: PASS
+
+SINGLE MODELS
+CatBoost 3-seed OOF: 0.94543956
+Recipe-margin XGBoost OOF: 0.94574952
+
+NEW META-CV BLEND
+Meta-CV OOF: 0.94580529
+Delta vs current income-digit blend: +0.00002942
+Delta vs recipe-margin XGB single: +0.00005577
+Folds blend > CatBoost: 5/5
+Folds blend > recipe-margin XGB: 5/5
+Selected CAT weights: [0.3, 0.3, 0.28, 0.26, 0.32]
+Mean CAT weight: 0.2920
+Std CAT weight: 0.0204
+Deployment blend: 0.29 CAT / 0.71 XGB
+Full-OOF deployment diagnostic: 0.94580762
+Selected weights hit a search boundary: NO
+
+DECISION: KEEP_RECIPE_MARGIN_BLEND
+
+Do not submit to Kaggle yet. Analyze the local result first.
