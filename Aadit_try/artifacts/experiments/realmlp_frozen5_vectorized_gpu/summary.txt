@@ -1,0 +1,45 @@
+EXPERIMENT: REALMLP FROZEN-5 VECTORIZED GPU
+========================================================================================
+
+GOAL
+Create a genuinely different neural OOF member for ensemble diversity.
+
+VALIDATION
+Frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+n_cv: 5
+
+FIXED MODEL
+seed: 42
+n_epochs: 64
+batch_size: 4096
+predict_batch_size: 16384
+n_ens: 1
+val_metric_name: 1-auc_ovr
+use_ls: False
+
+FEATURE VIEW
+total features: 31
+categorical features: 16
+target encodings: NONE
+model prediction features: NONE
+
+RESULT
+RealMLP OOF AUC: 0.94329901
+Training seconds: 284.94
+
+FOLD AUC
+Fold 0: 0.94261950
+Fold 1: 0.94397213
+Fold 2: 0.94477289
+Fold 3: 0.94428166
+Fold 4: 0.94442554
+
+DIVERSITY CORRELATIONS
+fine_xgb: prob_corr=0.986598, rank_corr=0.988046
+fine_cat: prob_corr=0.797153, rank_corr=0.985470
+lgbm: prob_corr=0.986262, rank_corr=0.987999
+champion: prob_corr=0.798370, rank_corr=0.988655
+
+IMPORTANT
+Do not KEEP/REJECT from standalone AUC alone.
+Manual decision must consider both AUC and correlation/ensemble value.
