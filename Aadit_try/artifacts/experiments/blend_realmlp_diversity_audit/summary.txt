@@ -1,0 +1,24 @@
+EXPERIMENT: REALMLP DIVERSITY BLEND AUDIT
+================================================================================
+
+NO TRAINING
+COARSE 0.05 WEIGHT GRID ONLY
+
+Champion raw OOF: 0.94611253
+RealMLP raw OOF: 0.94329901
+Global rank corr: 0.988655
+
+Champion meta representation: 0.94611252
+RealMLP blend meta-CV: 0.94611580
+Delta: +0.00000328
+Folds improved: 2/5
+Folds worse: 3/5
+Mean selected RealMLP alpha: 0.050
+Primitive: WEAK_OR_INCONSISTENT_REALMLP_ENSEMBLE_SIGNAL
+
+FOLD RESULTS
+Fold 0: alpha=0.05 | 0.94515622 -> 0.94515168 (-0.00000454)
+Fold 1: alpha=0.05 | 0.94580919 -> 0.94582434 (+0.00001515)
+Fold 2: alpha=0.05 | 0.94708674 -> 0.94708315 (-0.00000359)
+Fold 3: alpha=0.05 | 0.94638260 -> 0.94637710 (-0.00000550)
+Fold 4: alpha=0.05 | 0.94612780 -> 0.94614250 (+0.00001470)
