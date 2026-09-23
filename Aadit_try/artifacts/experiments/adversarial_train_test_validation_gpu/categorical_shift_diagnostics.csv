@@ -1,0 +1,17 @@
+feature,train_unique,test_unique,test_seen_in_train_rate
+Gender,3,3,1.0
+City_Type,3,3,1.0
+Current_Car_Type,4,4,1.0
+Home_Charging_Possible,2,2,1.0
+Subsidy_Available,2,2,1.0
+Range_Anxiety_Level,3,3,1.0
+ADV__income_exact_cat,13214,10526,0.9942248168865656
+ADV__commute_exact_cat,805,781,0.9998848452913938
+ADV__income_50_cat,2026,1973,0.9998918243646426
+ADV__income_250_cat,533,524,0.9999825523168778
+ADV__income_1k_cat,150,149,0.9999930209267511
+ADV__income_10k_cat,16,16,1.0
+ADV__income_100k_cat,2,2,1.0
+ADV__commute_1km_cat,89,90,0.9999930209267511
+ADV__commute_5km_cat,19,20,0.9999930209267511
+ADV__commute_10km_cat,10,11,0.9999930209267511

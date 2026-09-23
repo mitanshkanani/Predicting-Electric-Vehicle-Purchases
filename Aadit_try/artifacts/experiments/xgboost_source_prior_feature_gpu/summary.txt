@@ -1,0 +1,58 @@
+EXPERIMENT: XGBOOST FINE-INCOME + SOURCE-MODEL PRIOR
+====================================================================================
+
+HYPOTHESIS
+Can one fixed probability learned only from the original source dataset
+add generator-level structural information to the current fine-income XGB?
+
+ONLY CHANGE
+Add one numeric feature: SOURCE_PRIOR
+
+SOURCE MODEL
+Source file: C:\Users\Admin\.cache\kagglehub\datasets\itzzomkar\ev-adoption-behavior-and-range-anxiety\versions\1\EV_Adoption_and_Range_Anxiety_Dataset.csv
+Source shape: 10000 x 15
+Source model: raw 13-feature CatBoost, 5-fold source-only ensemble
+Source positive label: Yes
+Source-model OOF AUC: 0.90403560
+
+HELD FIXED
+- frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+- complete current fine-income XGB representation
+- exact income + commute TE
+- hierarchical income TE at 1k/10k/100k
+- hierarchical commute TE at 1km/5km/10km
+- fine income TE at 50/250
+- income digits
+- exact income + commute frequencies
+- learned nested logistic base margin
+- smoothing m=2
+- depth-4 XGBoost configuration
+- seed 42
+- CUDA GPU
+
+RESULTS
+Current fine-income XGB baseline OOF: 0.94606664
+Source-prior candidate OOF: 0.94606506
+Delta vs baseline: -0.00000159
+Folds improved: 2/5
+Folds worse: 3/5
+Probability corr vs baseline: 0.999796
+Rank corr vs baseline: 0.999272
+SOURCE_PRIOR mean gain importance: 0.01788106
+Competition XGB runtime: 109.25 seconds
+
+DECISION: REJECT_SOURCE_PRIOR_FEATURE
+
+FOLD RESULTS
+Fold 0: baseline=0.94510032 -> candidate=0.94510494 (+0.00000462)
+Fold 1: baseline=0.94580127 -> candidate=0.94580005 (-0.00000122)
+Fold 2: baseline=0.94702068 -> candidate=0.94701218 (-0.00000849)
+Fold 3: baseline=0.94634732 -> candidate=0.94633550 (-0.00001182)
+Fold 4: baseline=0.94607535 -> candidate=0.94609326 (+0.00001791)
+
+SOURCE PRIOR IMPORTANCE
+SOURCE_PRIOR: 0.01788106
+
+FINE INCOME TE IMPORTANCE (unchanged representation)
+HTE__income_50_bucket: 0.05570547
+HTE__income_250_bucket: 0.01847240

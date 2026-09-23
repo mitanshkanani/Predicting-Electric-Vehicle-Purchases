@@ -1,0 +1,2 @@
+feature,is_commute_hte,is_income_hte,is_fine_income_te,is_exact_te,is_income_digit,is_exact_frequency,is_source_prior,mean_gain_importance,std_gain_importance
+SOURCE_PRIOR,False,False,False,False,False,False,True,0.017881055176258088,0.004059531596938293

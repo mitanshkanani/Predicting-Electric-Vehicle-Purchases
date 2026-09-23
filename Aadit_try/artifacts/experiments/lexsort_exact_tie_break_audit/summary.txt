@@ -1,0 +1,38 @@
+EXPERIMENT: EXACT LEXICOGRAPHIC TIE-BREAK AUDIT
+======================================================================================
+
+NO TRAINING
+NO WEIGHT SEARCH
+NO NEAR-TIE THRESHOLD
+
+Raw champion OOF: 0.94611253
+Primary meta AUC: 0.94611252
+
+EXACT TIE BURDEN
+unique champion scores: 586720
+tie groups: 71045
+rows in tie groups: 152990
+fraction rows in ties: 0.22879917
+max tie group size: 7
+positive-negative tied pairs: 10825
+perfect tie-break AUC upper bound: +0.00000008
+
+META-CV RESULT
+Lexsort meta-CV AUC: 0.94611252
+Delta: +0.00000000
+Folds improved: 4/5
+Folds worse: 1/5
+Folds unchanged: 0/5
+Selected secondaries: {'fine_cat': 3, 'realmlp': 2}
+Primitive: POSITIVE_EXACT_TIE_BREAK_SIGNAL
+
+HELD-FOLD RESULTS
+Fold 0: secondary=realmlp | 0.94515622 -> 0.94515622 (+0.00000001)
+Fold 1: secondary=fine_cat | 0.94580919 -> 0.94580920 (+0.00000000)
+Fold 2: secondary=realmlp | 0.94708674 -> 0.94708674 (+0.00000000)
+Fold 3: secondary=fine_cat | 0.94638260 -> 0.94638260 (-0.00000000)
+Fold 4: secondary=fine_cat | 0.94612780 -> 0.94612780 (+0.00000000)
+
+INTERPRETATION
+This experiment changes ordering ONLY inside exact primary-score ties.
+If the perfect upper bound is tiny, exact lexsort cannot materially improve this champion regardless of secondary model.
