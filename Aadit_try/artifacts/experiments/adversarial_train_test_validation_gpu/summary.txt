@@ -1,0 +1,60 @@
+EXPERIMENT: ADVERSARIAL TRAIN-vs-TEST VALIDATION
+======================================================================================
+
+QUESTION
+Can target-free features distinguish competition train from test?
+
+LABEL
+0 = train row
+1 = test row
+
+CRITICAL EXCLUSIONS
+- competition target NOT used
+- id NOT used
+- no target encoding
+- no source data
+- no model predictions
+
+VALIDATION
+StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+
+RESULT
+Adversarial OOF AUC: 0.50227066
+Mean fold AUC: 0.50215696
+Fold AUC std: 0.00071510
+Runtime: 25.73 seconds
+
+FOLD RESULTS
+Fold 0: 0.50210113
+Fold 1: 0.50130229
+Fold 2: 0.50323748
+Fold 3: 0.50232678
+Fold 4: 0.50181710
+
+TOP 20 FEATURES BY MEAN GAIN
+ADV__income_exact_cat: mean_gain=100.84828644, gain_share=0.258743
+ADV__commute_exact_cat: mean_gain=61.72231903, gain_share=0.158359
+ADV__income_50_cat: mean_gain=60.45439987, gain_share=0.155106
+ADV__income_250_cat: mean_gain=35.10884933, gain_share=0.090077
+ADV__commute_1km_cat: mean_gain=16.38545265, gain_share=0.042040
+ADV__income_1k_cat: mean_gain=7.66454010, gain_share=0.019665
+ADV__commute_5km_cat: mean_gain=6.44838123, gain_share=0.016544
+Charging_Stations_Near_Home: mean_gain=5.29010477, gain_share=0.013573
+ADV__commute_10km_cat: mean_gain=5.26745577, gain_share=0.013515
+Age: mean_gain=5.24992704, gain_share=0.013470
+ADV__income_10k_cat: mean_gain=5.21363096, gain_share=0.013376
+Current_Car_Type: mean_gain=5.17801590, gain_share=0.013285
+Range_Anxiety_Level: mean_gain=5.16223602, gain_share=0.013245
+Charging_Stations_Near_Work: mean_gain=5.11178226, gain_share=0.013115
+Number_of_Cars_Owned: mean_gain=4.93849068, gain_share=0.012671
+Environmental_Concern_Level: mean_gain=4.74784355, gain_share=0.012181
+City_Type: mean_gain=4.59688253, gain_share=0.011794
+Home_Charging_Possible: mean_gain=4.53083029, gain_share=0.011625
+Gender: mean_gain=4.50460458, gain_share=0.011557
+Daily_Commute_km: mean_gain=4.37131453, gain_share=0.011215
+
+INTERPRETATION NOTE
+AUC near 0.50 means little detectable covariate shift.
+Higher AUC means train/test membership is increasingly predictable.
+Feature importance identifies candidate shift drivers; it does not prove
+that a feature should be removed from the competition model.

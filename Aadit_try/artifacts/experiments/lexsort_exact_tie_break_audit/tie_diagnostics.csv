@@ -1,0 +1,2 @@
+rows,unique_primary_scores,tie_groups,rows_in_tie_groups,fraction_rows_in_ties,max_tie_group_size,positive_negative_tied_pairs,total_positive_negative_pairs,theoretical_perfect_tie_break_auc_gain
+668665,586720,71045,152990,0.22879917447451265,7,10825,64448695194,8.398152955164699e-08
