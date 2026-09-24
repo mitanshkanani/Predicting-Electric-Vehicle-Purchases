@@ -1,54 +1,45 @@
 """
-Predicting Electric Vehicle Purchases — Kaggle Playground S06E09  (v6 FINAL)
-Built to run on Google Colab with a SINGLE T4 (also works on Kaggle / locally).
+Predicting Electric Vehicle Purchases — Kaggle Playground S06E09  (v6 · KAGGLE build)
+Same model/feature recipe as ev_s6e9_v6.py (the Colab single-T4 build), but the
+compute layout is rewritten to use BOTH Kaggle T4s AND the CPU pool at the same
+time. Identical features/TE/blend/post-processing, so scores are comparable.
 
-What v6 is based on (all VERIFIED, not guessed):
-  * Hard edges of the synthetic generator, confirmed on our own train.csv:
-      - income >= 170,537        -> 100% buy   (378/378 train, 156 test rows)
-      - income in [31004, 41970] -> 0% buy     (1,257/1,257 train, 494 test)
-      - commute >= 83 km         -> 0% buy     (186/186 train, 81 test)
-      - income == 30,000 spike   -> 9.2% of all rows, 4.4% buy (flag feature)
-      - commute == 5.0 sentinel  -> 21.6% of all rows (flag feature)
-      - Environmental_Concern == 1 -> 0.57% buy vs 17.5% base (flag feature)
-  * Income digit decomposition: +0.00192 LB in public ablations. INTEGER digits
-    only — fractional/decimal digits are HARMFUL (float-repr bug floors them).
-    Our income is integer-valued, so np.rint digits are safe.
-  * Bucketed + TRIPLE target encoding (public 0.9463 recipe), leakage-safe on
-    the same folds as the models. NO exact-value TE for GBDTs (inflates CV,
-    does not transfer — our v1/v2 lesson).
-  * Original source dataset (itzzomkar EV Adoption, 10k rows) merged into
-    training — the public 0.94638 winner uses it.
-  * Blend: 5 GBDT specs (LGBM x2, XGB x2, CatBoost) + PyTorch MLP for diversity
-    (our best-ever LB 0.94550 was 0.75*GBDT + 0.25*NN). Rank-averaged.
-  * Post-processing from the 0.94656/0.94657 public recipes:
-      - tie-break the blend order with the most orthogonal model (NN) via
-        np.lexsort, then map onto the best GBDT's probability scale;
-      - clamp the deterministic edge rows (cliff -> 1.0, dead-zone / long
-        commute -> 0.0).
-  * Simple fixed blend weights only. OOF-optimized weights are printed for
-    info but NOT submitted (they overfit OOF — our v2 lesson, and the public
-    "CV up / LB down" postmortem).
+HOW BOTH GPUs GET USED (no multiprocessing — that breaks on Kaggle, see below):
+  1. CatBoost  -> task_type="GPU", devices="0:1"  (one model spread over both T4s)
+  2. XGBoost   -> xgb_a pinned to cuda:0, xgb_b pinned to cuda:1
+  3. LightGBM  -> CPU, run in a BACKGROUND THREAD while the GPU lane trains.
+     LightGBM releases the GIL during fitting, so the CPU lane and the GPU lane
+     genuinely overlap. This is where the ~2h saving comes from: on the Colab
+     build the GPU sits idle for hours while LightGBM grinds on 2 cores.
+  4. PyTorch MLP -> cuda:0 (tiny model; DataParallel would only add overhead).
 
-=====================  DATASETS YOU NEED (Colab)  =============================
-Upload these to the Colab Files panel (/content) or into a folder ./data:
-  1. train.csv              — competition data (required)
-  2. test.csv               — competition data (required)
-  3. sample_submission.csv  — competition data (optional, for id alignment)
-  4. EV_Adoption_and_Range_Anxiety_Dataset.csv  (OPTIONAL but recommended)
-     from kaggle.com/datasets/itzzomkar/ev-adoption-behavior-and-range-anxiety
-     The script auto-detects it anywhere under /content and merges it.
-Everything else (catboost) is auto-pip-installed if missing.
-Expected runtime on 1x T4: ~5-7h. Short on time? Set NN_SEEDS=(42,) and/or
-trim MODEL_SPECS seeds below. Output: submission_v6.csv + v6_*.npy artifacts.
+WHY NOT ProcessPoolExecutor fold-parallelism: Kaggle's "Save & Run All" executes
+the .py inside the notebook kernel, so spawned workers cannot re-import functions
+from __main__ -> BrokenProcessPool. Threads avoid that entirely (no pickling of
+callables, shared memory).
+
+=========================  KAGGLE SETUP  ======================================
+New Kaggle Notebook -> Add Input (twice):
+  1. Competition data  "Playground Series S6E9" (train.csv / test.csv /
+     sample_submission.csv)  — OR your own dataset
+     "mitanshkanani/dataset-for-experimentation-final"
+  2. Dataset "itzzomkar/ev-adoption-behavior-and-range-anxiety"  -> gives the
+     10k-row EV_Adoption_and_Range_Anxiety_Dataset.csv, auto-detected + merged.
+Then either attach this file as code and run it, or paste it into a cell.
+Output: /kaggle/working/submission_v6_kaggle.csv (+ v6k_*.npy artifacts).
+GPU quota note: Kaggle gives 30 GPU-hours/week; this run uses roughly 3-5h of
+wall-clock. Enable GPU accelerator, then "Save & Run All".
 ===============================================================================
 """
 
 from __future__ import annotations
 
 import gc
+import multiprocessing
 import os
 import subprocess
 import sys
+import threading
 import time
 import warnings
 
@@ -65,7 +56,7 @@ warnings.filterwarnings("ignore")
 # ----------------------------------------------------------------------------
 TARGET = "Will_Buy_EV"
 ID_COL = "id"
-VERSION = "v6"
+VERSION = "v6_kaggle"
 N_SPLITS = 10
 RANDOM_STATE = 42
 TE_SMOOTHINGS = (10.0, 30.0)     # bucketed/triple TE (GBDT)
@@ -75,10 +66,16 @@ USE_ORIGINAL_DATA = True         # merge itzzomkar source dataset if found
 EDGE_CLAMP = True                # clamp deterministic edge rows at the end
 USE_NN = True                    # PyTorch MLP diversity model (auto-skips on failure)
 NN_SEEDS = (42, 7)
-NN_WEIGHT = 0.25                 # our verified best ratio: 0.75 GBDT / 0.25 NN
+NN_WEIGHT = 0.25                 # verified best ratio: 0.75 GBDT / 0.25 NN
 BATCH = 8192
 MAX_EPOCHS = 40
 PATIENCE = 5
+
+CAT_MULTI_GPU = True             # CatBoost across both T4s (devices="0:1")
+XGB_GPU_OF_SPEC = {"xgb_a": 0, "xgb_b": 1}   # one spec per GPU
+OVERLAP_CPU_LANE = True          # run LightGBM in a thread while GPU lane trains
+
+KAGGLE_INPUT_DIR = "/kaggle/input"   # Kaggle mounts Inputs here (may nest deeper)
 
 MODEL_SPECS = [
     ("cat",    "catboost", (0, 1)),
@@ -97,10 +94,17 @@ CFG = {
     "lgbm_b": {"lr": 0.025, "num_leaves": 127, "mcs": 60, "csb": 0.75, "lambda": 5.0},
 }
 
-# Deterministic generator edges (verified on train.csv, see module docstring).
+# Deterministic generator edges (verified on train.csv).
 CLIFF_INCOME = 170_537
 DEAD_LO, DEAD_HI = 31_004, 41_970
 COMMUTE_ZERO_EDGE = 83.0
+
+_LOG_LOCK = threading.Lock()
+
+
+def log(msg):
+    with _LOG_LOCK:
+        print(msg, flush=True)
 
 
 # ----------------------------------------------------------------------------
@@ -117,31 +121,40 @@ def ensure_import(pkg, import_name=None):
         subprocess.run([sys.executable, "-m", "pip", "install", "-q", pkg],
                        check=True, timeout=600)
         __import__(name)
-        print(f"[env] installed {pkg}")
+        log(f"[env] installed {pkg}")
         return True
     except Exception as exc:
-        print(f"[env] could not install/import {pkg}: {exc!r} -> related specs skipped")
+        log(f"[env] could not install/import {pkg}: {exc!r} -> related specs skipped")
         return False
 
 
-def find_data_dir():
-    candidates = [
-        "/content/data", "/content", "/kaggle/working",
+def _csv_search_dirs():
+    """Every directory worth looking in. Kaggle mounts inputs at
+    /kaggle/input/<slug> OR /kaggle/input/datasets/<owner>/<slug>, so the walk
+    must descend all the way — no depth pruning (a previous version stopped one
+    level too early and missed the files entirely). Only a visited-dir cap."""
+    shallow = [
         "/kaggle/input/datasets/mitanshkanani/dataset-for-experimentation-final",
-        "data", ".", os.getcwd(),
+        "/kaggle/working", "/content/data", "/content", "data", ".", os.getcwd(),
     ]
-    if os.path.isdir("/kaggle/input"):
-        for root in os.listdir("/kaggle/input"):
-            base = os.path.join("/kaggle/input", root)
-            if os.path.isdir(base):
-                candidates.append(base)
-                for sub in os.listdir(base):
-                    subp = os.path.join(base, sub)
-                    if os.path.isdir(subp):
-                        candidates.append(subp)
+    seen = set()
+    for d in shallow:
+        if os.path.isdir(d) and d not in seen:
+            seen.add(d)
+            yield d
+    if os.path.isdir(KAGGLE_INPUT_DIR):
+        for dirpath, _dirnames, _files in os.walk(KAGGLE_INPUT_DIR):
+            if dirpath in seen:
+                continue
+            seen.add(dirpath)
+            yield dirpath
+            if len(seen) > 500:                 # pathological tree guard
+                break
 
+
+def find_data_dir():
     def pick(names):
-        for d in candidates:
+        for d in _csv_search_dirs():
             for n in names:
                 p = os.path.join(d, n)
                 if os.path.isfile(p):
@@ -152,9 +165,15 @@ def find_data_dir():
     test_path = pick(["test.csv"])
     sample_path = pick(["sample_submission.csv"])
     if train_path is None or test_path is None:
+        listing = []
+        if os.path.isdir(KAGGLE_INPUT_DIR):
+            for dirpath, _dirnames, files in os.walk(KAGGLE_INPUT_DIR):
+                listing.append(f"  {dirpath}: {sorted(files)[:8]}")
         raise FileNotFoundError(
-            "train.csv / test.csv not found. Upload them to /content (Files panel) "
-            "or a ./data folder. See the module docstring."
+            "train.csv / test.csv not found.\nContents of " + KAGGLE_INPUT_DIR + ":\n"
+            + ("\n".join(listing) or "  (nothing mounted — no Input attached)")
+            + "\nUse the Input panel -> Datasets -> Add your dataset, then RESTART "
+              "the session so the mount appears."
         )
     return train_path, test_path, sample_path
 
@@ -189,11 +208,11 @@ def rank_pct(a):
 
 
 # ----------------------------------------------------------------------------
-# GBDT feature engineering (target-free).
+# GBDT feature engineering (target-free) — IDENTICAL to the Colab v6 build.
 # ----------------------------------------------------------------------------
 def income_digits(inc: pd.Series) -> pd.DataFrame:
-    """Integer digit decomposition. Income is integer-valued in this dataset;
-    fractional digits are harmful (float-repr bug), so we never create any."""
+    """Integer digit decomposition. Income is integer-valued here; fractional
+    digits are harmful (float-repr floors them), so we never create any."""
     inc_i = np.rint(pd.to_numeric(inc, errors="coerce").fillna(0).to_numpy(np.float64)).astype(np.int64)
     out = {}
     for div in (1, 10, 100, 1_000, 10_000, 100_000):
@@ -299,7 +318,7 @@ def _fit_te(keys, y, prior, smoothing):
 
 
 # Bucketed doubles + TRIPLES on low-cardinality interactions (public 0.9463
-# recipe). No exact-value TE here — it inflates CV without transferring to LB.
+# recipe). No exact-value TE for GBDTs: it inflates CV without transferring.
 TE_KEYS = {
     "te_incb_5k": ["inc_b_5k"],
     "te_incb_1k": ["inc_b_1k"],
@@ -357,6 +376,12 @@ def _cast_cat(Xtr, Xva, Xte, cat_features):
     return Xtr, Xva, Xte
 
 
+def _cat_devices(n_gpus: int) -> str:
+    if CAT_MULTI_GPU and n_gpus >= 2:
+        return ":".join(str(i) for i in range(n_gpus))   # "0:1"
+    return "0"
+
+
 def train_catboost(Xtr, ytr, Xva, yva, Xte, seed, use_gpu, cfg):
     from catboost import CatBoostClassifier, Pool
     cat_features = _cat_cols(Xtr)
@@ -373,7 +398,7 @@ def train_catboost(Xtr, ytr, Xva, yva, Xte, seed, use_gpu, cfg):
         logging_level="Silent",
         allow_writing_files=False,
         task_type="GPU" if use_gpu else "CPU",
-        devices="0",
+        devices=_cat_devices(int(cfg.get("n_gpus", 1))) if use_gpu else "0",
     )
     model.fit(
         Pool(Xtr, ytr, cat_features=cat_features),
@@ -391,17 +416,28 @@ def train_xgboost(Xtr, ytr, Xva, yva, Xte, seed, use_gpu, cfg):
     import xgboost as xgb
     cat_features = _cat_cols(Xtr)
     Xtr, Xva, Xte = _cast_cat(Xtr, Xva, Xte, cat_features)
-    model = xgb.XGBClassifier(
-        objective="binary:logistic", eval_metric="auc",
-        n_estimators=6000, learning_rate=cfg.get("lr", 0.03),
-        max_depth=cfg.get("depth", 6), min_child_weight=cfg.get("mcw", 12),
-        subsample=0.85, colsample_bytree=cfg.get("csb", 0.85),
-        reg_lambda=cfg.get("lambda", 3.0), reg_alpha=0.0, gamma=0.0,
-        max_cat_to_onehot=8, tree_method="hist",
-        device="cuda" if use_gpu else "cpu", enable_categorical=True,
-        early_stopping_rounds=250, random_state=seed, n_jobs=-1,
-    )
-    model.fit(Xtr, ytr, eval_set=[(Xva, yva)], verbose=0)
+    device = cfg.get("device", "cuda" if use_gpu else "cpu")
+
+    def _make(dev):
+        return xgb.XGBClassifier(
+            objective="binary:logistic", eval_metric="auc",
+            n_estimators=6000, learning_rate=cfg.get("lr", 0.03),
+            max_depth=cfg.get("depth", 6), min_child_weight=cfg.get("mcw", 12),
+            subsample=0.85, colsample_bytree=cfg.get("csb", 0.85),
+            reg_lambda=cfg.get("lambda", 3.0), reg_alpha=0.0, gamma=0.0,
+            max_cat_to_onehot=8, tree_method="hist",
+            device=dev, enable_categorical=True,
+            early_stopping_rounds=250, random_state=seed, n_jobs=-1,
+        )
+
+    try:
+        model = _make(device)
+        model.fit(Xtr, ytr, eval_set=[(Xva, yva)], verbose=0)
+    except Exception as exc:
+        # e.g. this XGBoost build rejects "cuda:1" -> fall back to generic cuda.
+        log(f"    [xgb] device={device} failed ({exc!r}) -> retry on 'cuda'")
+        model = _make("cuda" if use_gpu else "cpu")
+        model.fit(Xtr, ytr, eval_set=[(Xva, yva)], verbose=0)
     va_pred = model.predict_proba(Xva)[:, 1]
     te_pred = model.predict_proba(Xte)[:, 1]
     del model
@@ -420,7 +456,7 @@ def train_lightgbm(Xtr, ytr, Xva, yva, Xte, seed, use_gpu, cfg):
         min_child_samples=cfg.get("mcs", 40), subsample=0.85, subsample_freq=1,
         colsample_bytree=cfg.get("csb", 0.85), reg_lambda=cfg.get("lambda", 3.0),
         reg_alpha=0.0, max_bin=cfg.get("max_bin", 255),
-        n_jobs=-1, random_state=seed, verbose=-1,
+        n_jobs=cfg.get("n_jobs", -1), random_state=seed, verbose=-1,
     )
     model.fit(
         Xtr, ytr, eval_set=[(Xva, yva)], eval_metric="auc",
@@ -437,9 +473,8 @@ def train_lightgbm(Xtr, ytr, Xva, yva, Xte, seed, use_gpu, cfg):
 FACTORIES = {"catboost": train_catboost, "xgboost": train_xgboost, "lightgbm": train_lightgbm}
 
 
-def run_spec_sequential(key, kind, seeds, X, Xte, y, fold_ids, use_gpu):
+def run_spec_sequential(key, kind, seeds, X, Xte, y, fold_ids, use_gpu, cfg):
     factory = FACTORIES[kind]
-    cfg = CFG[key]
     oof_sum = np.zeros(len(y))
     te_sum = np.zeros(len(Xte))
     for seed in seeds:
@@ -455,8 +490,8 @@ def run_spec_sequential(key, kind, seeds, X, Xte, y, fold_ids, use_gpu):
             )
             oof[va] = vp
             tes.append(tp)
-            print(f"    [{key} seed={seed} fold={f}] auc={roc_auc_score(y[va], vp):.6f}", flush=True)
-        print(f"  [{key}] seed={seed} OOF AUC = {roc_auc_score(y, oof):.8f}", flush=True)
+            log(f"    [{key} seed={seed} fold={f}] auc={roc_auc_score(y[va], vp):.6f}")
+        log(f"  [{key}] seed={seed} OOF AUC = {roc_auc_score(y, oof):.8f}")
         oof_sum += oof
         te_sum += np.mean(np.vstack(tes), axis=0)
         del oof, tes
@@ -466,9 +501,27 @@ def run_spec_sequential(key, kind, seeds, X, Xte, y, fold_ids, use_gpu):
     return oof_avg, te_avg, roc_auc_score(y, oof_avg)
 
 
+def run_lane(specs, X, Xte, y, fold_ids, n_gpus, results, cfg_extra=None):
+    """Run a list of specs (one compute lane) and store results thread-safely."""
+    for key, kind, seeds in specs:
+        cfg = dict(CFG[key])
+        if cfg_extra:
+            cfg.update(cfg_extra)
+        if kind == "catboost":
+            cfg["n_gpus"] = n_gpus
+        elif kind == "xgboost" and n_gpus >= 1:
+            idx = XGB_GPU_OF_SPEC.get(key, 0) % n_gpus
+            cfg["device"] = f"cuda:{idx}" if n_gpus >= 2 else "cuda"
+        use_gpu = kind in GPU_KINDS and n_gpus > 0
+        res = run_spec_sequential(key, kind, seeds, X, Xte, y, fold_ids, use_gpu, cfg)
+        with _LOG_LOCK:
+            results[key] = res
+        log(f"== {key} OOF AUC = {res[2]:.8f} ==")
+
+
 # ----------------------------------------------------------------------------
-# PyTorch MLP (diversity model — our best-ever LB was 0.75*GBDT + 0.25*NN).
-# Deliberately different feature space: one-hot cats + light EXACT TE (m50).
+# PyTorch MLP (diversity model). Deliberately different feature space:
+# one-hot cats + light EXACT TE (m50) + edge flags + integer income digits.
 # ----------------------------------------------------------------------------
 NN_NUMERIC = [
     "Age", "Annual_Income_USD", "Daily_Commute_km", "Number_of_Cars_Owned",
@@ -616,15 +669,16 @@ def _train_fold_sklearn(Xtr_np, ytr, Xva_np, yva, Xte_np, seed):
     return va, te, roc_auc_score(yva, va)
 
 
-def run_nn(train, test, y, fold_ids):
+def run_nn(train, test, y, fold_ids, n_gpus):
     from sklearn.preprocessing import StandardScaler
     imported = _try_import_torch()
     if imported is not None:
-        device = imported[0].device("cuda" if imported[0].cuda.is_available() else "cpu")
-        print(f"[nn] PyTorch MLP on {device}")
+        torch = imported[0]
+        device = torch.device("cuda:0" if (torch.cuda.is_available() and n_gpus > 0) else "cpu")
+        log(f"[nn] PyTorch MLP on {device}")
     else:
         device = "cpu"
-        print("[nn] torch not found -> sklearn LogisticRegression fallback")
+        log("[nn] torch not found -> sklearn LogisticRegression fallback")
 
     Xtr = build_nn_base(train)
     Xte = build_nn_base(test)
@@ -633,7 +687,7 @@ def run_nn(train, test, y, fold_ids):
     Xte = Xte.fillna(0.0)
     Xtr, Xte = add_light_te(Xtr, Xte, y, fold_ids)
     cols = list(Xtr.columns)
-    print(f"[nn] features: {len(cols)}", flush=True)
+    log(f"[nn] features: {len(cols)}")
 
     oof_sum = np.zeros(len(y))
     te_sum = np.zeros(len(Xte))
@@ -650,8 +704,8 @@ def run_nn(train, test, y, fold_ids):
             vp, tp, fauc = train_fold_nn(Xtr_np, y[tr], Xva_np, y[va], Xte_np, seed + f, device)
             oof[va] = vp
             tes.append(tp)
-            print(f"    [nn seed={seed} fold={f}] auc={fauc:.6f}", flush=True)
-        print(f"  [nn] seed={seed} OOF AUC = {roc_auc_score(y, oof):.8f}", flush=True)
+            log(f"    [nn seed={seed} fold={f}] auc={fauc:.6f}")
+        log(f"  [nn] seed={seed} OOF AUC = {roc_auc_score(y, oof):.8f}")
         oof_sum += oof
         te_sum += np.mean(np.vstack(tes), axis=0)
         del oof, tes
@@ -662,8 +716,7 @@ def run_nn(train, test, y, fold_ids):
 
 
 # ----------------------------------------------------------------------------
-# OOF weight optimizer — INFO ONLY. We submit fixed weights (see docstring);
-# OOF-tuned weights overfit the CV and did not transfer to LB (v2 lesson).
+# OOF weight optimizer — INFO ONLY (OOF-tuned weights overfit; submit fixed).
 # ----------------------------------------------------------------------------
 def optimize_weights(oof_dict, y, n_iter=1500, seed=0):
     names = list(oof_dict)
@@ -701,22 +754,31 @@ def optimize_weights(oof_dict, y, n_iter=1500, seed=0):
 
 # ----------------------------------------------------------------------------
 # Original source dataset (itzzomkar EV Adoption, 10k rows) — auto-detected.
+# Guarded: your Kaggle dataset also ships fullypreprocessed_train.csv (298MB)
+# and onehotenc_train.csv, which carry the same 13 feature names + target and
+# would otherwise be mistaken for the source and merged as duplicate train rows.
+# The real source has no competition `id` column (it uses Buyer_ID) and is tiny.
 # ----------------------------------------------------------------------------
-ORIGINAL_CSV = None  # optionally set the exact path here
+ORIGINAL_CSV = None  # set the exact path here to bypass auto-detection entirely
+ORIG_NAME_HINTS = ("ev_adoption", "range_anxiety", "source", "original")
+MAX_ORIG_BYTES = 20 * 1024 * 1024
 
 
 def load_original(train, skip_paths):
     feats = [c for c in train.columns if c not in (ID_COL, TARGET)]
+    skip = {os.path.abspath(p) for p in skip_paths if p}
+
+    found = []  # (priority, path) — 0 = filename says it's the source
     roots = []
     if ORIGINAL_CSV and os.path.isfile(ORIGINAL_CSV):
         roots = [os.path.dirname(os.path.abspath(ORIGINAL_CSV))]
     else:
-        for r in ("/kaggle/input", "/content", os.getcwd(), "."):
+        for r in (KAGGLE_INPUT_DIR, "/content", os.getcwd(), "."):
             if os.path.isdir(r):
                 roots.append(r)
-    skip = {os.path.abspath(p) for p in skip_paths if p}
     for root in roots:
-        for dirpath, _, files in os.walk(root):
+        for dirpath, _dirnames, files in os.walk(root):
+            # No depth pruning: Kaggle nests the mount several levels deep.
             for fn in files:
                 if not fn.lower().endswith(".csv"):
                     continue
@@ -724,15 +786,26 @@ def load_original(train, skip_paths):
                 if os.path.abspath(p) in skip:
                     continue
                 try:
-                    df = pd.read_csv(p)
-                except Exception:
+                    if os.path.getsize(p) > MAX_ORIG_BYTES:
+                        continue
+                except OSError:
                     continue
-                if TARGET not in df.columns or not set(feats).issubset(df.columns):
-                    continue
-                sub = df[feats + [TARGET]].dropna(subset=[TARGET]).copy()
-                print(f"[original] merged {len(sub)} rows from {fn}")
-                return sub
-    print("[original] source dataset not found — training on competition data only")
+                prio = 0 if any(h in fn.lower() for h in ORIG_NAME_HINTS) else 1
+                found.append((prio, p))
+
+    for _prio, p in sorted(found):
+        try:
+            df = pd.read_csv(p)
+        except Exception:
+            continue
+        if TARGET not in df.columns or not set(feats).issubset(df.columns):
+            continue
+        if ID_COL in df.columns:      # competition/preprocessed data, not the source
+            continue
+        sub = df[feats + [TARGET]].dropna(subset=[TARGET]).copy()
+        log(f"[original] merged {len(sub)} rows from {os.path.basename(p)}")
+        return sub
+    log("[original] source dataset not found — training on competition data only")
     return None
 
 
@@ -740,7 +813,6 @@ def load_original(train, skip_paths):
 # Post-processing: tie-break + edge clamp (public 0.94656/0.94657 recipe).
 # ----------------------------------------------------------------------------
 def finalize_test_probs(blend_score, tiebreak_score, ref_probs, test):
-    # Unique ordering: blend score primary, orthogonal model breaks the ties.
     order = np.lexsort((rank_pct(tiebreak_score), blend_score))
     ranks = np.empty(len(order), dtype=np.int64)
     ranks[order] = np.arange(len(order))
@@ -756,7 +828,7 @@ def finalize_test_probs(blend_score, tiebreak_score, ref_probs, test):
         zero_edge = ((inc >= DEAD_LO) & (inc <= DEAD_HI)) | (comm >= COMMUTE_ZERO_EDGE)
         probs[cliff] = 1.0
         probs[zero_edge] = 0.0
-        print(f"[edges] clamped {int(cliff.sum())} rows -> 1.0, {int(zero_edge.sum())} rows -> 0.0")
+        log(f"[edges] clamped {int(cliff.sum())} rows -> 1.0, {int(zero_edge.sum())} rows -> 0.0")
     return probs
 
 
@@ -766,11 +838,11 @@ def finalize_test_probs(blend_score, tiebreak_score, ref_probs, test):
 def main():
     t0 = time.perf_counter()
     train_path, test_path, sample_path = find_data_dir()
-    print(f"train: {train_path}\ntest : {test_path}")
+    log(f"train: {train_path}\ntest : {test_path}")
 
     n_gpus = gpu_count()
-    use_gpu = n_gpus > 0
-    print(f"GPUs={n_gpus} use_gpu={use_gpu}")
+    n_cpus = multiprocessing.cpu_count()
+    log(f"GPUs={n_gpus} CPUs={n_cpus} cat_multi_gpu={CAT_MULTI_GPU}")
 
     available = {
         "catboost": ensure_import("catboost"),
@@ -790,42 +862,54 @@ def main():
             train = pd.concat([train, orig], ignore_index=True)
 
     y = encode_target(train[TARGET])
-    print(f"train {train.shape} test {test.shape} pos_rate {y.mean():.4f}")
+    log(f"train {train.shape} test {test.shape} pos_rate {y.mean():.4f}")
 
     skf = StratifiedKFold(n_splits=N_SPLITS, shuffle=True, random_state=RANDOM_STATE)
     fold_ids = np.full(len(train), -1, dtype=np.int16)
     for f, (_, va_idx) in enumerate(skf.split(np.zeros(len(train)), y)):
         fold_ids[va_idx] = f
 
-    # ---- GBDT ensemble ----
     Xtr = build_base_features(train)
     Xte = build_base_features(test)
     Xtr, Xte = add_target_encodings(Xtr, Xte, y, fold_ids)
     feature_cols = list(Xtr.columns)
-    print(f"[gbdt] features: {len(feature_cols)}", flush=True)
+    log(f"[gbdt] features: {len(feature_cols)}")
     for c in feature_cols:
         if Xtr[c].dtype == object:
             Xtr[c] = Xtr[c].astype(str)
             Xte[c] = Xte[c].astype(str)
+    Xtr = Xtr[feature_cols]
+    Xte = Xte[feature_cols]
 
+    # ---- Two overlapping lanes: GPU (CatBoost+XGBoost) and CPU (LightGBM) ----
     results = {}
-    for key, kind, seeds in specs:
-        spec_gpu = kind in GPU_KINDS and use_gpu
-        results[key] = run_spec_sequential(
-            key, kind, seeds, Xtr[feature_cols], Xte[feature_cols], y, fold_ids, spec_gpu
+    gpu_specs = [s for s in specs if s[1] in GPU_KINDS]
+    cpu_specs = [s for s in specs if s[1] == "lightgbm"]
+
+    if OVERLAP_CPU_LANE and gpu_specs and cpu_specs:
+        per_spec_jobs = max(1, n_cpus // len(cpu_specs))
+        log(f"[schedule] GPU lane: {[k for k, _, _ in gpu_specs]} (both T4s) | "
+            f"CPU lane: {[k for k, _, _ in cpu_specs]} (n_jobs={per_spec_jobs} each, overlapping)")
+        cpu_thread = threading.Thread(
+            target=run_lane, args=(cpu_specs, Xtr, Xte, y, fold_ids, n_gpus, results),
+            kwargs={"cfg_extra": {"n_jobs": per_spec_jobs}}, daemon=True,
         )
-    del Xtr
-    gc.collect()
+        cpu_thread.start()
+        run_lane(gpu_specs, Xtr, Xte, y, fold_ids, n_gpus, results)
+        cpu_thread.join()
+    else:
+        log("[schedule] single sequential lane")
+        run_lane(specs, Xtr, Xte, y, fold_ids, n_gpus, results)
 
     # ---- NN diversity model (never kills the run) ----
     nn_ok = False
     if USE_NN:
         try:
-            oof_nn, te_nn, auc_nn = run_nn(train, test, y, fold_ids)
+            oof_nn, te_nn, auc_nn = run_nn(train, test, y, fold_ids, n_gpus)
             results["nn"] = (oof_nn, te_nn, auc_nn)
             nn_ok = True
         except Exception as exc:
-            print(f"[nn] FAILED ({exc!r}) -> continuing with GBDTs only", flush=True)
+            log(f"[nn] FAILED ({exc!r}) -> continuing with GBDTs only")
 
     # ---- Fixed-weight rank blend (0.75 GBDT / 0.25 NN when NN ran) ----
     keys = list(results)
@@ -841,23 +925,24 @@ def main():
     blend_auc = roc_auc_score(y, blend_oof)
 
     opt_w, opt_auc = optimize_weights({k: results[k][0] for k in keys}, y)
-    print("\n" + "=" * 70)
+    log("\n" + "=" * 70)
     for k in keys:
-        print(f"{k:8s} OOF AUC = {results[k][2]:.8f}   (blend w {weights[k]:.3f} | opt w {opt_w[k]:.3f})")
-    print(f"{'BLEND':8s} OOF AUC = {blend_auc:.8f}   <-- SUBMITTED (fixed weights)")
-    print(f"{'OPT':8s} OOF AUC = {opt_auc:.8f}   (info only, overfits OOF)")
-    print("=" * 70, flush=True)
+        log(f"{k:8s} OOF AUC = {results[k][2]:.8f}   (blend w {weights[k]:.3f} | opt w {opt_w[k]:.3f})")
+    log(f"{'BLEND':8s} OOF AUC = {blend_auc:.8f}   <-- SUBMITTED (fixed weights)")
+    log(f"{'OPT':8s} OOF AUC = {opt_auc:.8f}   (info only, overfits OOF)")
+    log("=" * 70)
 
     # ---- Tie-break + edge clamp ----
     tie_key = "nn" if nn_ok else ("cat" if "cat" in results else keys[0])
     best_gbdt = max((k for k in keys if k != "nn"), key=lambda k: results[k][2])
     final_probs = finalize_test_probs(blend_te, results[tie_key][1], results[best_gbdt][1], test)
 
-    np.save("v6_oof.npy", blend_oof)
-    np.save("v6_test.npy", final_probs)
+    out_dir = "/kaggle/working" if os.path.isdir("/kaggle/working") else "."
+    np.save(os.path.join(out_dir, "v6k_oof.npy"), blend_oof)
+    np.save(os.path.join(out_dir, "v6k_test.npy"), final_probs)
     if nn_ok:
-        np.save("v6_nn_oof.npy", results["nn"][0])
-        np.save("v6_nn_test.npy", results["nn"][1])
+        np.save(os.path.join(out_dir, "v6k_nn_oof.npy"), results["nn"][0])
+        np.save(os.path.join(out_dir, "v6k_nn_test.npy"), results["nn"][1])
 
     sub = pd.DataFrame({ID_COL: test[ID_COL].to_numpy(), TARGET: final_probs})
     if sample_path:
@@ -866,10 +951,10 @@ def main():
             sub = submission[[ID_COL]].merge(sub, on=ID_COL, how="left")
 
     fname = f"submission_{VERSION}.csv"
-    out = os.path.join("/kaggle/working", fname) if os.path.isdir("/kaggle/working") else fname
+    out = os.path.join(out_dir, fname)
     sub.to_csv(out, index=False)
-    print(f"Wrote {out} ({len(sub)} rows) | prob {final_probs.min():.4f}..{final_probs.max():.4f} mean {final_probs.mean():.4f}")
-    print(f"Runtime: {time.perf_counter() - t0:.1f}s")
+    log(f"Wrote {out} ({len(sub)} rows) | prob {final_probs.min():.4f}..{final_probs.max():.4f} mean {final_probs.mean():.4f}")
+    log(f"Runtime: {time.perf_counter() - t0:.1f}s")
 
 
 if __name__ == "__main__":
