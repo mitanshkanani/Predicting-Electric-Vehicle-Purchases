@@ -1,50 +1,47 @@
 """
-Predicting Electric Vehicle Purchases — Kaggle Playground S06E09  (v6 · KAGGLE build)
-Same model/feature recipe as ev_s6e9_v6.py (the Colab single-T4 build), but the
-compute layout is rewritten to use BOTH Kaggle T4s AND the CPU pool at the same
-time. Identical features/TE/blend/post-processing, so scores are comparable.
+Predicting Electric Vehicle Purchases — Kaggle Playground S06E09  (v7 · KAGGLE)
 
-HOW BOTH GPUs GET USED (no multiprocessing — that breaks on Kaggle, see below):
-  1. CatBoost  -> task_type="GPU", devices="0:1"  (one model spread over both T4s)
-  2. XGBoost   -> device="cuda" (single). NOT "cuda:0"/"cuda:1": pinning per-spec
-     GPUs in a process that also holds a CatBoost multi-GPU context aborted the
-     kernel with `thrust::system_error` at ~1.8h. Set XGB_USE_GPU=False to run
-     XGBoost on CPU if GPU aborts ever repeat.
-  3. LightGBM  -> CPU, run in a BACKGROUND THREAD while the GPU lane trains.
-     LightGBM releases the GIL during fitting, so the CPU lane and the GPU lane
-     genuinely overlap. This is where the ~2h saving comes from: on the Colab
-     build the GPU sits idle for hours while LightGBM grinds on 2 cores.
-  4. PyTorch MLP -> cuda:0 (tiny model; DataParallel would only add overhead).
+WHY v7 EXISTS — v6 (LB 0.94452) was a regression, and the log proves why:
+  LightGBM OOF fell from 0.94719 (v1) to 0.94373 (v6). The only thing v6 deleted
+  was EXACT-VALUE income target encoding. Our own LB history says that feature
+  transfers to the real leaderboard, monotonically with its smoothing:
+      v1/v2  exact TE, smoothing 2/10 .......... 0.94540   <- our best GBDT
+      v3     exact TE, smoothing 10/50 ......... 0.94503
+      v6     exact TE REMOVED .................. 0.94452
+  I had read "OOF rose while LB stayed flat" as evidence that exact TE was a CV
+  mirage. That was wrong: exact-value TE on a near-continuous generator variable
+  is a legitimate estimate of p(buy | that exact income), and test rows share
+  those income values. The public 0.94638 "Pure LGBM" uses the same thing
+  (sklearn TargetEncoder on raw income IS exact-value TE).
 
-CRASH INSURANCE (RESUME=True): every finished model writes its OOF + test
-predictions to v6k_ckpt/, and a submittable submission_v6_kaggle_partial.csv is
-rewritten after each one. A CUDA abort is a C++ terminate() — uncatchable in
-Python — so if the kernel dies you just rerun: finished models load from disk in
-seconds and only the incomplete ones retrain. A spec that raises a Python
-exception is skipped rather than killing the run.
+v7 = v6's genuine improvements + exact-value TE restored + the weak model cut:
+  1. EXACT-VALUE TE back on income and commute, smoothing 2/10 (the v1 config),
+     plus exact income x subsidy and income x anxiety (low-cardinality crosses).
+  2. KEEP from v6: integer income digits, bucketed + TRIPLE TE, generator edge
+     flags, lexsort tie-break, edge clamping, original-data merge, NN diversity.
+  3. CatBoost DROPPED from the blend. It was our worst member (OOF 0.94298 vs
+     lgbm_a 0.94373) and got 15% of the weight — the same drag that made v1's
+     equal blend score below LightGBM alone. Also saves ~1.3h.
+  4. Checkpoints are now keyed by a hash of the feature set, so a v6 checkpoint
+     can never be silently reused after features change.
 
-WHY NOT ProcessPoolExecutor fold-parallelism: Kaggle's "Save & Run All" executes
-the .py inside the notebook kernel, so spawned workers cannot re-import functions
-from __main__ -> BrokenProcessPool. Threads avoid that entirely (no pickling of
-callables, shared memory).
+READ THIS BEFORE JUDGING THE RESULT: with exact TE back, OOF will jump to ~0.947
+again. That number is leakage-inflated and MEANINGLESS — income values repeat
+across folds. Judge v7 only by the LB score, versus v1's 0.94540.
 
 =========================  KAGGLE SETUP  ======================================
-New Kaggle Notebook -> Add Input (twice):
-  1. Competition data  "Playground Series S6E9" (train.csv / test.csv /
-     sample_submission.csv)  — OR your own dataset
-     "mitanshkanani/dataset-for-experimentation-final"
-  2. Dataset "itzzomkar/ev-adoption-behavior-and-range-anxiety"  -> gives the
-     10k-row EV_Adoption_and_Range_Anxiety_Dataset.csv, auto-detected + merged.
-Then either attach this file as code and run it, or paste it into a cell.
-Output: /kaggle/working/submission_v6_kaggle.csv (+ v6k_*.npy artifacts).
-GPU quota note: Kaggle gives 30 GPU-hours/week; this run uses roughly 3-5h of
-wall-clock. Enable GPU accelerator, then "Save & Run All".
-===============================================================================
+One Input is enough: the dataset with train.csv / test.csv /
+sample_submission.csv / EV_Adoption_and_Range_Anxiety_Dataset.csv (auto-detected,
+auto-merged). Enable the GPU accelerator. Run interactively if you can, so a
+kernel death resumes from /kaggle/working/v7_ckpt_* instead of starting over.
+Output: /kaggle/working/submission_v7.csv (+ submission_v7_partial.csv).
+Expected wall-clock: ~3h (CatBoost removed).
 """
 
 from __future__ import annotations
 
 import gc
+import hashlib
 import multiprocessing
 import os
 import subprocess
@@ -66,11 +63,13 @@ warnings.filterwarnings("ignore")
 # ----------------------------------------------------------------------------
 TARGET = "Will_Buy_EV"
 ID_COL = "id"
-VERSION = "v6_kaggle"
+VERSION = "v7"
 N_SPLITS = 10
 RANDOM_STATE = 42
-TE_SMOOTHINGS = (10.0, 30.0)     # bucketed/triple TE (GBDT)
-NN_TE_SMOOTHING = 50.0           # light exact TE (NN only, v4-proven)
+# v7: EXACT-value TE is back at low smoothing (the v1 config that scored 0.94540).
+TE_SMOOTHINGS_EXACT = (2.0, 10.0)
+TE_SMOOTHINGS_BUCKET = (10.0, 30.0)
+NN_TE_SMOOTHING = 10.0           # v7: NN exact TE also lowered (same lesson)
 
 USE_ORIGINAL_DATA = True         # merge itzzomkar source dataset if found
 EDGE_CLAMP = True                # clamp deterministic edge rows at the end
@@ -89,20 +88,24 @@ OVERLAP_CPU_LANE = True          # run LightGBM in a thread while GPU lane train
 XGB_USE_GPU = True
 
 # Resume insurance: every finished model is checkpointed to disk, so a kernel
-# death costs one model instead of the whole run.
+# death costs one model instead of the whole run. The directory name carries a
+# hash of the feature set (set in init_run_state), so checkpoints from a run
+# with DIFFERENT features can never be silently reused.
 RESUME = True
-CKPT_DIRNAME = "v6k_ckpt"
+CKPT_DIRNAME = "v7_ckpt"
 # A "Save & Run All" (commit) run starts a FRESH container, so its own
 # /kaggle/working checkpoints are gone next time. To resume across commits:
 # after a crash, click "Output -> New Version" on that notebook, attach that
 # output dataset as an Input here, and rerun — checkpoints are found automatically
-# (or set this explicitly to e.g. "/kaggle/input/<owner>/<slug>/v6k_ckpt").
+# (or set this explicitly to e.g. "/kaggle/input/<owner>/<slug>/v7_ckpt_xxxxxxxx").
 CKPT_INPUT_DIR = None
 
 KAGGLE_INPUT_DIR = "/kaggle/input"   # Kaggle mounts Inputs here (may nest deeper)
 
+# CatBoost removed in v7: worst member (OOF 0.94298 vs lgbm_a 0.94373), the
+# weight optimizer gave it 0.008, and it repeats the v1 failure where equal
+# averaging let a weak model drag the blend below LightGBM alone.
 MODEL_SPECS = [
-    ("cat",    "catboost", (0, 1)),
     ("xgb_a",  "xgboost",  (42, 7)),
     ("xgb_b",  "xgboost",  (13,)),
     ("lgbm_a", "lightgbm", (42, 7)),
@@ -299,6 +302,11 @@ def build_base_features(df: pd.DataFrame) -> pd.DataFrame:
     x["comm_b1"] = (comm // 10).astype(np.int16)
     x["comm_b5"] = (comm // 50).astype(np.int16)
 
+    # Key sources for EXACT-value target encoding only — dropped from the model
+    # matrix in main() (raw high-cardinality ids must never be fed to a GBDT).
+    x["inc_exact"] = np.rint(income.to_numpy(dtype=np.float64)).astype(np.int64)
+    x["comm_exact"] = [f"{v:.1f}" for v in commute.to_numpy(dtype=np.float64)]
+
     x["income_per_car"] = income / (cars + 1.0)
     x["income_per_age"] = income / (age + 1.0)
     x["total_charging"] = csh + csw
@@ -341,28 +349,36 @@ def _fit_te(keys, y, prior, smoothing):
     return (stats["sum"] + smoothing * prior) / (stats["count"] + smoothing)
 
 
-# Bucketed doubles + TRIPLES on low-cardinality interactions (public 0.9463
-# recipe). No exact-value TE for GBDTs: it inflates CV without transferring.
-TE_KEYS = {
-    "te_incb_5k": ["inc_b_5k"],
-    "te_incb_1k": ["inc_b_1k"],
-    "te_cmb": ["comm_b5"],
-    "te_incb_subsidy": ["inc_b_5k", "Subsidy_Available"],
-    "te_incb_env": ["inc_b_5k", "Environmental_Concern_Level"],
-    "te_incb_anx": ["inc_b_5k", "Range_Anxiety_Level"],
-    "te_inc_sub_anx": ["inc_b_5k", "Subsidy_Available", "Range_Anxiety_Level"],
-    "te_inc_sub_env": ["inc_b_5k", "Subsidy_Available", "Environmental_Concern_Level"],
-    "te_spike_sub_anx": ["is_30k_spike", "Subsidy_Available", "Range_Anxiety_Level"],
-    "te_cmb_sub": ["comm_b5", "Subsidy_Available"],
-    "te_city_sub_anx": ["City_Type", "Subsidy_Available", "Range_Anxiety_Level"],
+# v7: EXACT-value TE restored (this is what made v1/v2 our best GBDT LB, 0.94540)
+# alongside v6's bucketed doubles/TRIPLES. "exact"/"bucket" pick the smoothing set.
+TE_SPECS = {
+    # ---- exact value (income is integer-valued; commute has 1 decimal) ----
+    "te_incex": (["inc_exact"], "exact"),
+    "te_commex": (["comm_exact"], "exact"),
+    "te_incex_sub": (["inc_exact", "Subsidy_Available"], "exact"),
+    "te_incex_anx": (["inc_exact", "Range_Anxiety_Level"], "exact"),
+    # ---- bucketed doubles + TRIPLES on low-cardinality interactions ----
+    "te_incb_5k": (["inc_b_5k"], "bucket"),
+    "te_incb_1k": (["inc_b_1k"], "bucket"),
+    "te_cmb": (["comm_b5"], "bucket"),
+    "te_incb_subsidy": (["inc_b_5k", "Subsidy_Available"], "bucket"),
+    "te_incb_env": (["inc_b_5k", "Environmental_Concern_Level"], "bucket"),
+    "te_incb_anx": (["inc_b_5k", "Range_Anxiety_Level"], "bucket"),
+    "te_inc_sub_anx": (["inc_b_5k", "Subsidy_Available", "Range_Anxiety_Level"], "bucket"),
+    "te_inc_sub_env": (["inc_b_5k", "Subsidy_Available", "Environmental_Concern_Level"], "bucket"),
+    "te_spike_sub_anx": (["is_30k_spike", "Subsidy_Available", "Range_Anxiety_Level"], "bucket"),
+    "te_cmb_sub": (["comm_b5", "Subsidy_Available"], "bucket"),
+    "te_city_sub_anx": (["City_Type", "Subsidy_Available", "Range_Anxiety_Level"], "bucket"),
 }
+TE_SMOOTHS = {"exact": TE_SMOOTHINGS_EXACT, "bucket": TE_SMOOTHINGS_BUCKET}
+KEY_ONLY_COLS = ("inc_exact", "comm_exact")   # TE key sources, not model features
 
 
 def add_target_encodings(train, test, y, fold_ids):
-    for name, cols in TE_KEYS.items():
+    for name, (cols, kind) in TE_SPECS.items():
         tr_keys = _te_key(train, cols)
         te_keys = _te_key(test, cols)
-        for m in TE_SMOOTHINGS:
+        for m in TE_SMOOTHS[kind]:
             col = f"{name}_m{int(m)}"
             enc_tr = np.full(len(train), np.nan, dtype=np.float32)
             for f in range(N_SPLITS):
@@ -529,27 +545,40 @@ def run_spec_sequential(key, kind, seeds, X, Xte, y, fold_ids, use_gpu, cfg):
 # Checkpointing + partial submissions. A CUDA/thrust abort kills the whole
 # process, so the only defence is writing each finished model to disk.
 # ----------------------------------------------------------------------------
-_RUN = {"write_dir": None, "read_dir": None, "out_dir": ".",
+_RUN = {"write_dir": None, "read_dir": None, "out_dir": ".", "tag": CKPT_DIRNAME,
         "test": None, "y": None, "n_train": 0, "n_test": 0}
 
 
+def _feature_tag(feature_cols):
+    """Checkpoints are only valid for the exact feature set that produced them."""
+    payload = "|".join(sorted(feature_cols)) + f"#{N_SPLITS}#{RANDOM_STATE}#{len(TE_SPECS)}"
+    return hashlib.md5(payload.encode()).hexdigest()[:8]
+
+
 def _find_ckpt_input():
-    """Locate a v6k_ckpt folder published as a Kaggle Input (cross-commit resume)."""
+    """Locate this feature set's ckpt folder published as a Kaggle Input (cross-commit resume)."""
     if CKPT_INPUT_DIR and os.path.isdir(CKPT_INPUT_DIR):
         return CKPT_INPUT_DIR
     if not os.path.isdir(KAGGLE_INPUT_DIR):
         return None
-    for dirpath, dirnames, _files in os.walk(KAGGLE_INPUT_DIR):
-        if os.path.basename(dirpath) == CKPT_DIRNAME:
+    foreign = []
+    for dirpath, _dirnames, _files in os.walk(KAGGLE_INPUT_DIR):
+        base = os.path.basename(dirpath)
+        if base == _RUN["tag"]:
             return dirpath
+        if base.startswith(CKPT_DIRNAME):
+            foreign.append(base)
         if dirpath.count(os.sep) - KAGGLE_INPUT_DIR.count(os.sep) >= 4:
-            dirnames[:] = []
+            break
+    if foreign:
+        log(f"[ckpt] attached checkpoints {foreign} are for a DIFFERENT feature set -> ignoring")
     return None
 
 
-def init_run_state(train, test, y, out_dir):
+def init_run_state(train, test, y, out_dir, feature_cols):
     _RUN["out_dir"] = out_dir
-    _RUN["write_dir"] = os.path.join(out_dir, CKPT_DIRNAME)
+    _RUN["tag"] = f"{CKPT_DIRNAME}_{_feature_tag(feature_cols)}"
+    _RUN["write_dir"] = os.path.join(out_dir, _RUN["tag"])
     os.makedirs(_RUN["write_dir"], exist_ok=True)
     _RUN["read_dir"] = _find_ckpt_input() or _RUN["write_dir"]
     _RUN["test"] = test
@@ -564,7 +593,7 @@ def init_run_state(train, test, y, out_dir):
             except OSError:
                 pass
         src = "attached Input (cross-commit resume)" if _RUN["read_dir"] != _RUN["write_dir"] else "this session"
-        log(f"[ckpt] resume on, reading from {src}; already-finished models: {sorted(done) or 'none'}")
+        log(f"[ckpt] {_RUN['tag']}, resume on, reading from {src}; already-finished: {sorted(done) or 'none'}")
 
 
 def _ckpt_files(key, d):
@@ -979,11 +1008,10 @@ def main():
     n_cpus = multiprocessing.cpu_count()
     log(f"GPUs={n_gpus} CPUs={n_cpus} cat_multi_gpu={CAT_MULTI_GPU}")
 
-    available = {
-        "catboost": ensure_import("catboost"),
-        "xgboost": ensure_import("xgboost"),
-        "lightgbm": ensure_import("lightgbm"),
-    }
+    used_kinds = {k for _key, k, _s in MODEL_SPECS}
+    available = {kind: ensure_import(pkg) for kind, pkg in
+                 (("catboost", "catboost"), ("xgboost", "xgboost"), ("lightgbm", "lightgbm"))
+                 if kind in used_kinds}
     specs = [s for s in MODEL_SPECS if available.get(s[1], False)]
     if not specs:
         raise RuntimeError("No GBDT library available.")
@@ -1007,8 +1035,8 @@ def main():
     Xtr = build_base_features(train)
     Xte = build_base_features(test)
     Xtr, Xte = add_target_encodings(Xtr, Xte, y, fold_ids)
-    feature_cols = list(Xtr.columns)
-    log(f"[gbdt] features: {len(feature_cols)}")
+    feature_cols = [c for c in Xtr.columns if c not in KEY_ONLY_COLS]
+    log(f"[gbdt] features: {len(feature_cols)} (TE key-only cols dropped)")
     for c in feature_cols:
         if Xtr[c].dtype == object:
             Xtr[c] = Xtr[c].astype(str)
@@ -1017,16 +1045,16 @@ def main():
     Xte = Xte[feature_cols]
 
     out_dir = "/kaggle/working" if os.path.isdir("/kaggle/working") else "."
-    init_run_state(train, test, y, out_dir)
+    init_run_state(train, test, y, out_dir, feature_cols)
 
-    # ---- Two overlapping lanes: GPU (CatBoost+XGBoost) and CPU (LightGBM) ----
+    # ---- Overlapping lanes: GPU (XGBoost) and CPU (LightGBM) ----
     results = {}
     gpu_specs = [s for s in specs if s[1] in GPU_KINDS]
     cpu_specs = [s for s in specs if s[1] == "lightgbm"]
 
     if OVERLAP_CPU_LANE and gpu_specs and cpu_specs:
         per_spec_jobs = max(1, n_cpus // len(cpu_specs))
-        log(f"[schedule] GPU lane: {[k for k, _, _ in gpu_specs]} (both T4s) | "
+        log(f"[schedule] GPU lane: {[k for k, _, _ in gpu_specs]} on cuda | "
             f"CPU lane: {[k for k, _, _ in cpu_specs]} (n_jobs={per_spec_jobs} each, overlapping)")
         cpu_thread = threading.Thread(
             target=run_lane, args=(cpu_specs, Xtr, Xte, y, fold_ids, n_gpus, results),
@@ -1080,15 +1108,15 @@ def main():
     log("=" * 70)
 
     # ---- Tie-break + edge clamp ----
-    tie_key = "nn" if nn_ok else ("cat" if "cat" in results else keys[0])
+    tie_key = "nn" if nn_ok else keys[0]
     scale_key = max(gbdt_keys, key=lambda k: results[k][2]) if gbdt_keys else keys[0]
     final_probs = finalize_test_probs(blend_te, results[tie_key][1], results[scale_key][1], test)
 
-    np.save(os.path.join(out_dir, "v6k_oof.npy"), blend_oof)
-    np.save(os.path.join(out_dir, "v6k_test.npy"), final_probs)
+    np.save(os.path.join(out_dir, "v7_oof.npy"), blend_oof)
+    np.save(os.path.join(out_dir, "v7_test.npy"), final_probs)
     if nn_ok:
-        np.save(os.path.join(out_dir, "v6k_nn_oof.npy"), results["nn"][0])
-        np.save(os.path.join(out_dir, "v6k_nn_test.npy"), results["nn"][1])
+        np.save(os.path.join(out_dir, "v7_nn_oof.npy"), results["nn"][0])
+        np.save(os.path.join(out_dir, "v7_nn_test.npy"), results["nn"][1])
 
     sub = pd.DataFrame({ID_COL: test[ID_COL].to_numpy(), TARGET: final_probs})
     if sample_path:
