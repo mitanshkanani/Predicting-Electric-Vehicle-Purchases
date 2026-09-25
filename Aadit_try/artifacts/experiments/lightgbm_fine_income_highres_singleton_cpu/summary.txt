@@ -1,0 +1,50 @@
+EXPERIMENT: LIGHTGBM HIGH-RESOLUTION + SINGLETON CONSTRAINTS
+====================================================================================
+
+HYPOTHESIS
+Can high histogram resolution become useful when LightGBM is prevented from combining different features along one branch?
+
+ONLY CHANGE VS VERIFIED HIGH-RES BASELINE
+Add one singleton interaction-constraint group per feature.
+
+HELD FIXED
+- max_bin=13214
+- complete current fine-income LightGBM representation
+- raw features
+- income digits
+- exact income/commute frequency features
+- exact income/commute nested TE
+- fine income TE at $50/$250
+- learned nested logistic base margin
+- smoothing m=2
+- all other LightGBM parameters
+- seed 42
+- CPU
+- frozen 5 folds
+
+Frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+Annual_Income_USD unique values: 13214
+Verified high-res baseline: 0.94595344
+High-res + singleton candidate: 0.94573418
+Delta: -0.00021926
+Folds improved: 0/5
+Folds worse: 5/5
+Probability corr vs baseline: 0.997410
+Rank corr vs baseline: 0.997970
+Primitive: NEGATIVE_HIGHRES_SINGLETON_LGBM_SYNERGY
+Runtime: 258.85s
+
+FOLD RESULTS
+Fold 0: 0.94497885 -> 0.94465138 (-0.00032747)
+Fold 1: 0.94562644 -> 0.94545520 (-0.00017124)
+Fold 2: 0.94694716 -> 0.94667094 (-0.00027622)
+Fold 3: 0.94626633 -> 0.94605414 (-0.00021218)
+Fold 4: 0.94596189 -> 0.94585640 (-0.00010550)
+
+DIVERSITY CORRELATIONS
+fine_xgb: prob_corr=0.997220, rank_corr=0.997727
+champion: prob_corr=0.809486, rank_corr=0.997639
+
+FINE INCOME TE IMPORTANCE
+HTE__income_50_bucket: 49421.47601250
+HTE__income_250_bucket: 4400.62150302
