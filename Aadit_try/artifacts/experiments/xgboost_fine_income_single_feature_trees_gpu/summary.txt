@@ -1,0 +1,49 @@
+EXPERIMENT: XGBOOST FINE-INCOME + SINGLE-FEATURE TREE CONSTRAINTS
+====================================================================================
+
+HYPOTHESIS
+Can $50/$250 income neighbourhoods add useful local structure between
+exact income identity and the existing $1k income hierarchy?
+
+ONLY CHANGE
+XGBoost interaction constraints: one singleton group per feature.
+
+HELD FIXED
+- frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+- complete current fine-income XGB representation
+- exact income + commute TE
+- hierarchical income TE at 1k/10k/100k
+- hierarchical commute TE at 1km/5km/10km
+- income digits
+- exact income + commute frequencies
+- learned nested logistic base margin
+- smoothing m=2
+- depth-4 XGBoost configuration
+- seed 42
+- CUDA GPU
+
+ONLY MODEL CHANGE
+- singleton interaction constraint per feature
+
+RESULTS
+Current fine-income XGB baseline OOF: 0.94606664
+Single-feature-tree candidate OOF: 0.94576893
+Delta vs baseline: -0.00029772
+Folds improved: 0/5
+Folds worse: 5/5
+Probability corr vs baseline: 0.997923
+Rank corr vs baseline: 0.998290
+Runtime: 159.56 seconds
+
+DECISION: NEGATIVE_SINGLE_FEATURE_TREE_SIGNAL
+
+FOLD RESULTS
+Fold 0: baseline=0.94510032 -> candidate=0.94477925 (-0.00032106)
+Fold 1: baseline=0.94580127 -> candidate=0.94551571 (-0.00028556)
+Fold 2: baseline=0.94702068 -> candidate=0.94667283 (-0.00034785)
+Fold 3: baseline=0.94634732 -> candidate=0.94611387 (-0.00023345)
+Fold 4: baseline=0.94607535 -> candidate=0.94577342 (-0.00030194)
+
+FINE INCOME TE IMPORTANCE
+HTE__income_50_bucket: 0.07917798
+HTE__income_250_bucket: 0.02324233

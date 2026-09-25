@@ -1,0 +1,32 @@
+EXPERIMENT: CHAMPION HARD-EDGE AUDIT
+========================================================================================
+
+NO TRAINING
+NO SUBMISSION GENERATION
+NO BLEND-WEIGHT SEARCH
+
+Frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+Raw champion OOF verified: 0.94611253
+
+MAIN CROSS-FITTED TESTS
+High-income threshold per fold = max income among NEGATIVE outer-training rows.
+Long-commute threshold per fold = max commute among POSITIVE outer-training rows.
+
+Champion fold-rank baseline: 0.94611252
+High-income hard edge: 0.94611181 (-0.00000071), folds improved 4/5
+Long-commute hard edge: 0.94611300 (+0.00000048), folds improved 5/5
+Combined hard edges: 0.94611229 (-0.00000022), folds improved 4/5
+Primitive: NO_MEANINGFUL_CROSSFIT_HARD_EDGE_SIGNAL
+
+PUBLIC OBSERVATION SANITY CHECKS
+P(Buy | Subsidy=Yes): 0.27469523
+P(Buy | Subsidy=No): 0.00575665
+Observed buy-rate ratio: 47.7179x
+P(Buy | income<31,004): 0.04428068
+P(Subsidy=Yes | Buy, income<31,004): 0.98936950
+P(Buy | income<31,004, Subsidy=Yes): 0.07011300
+P(Buy | income<31,004, Subsidy=No): 0.00125476
+
+IMPORTANT
+Public fixed-threshold tests are descriptive because those rules were discovered from the same competition training labels.
+Do not modify the Kaggle submission unless the cross-fitted hard-edge tests show a meaningful, fold-stable gain.
