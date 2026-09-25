@@ -4,3 +4,10 @@ __pycache__/
 .ipynb_checkpoints/
 .DS_Store
 Thumbs.db
+
+# External Kaggle OOF datasets
+external_oof_library/
+external_oof_strong/
+
+# Large generated audit predictions
+artifacts/experiments/external_oof_diversity_audit/meta_oof_predictions.csv
