@@ -1,0 +1,36 @@
+EXPERIMENT: FINE-INCOME LIGHTGBM -> CURRENT CHAMPION REPLACEMENT AUDIT
+========================================================================================
+
+NO TRAINING
+NO WEIGHT SEARCH
+NO LEADERBOARD USAGE
+
+ONLY CHANGE
+OLD engineered LightGBM -> fine-income LightGBM
+
+Frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+
+FROZEN WEIGHTS
+Fold 0: CAT=.25 XGB=.50 LGBM=.25
+Fold 1: CAT=.25 XGB=.50 LGBM=.25
+Fold 2: CAT=.20 XGB=.55 LGBM=.25
+Fold 3: CAT=.20 XGB=.55 LGBM=.25
+Fold 4: CAT=.20 XGB=.55 LGBM=.25
+
+RESULT
+Current champion: 0.94611253
+Fine-LGBM replacement: 0.94612099
+Delta: +0.00000846
+Folds improved: 3/5
+Folds worse: 2/5
+Folds unchanged: 0/5
+Probability corr vs champion: 0.999855
+Rank corr vs champion: 0.999854
+Primitive: WEAK_OR_INCONSISTENT_FINE_LGBM_REPLACEMENT_SIGNAL
+
+FOLD RESULTS
+Fold 0: 0.94515622 -> 0.94515652 (+0.00000030)
+Fold 1: 0.94580919 -> 0.94582551 (+0.00001632)
+Fold 2: 0.94708674 -> 0.94708606 (-0.00000068)
+Fold 3: 0.94638260 -> 0.94641309 (+0.00003049)
+Fold 4: 0.94612779 -> 0.94612552 (-0.00000228)

@@ -1,0 +1,39 @@
+EXPERIMENT: LIGHTGBM + FINE $50/$250 INCOME TE
+====================================================================================
+
+HYPOTHESIS
+Can the strongest local-income signal improve the old diverse LightGBM without adding the hierarchical features that previously reduced ensemble value?
+
+ONLY CHANGE
+Add nested leakage-safe HTE__income_50_bucket and HTE__income_250_bucket.
+
+INTENTIONALLY NOT ADDED
+- hierarchical income TE
+- hierarchical commute TE
+- parameter changes
+
+Frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+Old engineered LightGBM: 0.94578042
+Fine-income LightGBM: 0.94595207
+Delta: +0.00017165
+Folds improved: 5/5
+Folds worse: 0/5
+Probability corr vs old LGBM: 0.998524
+Rank corr vs old LGBM: 0.997686
+Primitive: POSITIVE_FINE_INCOME_LGBM_SIGNAL
+Runtime: 114.14s
+
+FOLD RESULTS
+Fold 0: 0.94485671 -> 0.94498234 (+0.00012563)
+Fold 1: 0.94548225 -> 0.94565818 (+0.00017593)
+Fold 2: 0.94675246 -> 0.94688454 (+0.00013208)
+Fold 3: 0.94602693 -> 0.94631100 (+0.00028407)
+Fold 4: 0.94580188 -> 0.94594160 (+0.00013972)
+
+DIVERSITY CORRELATIONS
+fine_xgb: prob_corr=0.999008, rank_corr=0.999126
+champion: prob_corr=0.810179, rank_corr=0.998875
+
+FINE INCOME TE IMPORTANCE
+HTE__income_50_bucket: 47677.07000751
+HTE__income_250_bucket: 13019.24711356

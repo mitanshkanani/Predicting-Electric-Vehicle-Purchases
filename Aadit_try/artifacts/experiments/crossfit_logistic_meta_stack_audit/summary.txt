@@ -1,0 +1,48 @@
+EXPERIMENT: CROSS-FITTED LOGISTIC META-STACK
+========================================================================================
+
+NO BASE-MODEL TRAINING
+NO BLEND-WEIGHT GRID
+NO LEADERBOARD USAGE
+
+Frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+
+META FEATURES
+- old_cat: 0.94558572
+- fine_cat: 0.94578633
+- fine_xgb: 0.94606664
+- old_lgbm: 0.94578042
+- fine_lgbm: 0.94595207
+- realmlp: 0.94329901
+
+META LEARNER
+LogisticRegression(penalty='l2', C=1.0, solver='lbfgs', max_iter=2000)
+
+VALIDATION
+Train meta learner on 4 frozen folds, evaluate once on held fold.
+Each base prediction is percentile-ranked within its original frozen fold.
+
+RESULT
+Champion meta AUC: 0.94611252
+Logistic stack AUC: 0.94606896
+Delta: -0.00004356
+Folds improved: 1/5
+Folds worse: 4/5
+Probability corr vs champion: 0.999676
+Rank corr vs champion: 0.999684
+Primitive: NEGATIVE_META_STACK_SIGNAL
+
+FOLD RESULTS
+Fold 0: 0.94515622 -> 0.94509085 (-0.00006537)
+Fold 1: 0.94580919 -> 0.94581226 (+0.00000307)
+Fold 2: 0.94708674 -> 0.94700563 (-0.00008111)
+Fold 3: 0.94638260 -> 0.94632829 (-0.00005432)
+Fold 4: 0.94612780 -> 0.94611552 (-0.00001228)
+
+COEFFICIENT STABILITY
+fine_xgb: mean=+2.184466, std=0.004750, positive_folds=5/5, negative_folds=0/5
+fine_lgbm: mean=+2.164679, std=0.005239, positive_folds=5/5, negative_folds=0/5
+fine_cat: mean=+2.154476, std=0.003178, positive_folds=5/5, negative_folds=0/5
+old_lgbm: mean=+2.146328, std=0.005115, positive_folds=5/5, negative_folds=0/5
+old_cat: mean=+2.142654, std=0.006569, positive_folds=5/5, negative_folds=0/5
+realmlp: mean=+2.049743, std=0.009680, positive_folds=5/5, negative_folds=0/5
