@@ -1,0 +1,2 @@
+champion_auc,external_xgb10_auc,fixed_rank_blend_auc,delta_vs_champion,probability_corr,rank_corr,external_alpha,folds_improved,folds_worse,primitive
+0.9461125311063966,0.9462428307575335,0.9463234791707303,0.00021094806433374913,0.8086418995481701,0.9967444809212269,0.5,5,0,POSITIVE_FIXED_EXTERNAL_XGB10_BLEND_SIGNAL

@@ -1,0 +1,272 @@
+{
+  "01_blend_oof.csv": {
+    "columns": [
+      "id",
+      "Will_Buy_EV"
+    ],
+    "dtypes": {
+      "id": "int64",
+      "Will_Buy_EV": "float64"
+    },
+    "first_three_rows": [
+      {
+        "id": 0,
+        "Will_Buy_EV": 0.3149506976809634
+      },
+      {
+        "id": 1,
+        "Will_Buy_EV": 0.3986838387848596
+      },
+      {
+        "id": 2,
+        "Will_Buy_EV": 0.7372876026990962
+      }
+    ],
+    "prediction_candidate_aucs": {
+      "Will_Buy_EV": 0.9461845832633258
+    },
+    "fold_candidates": [],
+    "frozen_fold_match_columns": [],
+    "matching_test_file": "01_submission.csv",
+    "test_columns": [
+      "id",
+      "Will_Buy_EV"
+    ]
+  },
+  "Pure LGBM_V1_oof.csv": {
+    "columns": [
+      "id",
+      "OOF_Pred"
+    ],
+    "dtypes": {
+      "id": "int64",
+      "OOF_Pred": "float64"
+    },
+    "first_three_rows": [
+      {
+        "id": 0,
+        "OOF_Pred": 0.000338920488514
+      },
+      {
+        "id": 1,
+        "OOF_Pred": 0.0028437363732347
+      },
+      {
+        "id": 2,
+        "OOF_Pred": 0.9056276981611732
+      }
+    ],
+    "prediction_candidate_aucs": {
+      "OOF_Pred": 0.9458660241607995
+    },
+    "fold_candidates": [],
+    "frozen_fold_match_columns": [],
+    "matching_test_file": "Pure LGBM_V1_test.csv",
+    "test_columns": [
+      "id",
+      "Will_Buy_EV"
+    ]
+  },
+  "Pure LGBM_V3_oof.csv": {
+    "columns": [
+      "id",
+      "OOF_Pred"
+    ],
+    "dtypes": {
+      "id": "int64",
+      "OOF_Pred": "float64"
+    },
+    "first_three_rows": [
+      {
+        "id": 0,
+        "OOF_Pred": 0.0003314721651633
+      },
+      {
+        "id": 1,
+        "OOF_Pred": 0.0023808191164014
+      },
+      {
+        "id": 2,
+        "OOF_Pred": 0.9063099032869504
+      }
+    ],
+    "prediction_candidate_aucs": {
+      "OOF_Pred": 0.9460642523865461
+    },
+    "fold_candidates": [],
+    "frozen_fold_match_columns": [],
+    "matching_test_file": "Pure LGBM_V3_test.csv",
+    "test_columns": [
+      "id",
+      "Will_Buy_EV"
+    ]
+  },
+  "Pure LGBM_V5_oof.csv": {
+    "columns": [
+      "id",
+      "OOF_Pred"
+    ],
+    "dtypes": {
+      "id": "int64",
+      "OOF_Pred": "float64"
+    },
+    "first_three_rows": [
+      {
+        "id": 0,
+        "OOF_Pred": 0.0003217452402846
+      },
+      {
+        "id": 1,
+        "OOF_Pred": 0.0026104331539923
+      },
+      {
+        "id": 2,
+        "OOF_Pred": 0.9096330976557612
+      }
+    ],
+    "prediction_candidate_aucs": {
+      "OOF_Pred": 0.9461696392679959
+    },
+    "fold_candidates": [],
+    "frozen_fold_match_columns": [],
+    "matching_test_file": "Pure LGBM_V5_test.csv",
+    "test_columns": [
+      "id",
+      "Will_Buy_EV"
+    ]
+  },
+  "Pure LGBM_V6_oof.csv": {
+    "columns": [
+      "id",
+      "OOF_Pred"
+    ],
+    "dtypes": {
+      "id": "int64",
+      "OOF_Pred": "float64"
+    },
+    "first_three_rows": [
+      {
+        "id": 0,
+        "OOF_Pred": 0.000330710119736
+      },
+      {
+        "id": 1,
+        "OOF_Pred": 0.0023617371566065
+      },
+      {
+        "id": 2,
+        "OOF_Pred": 0.9118029381622036
+      }
+    ],
+    "prediction_candidate_aucs": {
+      "OOF_Pred": 0.9460677414641655
+    },
+    "fold_candidates": [],
+    "frozen_fold_match_columns": [],
+    "matching_test_file": "Pure LGBM_V6_test.csv",
+    "test_columns": [
+      "id",
+      "Will_Buy_EV"
+    ]
+  },
+  "Sergey_LGBM_oof.csv": {
+    "columns": [
+      "id",
+      "Will_Buy_EV"
+    ],
+    "dtypes": {
+      "id": "int64",
+      "Will_Buy_EV": "float64"
+    },
+    "first_three_rows": [
+      {
+        "id": 0,
+        "Will_Buy_EV": -3.170913620881836
+      },
+      {
+        "id": 1,
+        "Will_Buy_EV": -2.383875508447288
+      },
+      {
+        "id": 2,
+        "Will_Buy_EV": 1.1250564112871984
+      }
+    ],
+    "prediction_candidate_aucs": {},
+    "fold_candidates": [],
+    "frozen_fold_match_columns": [],
+    "matching_test_file": "Sergey_LGBM_submission.csv",
+    "test_columns": [
+      "id",
+      "Will_Buy_EV"
+    ]
+  },
+  "XGBoost_Triple_TE_10folds_oof.csv": {
+    "columns": [
+      "id",
+      "OOF_Pred"
+    ],
+    "dtypes": {
+      "id": "int64",
+      "OOF_Pred": "float64"
+    },
+    "first_three_rows": [
+      {
+        "id": 0,
+        "OOF_Pred": 0.0003317226655781
+      },
+      {
+        "id": 1,
+        "OOF_Pred": 0.0029283645562827
+      },
+      {
+        "id": 2,
+        "OOF_Pred": 0.9042560458183287
+      }
+    ],
+    "prediction_candidate_aucs": {
+      "OOF_Pred": 0.9462428307575335
+    },
+    "fold_candidates": [],
+    "frozen_fold_match_columns": [],
+    "matching_test_file": "XGBoost_Triple_TE_10folds_test.csv",
+    "test_columns": [
+      "id",
+      "Will_Buy_EV"
+    ]
+  },
+  "XGBoost_Triple_TE_5folds_oof.csv": {
+    "columns": [
+      "id",
+      "OOF_Pred"
+    ],
+    "dtypes": {
+      "id": "int64",
+      "OOF_Pred": "float64"
+    },
+    "first_three_rows": [
+      {
+        "id": 0,
+        "OOF_Pred": 0.0003721188404597
+      },
+      {
+        "id": 1,
+        "OOF_Pred": 0.0026072692126035
+      },
+      {
+        "id": 2,
+        "OOF_Pred": 0.8945854902267456
+      }
+    ],
+    "prediction_candidate_aucs": {
+      "OOF_Pred": 0.9461421757639688
+    },
+    "fold_candidates": [],
+    "frozen_fold_match_columns": [],
+    "matching_test_file": "XGBoost_Triple_TE_5folds_test.csv",
+    "test_columns": [
+      "id",
+      "Will_Buy_EV"
+    ]
+  }
+}
