@@ -1,0 +1,26 @@
+DIAGNOSTIC: REMAINING STRONG EXTERNAL OOF DIVERSITY SCREEN
+============================================================================================
+
+TYPE
+Diagnostic only. No blending. No weight search. No submission.
+
+Frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+Current 2-way champion OOF: 0.94632348
+
+EXCLUDED BECAUSE ALREADY TESTED
+- XGBoost_Triple_TE_10folds_oof.csv
+- Pure LGBM_V5_oof.csv
+- 01_blend_oof.csv
+
+RESULTS
+Sergey_LGBM_oof.csv: status=NO_UNAMBIGUOUS_PREDICTION_COLUMN
+XGBoost_Triple_TE_5folds_oof.csv: AUC=0.94614218, rank_corr_vs_two_way=0.998719, rank_distance=0.001281
+Pure LGBM_V6_oof.csv: AUC=0.94606774, rank_corr_vs_two_way=0.997671, rank_distance=0.002329
+Pure LGBM_V3_oof.csv: AUC=0.94606425, rank_corr_vs_two_way=0.997688, rank_distance=0.002312
+Pure LGBM_V1_oof.csv: AUC=0.94586602, rank_corr_vs_two_way=0.997249, rank_distance=0.002751
+
+INTERPRETATION
+This file does not test ensemble performance. It only identifies which remaining member combines standalone strength with genuine ranking diversity versus the current champion.
+
+NEXT STEP
+Choose exactly one candidate for the next fixed-weight ensemble experiment after manual review.

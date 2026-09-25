@@ -39,7 +39,7 @@ Rank corr LGBM V5 vs 2-way: 0.998088
 Rank corr LGBM V5 vs internal: 0.995882
 Rank corr LGBM V5 vs XGB10: 0.998677
 Primitive: WEAK_OR_INCONSISTENT_THREE_WAY_SIGNAL
-Runtime: 3.97s
+Runtime: 3.91s
 
 FOLD RESULTS
 Fold 0: two-way=0.94537960, LGBM=0.94525330, three-way=0.94539471, delta=+0.00001510
