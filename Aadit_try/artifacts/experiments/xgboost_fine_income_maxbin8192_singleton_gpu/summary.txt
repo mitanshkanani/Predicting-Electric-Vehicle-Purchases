@@ -1,0 +1,50 @@
+EXPERIMENT: XGBOOST FINE-INCOME + MAX_BIN 8192 + SINGLETON CONSTRAINTS
+====================================================================================
+
+HYPOTHESIS
+Can high histogram resolution rescue the strongly negative singleton
+feature-tree behavior previously observed at max_bin=256?
+
+ONLY CHANGE VS VERIFIED max_bin=8192 BASELINE
+Add one singleton interaction-constraint group per feature.
+
+HELD FIXED
+- frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+- complete current fine-income XGB representation
+- exact income + commute TE
+- hierarchical income TE at 1k/10k/100k
+- hierarchical commute TE at 1km/5km/10km
+- income digits
+- exact income + commute frequencies
+- learned nested logistic base margin
+- smoothing m=2
+- depth-4 XGBoost configuration
+- max_bin=8192
+- seed 42
+- CUDA GPU
+
+ONLY MODEL CHANGE
+- singleton interaction constraint per feature
+
+RESULTS
+Verified max_bin=8192 baseline OOF: 0.94606401
+max_bin=8192 + singleton candidate OOF: 0.94580907
+Delta vs baseline: -0.00025494
+Folds improved: 0/5
+Folds worse: 5/5
+Probability corr vs baseline: 0.998191
+Rank corr vs baseline: 0.998471
+Runtime: 256.10 seconds
+
+DECISION: NEGATIVE_MAXBIN8192_SINGLETON_SYNERGY
+
+FOLD RESULTS
+Fold 0: baseline=0.94508238 -> candidate=0.94477488 (-0.00030750)
+Fold 1: baseline=0.94582053 -> candidate=0.94557621 (-0.00024432)
+Fold 2: baseline=0.94700962 -> candidate=0.94669051 (-0.00031910)
+Fold 3: baseline=0.94634633 -> candidate=0.94614051 (-0.00020581)
+Fold 4: baseline=0.94607621 -> candidate=0.94587072 (-0.00020550)
+
+FINE INCOME TE IMPORTANCE
+HTE__income_50_bucket: 0.08006287
+HTE__income_250_bucket: 0.02342101
