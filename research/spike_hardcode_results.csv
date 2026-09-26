@@ -1,0 +1,14 @@
+name,neg,pos,rows,imp,delta,keep
+income exact,4,1,588,11,-0.00014064282223091862,False
+income exact,4,0,554,11,-0.00014876809946429148,False
+income x subsidy,28,1,3327,9,-5.165509530102863e-05,False
+income x anxiety,4,0,537,11,-0.00014586137815275624,False
+income x homecharge,2,0,227,2,-2.3339046895665128e-05,False
+income x env,5,0,544,4,-2.948925062906671e-05,False
+income x commute:1,1,0,131,1,-6.5533736873790716e-06,False
+income x subsidy x anx,18,0,3373,8,-6.191346184458713e-05,False
+income floored to 1,1,0,227,2,-2.3339046895665128e-05,False
+income floored to 10,5,0,895,4,-2.9420110953970458e-05,False
+income floored to 50,6,0,1858,5,-1.4931066592671627e-05,False
+income floored to 100,14,0,3385,9,1.8909514931775284e-05,False
+income floored to 250,10,0,2312,5,-4.343200466827568e-06,False
