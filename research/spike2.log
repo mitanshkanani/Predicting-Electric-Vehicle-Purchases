@@ -1,0 +1,20 @@
+[original] 10000 real rows from EV_Adoption_and_Range_Anxiety_Dataset.csv (anchors only)
+fit rows 334332  held-out rows 334333
+[feat] tree 271 cols (raw 40 + TE 77x3=231) | LR +7 windows | anchors 13 (full=False) | freq 21 | dropped 3
+anchors13                  cols=271   held-out AUC=0.944575 (175s)
+[feat] tree 283 cols (raw 58 + TE 75x3=225) | LR +7 windows | anchors 69 (full=True) | freq 19 | dropped 12
+no_fine_income_bins        cols=283   held-out AUC=0.944530 (197s)
+[feat] tree 291 cols (raw 60 + TE 77x3=231) | LR +7 windows | anchors 69 (full=True) | freq 21 | dropped 10
+full_anchors69_s42         cols=291   held-out AUC=0.944557 (200s)
+[feat] tree 291 cols (raw 60 + TE 77x3=231) | LR +7 windows | anchors 69 (full=True) | freq 21 | dropped 10
+full_anchors69_s7          cols=291   held-out AUC=0.944652 (183s)
+[feat] tree 291 cols (raw 60 + TE 77x3=231) | LR +7 windows | anchors 69 (full=True) | freq 21 | dropped 10
+full_anchors69_s13         cols=291   held-out AUC=0.944608 (174s)
+
+==================================================================
+FAITHFUL-PIPELINE ABLATION  (reference = v11's own design, seed 42)
+  C1  full 69 anchors vs v8's 13      : -0.000019
+  v10 keeper: $50/$250 bins on/off    : +0.000027
+  C2  3-seed bagging vs single seed   : +0.000395
+      (single 0.944557 -> bagged 0.944952)
+==================================================================
