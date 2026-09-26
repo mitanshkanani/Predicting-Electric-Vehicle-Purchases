@@ -1,0 +1,2 @@
+internal_auc,xgb10_auc,xgb5_auc,baseline_auc,candidate_auc,delta_vs_baseline,rank_corr_xgb5_vs_xgb10,rank_corr_xgb5_vs_baseline,folds_improved,folds_worse,primitive
+0.9461125311063966,0.9462428307575335,0.9461421757639688,0.9463234791707303,0.9463066021804866,-1.687699024377487e-05,0.9988757668998216,0.9987185109553726,0,5,NEGATIVE_XGB_FOLDBAG_SIGNAL

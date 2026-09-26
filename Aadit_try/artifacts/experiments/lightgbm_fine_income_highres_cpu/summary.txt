@@ -1,0 +1,49 @@
+EXPERIMENT: LIGHTGBM FINE-INCOME + HIGH-RESOLUTION HISTOGRAMS
+====================================================================================
+
+HYPOTHESIS
+Can increasing histogram resolution recover useful income signal that remains compressed in the current fine-income LightGBM?
+
+ONLY CHANGE
+max_bin: 255 -> 13214
+
+HELD FIXED
+- complete current fine-income LightGBM representation
+- raw features
+- income digits
+- exact income/commute frequency features
+- exact income/commute nested TE
+- fine income TE at $50/$250
+- learned nested logistic base margin
+- smoothing m=2
+- all other LightGBM parameters
+- seed 42
+- CPU
+- frozen 5 folds
+
+Frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+Annual_Income_USD unique values: 13214
+Fine-income LightGBM baseline: 0.94595207
+High-resolution LightGBM: 0.94595344
+Delta: +0.00000137
+Folds improved: 2/5
+Folds worse: 3/5
+Probability corr vs baseline: 0.999555
+Rank corr vs baseline: 0.999610
+Primitive: WEAK_OR_INCONSISTENT_HIGHRES_LGBM_SIGNAL
+Runtime: 151.68s
+
+FOLD RESULTS
+Fold 0: 0.94498234 -> 0.94497885 (-0.00000348)
+Fold 1: 0.94565818 -> 0.94562644 (-0.00003174)
+Fold 2: 0.94688454 -> 0.94694716 (+0.00006262)
+Fold 3: 0.94631100 -> 0.94626633 (-0.00004467)
+Fold 4: 0.94594160 -> 0.94596189 (+0.00002030)
+
+DIVERSITY CORRELATIONS
+fine_xgb: prob_corr=0.999003, rank_corr=0.999109
+champion: prob_corr=0.810090, rank_corr=0.998769
+
+FINE INCOME TE IMPORTANCE
+HTE__income_50_bucket: 49817.69860308
+HTE__income_250_bucket: 12715.91620991

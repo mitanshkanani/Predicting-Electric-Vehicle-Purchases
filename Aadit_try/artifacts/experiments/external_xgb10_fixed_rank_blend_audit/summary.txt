@@ -1,0 +1,49 @@
+EXPERIMENT: FIXED 50/50 RANK BLEND — CHAMPION + EXTERNAL XGB10
+============================================================================================
+
+TYPE
+Competition-target ensemble audit.
+
+HYPOTHESIS
+Can the independently-produced stronger external 10-fold XGBoost OOF improve our current champion via a fixed equal rank average?
+
+ONLY CHANGE
+Add external XGB10 at fixed alpha=0.50 in rank space.
+
+NO WEIGHT SEARCH
+No alpha grid. No meta-model. No public leaderboard optimization.
+
+VALIDATION
+Frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+External generation fold vector: not exposed; therefore no meta-weight fitting is performed.
+
+INPUT COLUMNS
+Champion OOF column: oof_prediction
+Champion test column: Will_Buy_EV
+External OOF column: OOF_Pred
+External test column: Will_Buy_EV
+
+RESULT
+Champion OOF: 0.94611253
+External XGB10 OOF: 0.94624283
+Fixed 50/50 rank blend OOF: 0.94632348
+Delta vs champion: +0.00021095
+Folds improved: 5/5
+Folds worse: 0/5
+Probability corr: 0.808642
+Rank corr: 0.996744
+Primitive: POSITIVE_FIXED_EXTERNAL_XGB10_BLEND_SIGNAL
+Runtime: 3.39s
+
+FOLD RESULTS
+Fold 0: champion=0.94515622, external=0.94530520, blend=0.94537960, delta=+0.00022339
+Fold 1: champion=0.94580919, external=0.94595268, blend=0.94602950, delta=+0.00022030
+Fold 2: champion=0.94708674, external=0.94711240, blend=0.94724094, delta=+0.00015419
+Fold 3: champion=0.94638260, external=0.94655390, blend=0.94661464, delta=+0.00023203
+Fold 4: champion=0.94612780, external=0.94630731, blend=0.94635900, delta=+0.00023120
+
+DEPLOYMENT ARTIFACT
+candidate_submission.csv
+
+MANUAL REVIEW REQUIRED
+Do not submit automatically. Promote only after reviewing OOF magnitude, fold consistency and external provenance.

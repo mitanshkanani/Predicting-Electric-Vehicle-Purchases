@@ -1,0 +1,58 @@
+EXPERIMENT: EXTERNAL OOF LIBRARY DIVERSITY AUDIT
+============================================================================================
+
+TYPE
+Ensemble audit; no training; no public leaderboard optimization.
+
+ALIGNMENT
+Frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+External folds_seed42.npy: EXACT MATCH
+Regenerated StratifiedKFold(seed=42): EXACT MATCH
+Train rows: 668665
+Test rows: 286571
+
+BASELINE
+Current champion raw OOF: 0.94611253
+
+METHOD
+For each external member independently, select alpha from [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3] on the other four folds, then score on the held fold using rank blending.
+No negative weights. No fine alpha sweep.
+
+BEST OVERALL SCREENING RESULT
+Member: h
+Evidence class: CAUTION_HELDOUT_ES_AND_TRANSDUCTIVE
+Standalone AUC: 0.94450651
+Nested blend meta AUC: 0.94611727
+Delta vs champion meta: +0.00000475
+Folds improved: 5/5
+Mean selected alpha: 0.050
+Screening signal: WEAK_OR_INCONSISTENT
+
+BEST STRICTLY CLEAN-BY-DISCLOSED-PROTOCOL MEMBER
+Member: d
+Standalone AUC: 0.94161206
+Nested blend meta AUC: 0.94611252
+Delta vs champion meta: +0.00000000
+Folds improved: 0/5
+Mean selected alpha: 0.000
+Screening signal: ZERO_WEIGHT
+
+TOP 10 BY NESTED HELD-FOLD DELTA
+h: delta=+0.00000475, folds=5/5, alpha=0.050, standalone=0.944507, rank_corr=0.988998, evidence=CAUTION_HELDOUT_ES_AND_TRANSDUCTIVE, signal=WEAK_OR_INCONSISTENT
+i: delta=+0.00000339, folds=4/5, alpha=0.050, standalone=0.944407, rank_corr=0.988934, evidence=CAUTION_HELDOUT_ES_AND_TRANSDUCTIVE, signal=WEAK_OR_INCONSISTENT
+a: delta=+0.00000000, folds=0/5, alpha=0.000, standalone=0.943742, rank_corr=0.990666, evidence=CAUTION_HELDOUT_EARLY_STOPPING, signal=ZERO_WEIGHT
+d_catboost: delta=+0.00000000, folds=0/5, alpha=0.000, standalone=0.941672, rank_corr=0.986070, evidence=REVIEW_BATCH2_TRAINING_DETAIL, signal=ZERO_WEIGHT
+d: delta=+0.00000000, folds=0/5, alpha=0.000, standalone=0.941612, rank_corr=0.985941, evidence=CLEAN_BY_DISCLOSED_PROTOCOL, signal=ZERO_WEIGHT
+a_lgbm: delta=+0.00000000, folds=0/5, alpha=0.000, standalone=0.941603, rank_corr=0.984396, evidence=REVIEW_BATCH2_TRAINING_DETAIL, signal=ZERO_WEIGHT
+b: delta=+0.00000000, folds=0/5, alpha=0.000, standalone=0.941447, rank_corr=0.985554, evidence=CLEAN_BY_DISCLOSED_PROTOCOL, signal=ZERO_WEIGHT
+c_xgb: delta=+0.00000000, folds=0/5, alpha=0.000, standalone=0.941368, rank_corr=0.984210, evidence=REVIEW_BATCH2_TRAINING_DETAIL, signal=ZERO_WEIGHT
+e_histgb: delta=+0.00000000, folds=0/5, alpha=0.000, standalone=0.941342, rank_corr=0.984069, evidence=REVIEW_BATCH2_TRAINING_DETAIL, signal=ZERO_WEIGHT
+f_lgbm_te: delta=+0.00000000, folds=0/5, alpha=0.000, standalone=0.941326, rank_corr=0.982723, evidence=REVIEW_BATCH2_TRAINING_DETAIL, signal=ZERO_WEIGHT
+
+STRICT-CLEAN POSITIVE COUNT
+0
+
+Runtime: 138.17s
+
+MANUAL REVIEW REQUIRED
+Do not automatically change the champion from this screening result alone. A positive member should receive a dedicated follow-up confirmation/audit.

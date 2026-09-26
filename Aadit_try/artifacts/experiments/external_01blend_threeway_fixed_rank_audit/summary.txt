@@ -1,0 +1,55 @@
+EXPERIMENT: FIXED THREE-WAY RANK BLEND WITH EXTERNAL 01_BLEND
+============================================================================================
+
+TYPE
+Competition-target ensemble audit.
+
+HYPOTHESIS
+Can the external 01_blend composite add complementary ranking signal beyond the current internal+XGB10 champion?
+
+ONLY CHANGE
+Current 50/50 internal+XGB10 rank average -> fixed equal 1/3 internal + 1/3 XGB10 + 1/3 external 01_blend.
+
+NO WEIGHT SEARCH
+No alpha grid. No meta-model. No leaderboard optimization.
+
+VALIDATION
+Frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+
+INPUT COLUMNS
+Internal OOF: oof_prediction
+Internal test: Will_Buy_EV
+XGB10 OOF: OOF_Pred
+XGB10 test: Will_Buy_EV
+External blend OOF: Will_Buy_EV
+External blend test: Will_Buy_EV
+
+STANDALONE OOF
+Internal champion: 0.94611253
+External XGB10: 0.94624283
+External 01_blend: 0.94618458
+
+ENSEMBLE RESULT
+Current 2-way champion: 0.94632348
+Fixed 3-way candidate: 0.94634485
+Delta: +0.00002137
+Folds improved: 5/5
+Folds worse: 0/5
+Rank corr 01_blend vs 2-way: 0.998380
+Rank corr 01_blend vs internal: 0.998307
+Rank corr 01_blend vs XGB10: 0.996834
+Primitive: WEAK_OR_INCONSISTENT_EXTERNAL_01BLEND_SIGNAL
+Runtime: 3.79s
+
+FOLD RESULTS
+Fold 0: two-way=0.94537960, 01_blend=0.94531199, three-way=0.94542138, delta=+0.00004178
+Fold 1: two-way=0.94602950, 01_blend=0.94588387, three-way=0.94604722, delta=+0.00001773
+Fold 2: two-way=0.94724094, 01_blend=0.94707971, three-way=0.94725866, delta=+0.00001772
+Fold 3: two-way=0.94661464, 01_blend=0.94643970, three-way=0.94662026, delta=+0.00000562
+Fold 4: two-way=0.94635900, 01_blend=0.94624759, three-way=0.94639024, delta=+0.00003124
+
+DEPLOYMENT ARTIFACT
+candidate_submission.csv
+
+MANUAL REVIEW REQUIRED
+Do not submit automatically. Promote only if OOF magnitude and fold consistency are meaningful.

@@ -1,0 +1,9 @@
+file,best_prediction_column,best_recomputed_auc,id_alignment,frozen_fold_match_columns,matching_test_file
+XGBoost_Triple_TE_10folds_oof.csv,OOF_Pred,0.9462428307575335,EXACT,,XGBoost_Triple_TE_10folds_test.csv
+01_blend_oof.csv,Will_Buy_EV,0.9461845832633258,EXACT,,01_submission.csv
+Pure LGBM_V5_oof.csv,OOF_Pred,0.9461696392679959,EXACT,,Pure LGBM_V5_test.csv
+XGBoost_Triple_TE_5folds_oof.csv,OOF_Pred,0.9461421757639688,EXACT,,XGBoost_Triple_TE_5folds_test.csv
+Pure LGBM_V6_oof.csv,OOF_Pred,0.9460677414641655,EXACT,,Pure LGBM_V6_test.csv
+Pure LGBM_V3_oof.csv,OOF_Pred,0.9460642523865461,EXACT,,Pure LGBM_V3_test.csv
+Pure LGBM_V1_oof.csv,OOF_Pred,0.9458660241607995,EXACT,,Pure LGBM_V1_test.csv
+Sergey_LGBM_oof.csv,,,EXACT,,Sergey_LGBM_submission.csv

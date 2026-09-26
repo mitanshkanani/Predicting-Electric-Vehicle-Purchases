@@ -1,0 +1,45 @@
+EXPERIMENT: FIXED XGB 5-FOLD + 10-FOLD RANK BAGGING
+============================================================================================
+
+TYPE
+Competition-target ensemble audit.
+
+HYPOTHESIS
+Can averaging the 5-fold and 10-fold Triple-TE XGB rankings reduce external-model variance while preserving the strong XGB signal?
+
+ONLY CHANGE
+50% internal + 50% XGB10 -> 50% internal + 25% XGB10 + 25% XGB5.
+
+NO WEIGHT SEARCH
+Fixed weights declared before evaluation. No alpha sweep.
+
+Frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+
+STANDALONE OOF
+Internal: 0.94611253
+XGB10: 0.94624283
+XGB5: 0.94614218
+
+RESULT
+Baseline champion: 0.94632348
+Fold-bag candidate: 0.94630660
+Delta: -0.00001688
+Folds improved: 0/5
+Folds worse: 5/5
+Rank corr XGB5 vs XGB10: 0.998876
+Rank corr XGB5 vs baseline: 0.998719
+Primitive: NEGATIVE_XGB_FOLDBAG_SIGNAL
+Runtime: 3.93s
+
+FOLD RESULTS
+Fold 0: baseline=0.94537960, XGB10=0.94530520, XGB5=0.94522941, candidate=0.94536822, delta=-0.00001139
+Fold 1: baseline=0.94602950, XGB10=0.94595268, XGB5=0.94578109, candidate=0.94599648, delta=-0.00003301
+Fold 2: baseline=0.94724094, XGB10=0.94711240, XGB5=0.94703887, candidate=0.94723116, delta=-0.00000977
+Fold 3: baseline=0.94661464, XGB10=0.94655390, XGB5=0.94644099, candidate=0.94659323, delta=-0.00002141
+Fold 4: baseline=0.94635900, XGB10=0.94630731, XGB5=0.94623812, candidate=0.94635003, delta=-0.00000897
+
+DEPLOYMENT ARTIFACT
+candidate_submission.csv
+
+MANUAL REVIEW REQUIRED
+Do not submit automatically.

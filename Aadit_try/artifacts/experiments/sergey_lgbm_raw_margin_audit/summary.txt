@@ -1,0 +1,26 @@
+DIAGNOSTIC: SERGEY LGBM RAW-MARGIN OOF
+============================================================================================
+
+TYPE
+Diagnostic only. No blending. No tuning. No submission.
+
+INTERPRETATION
+Sergey_LGBM_oof.csv stores raw model margins/logits in Will_Buy_EV. ROC-AUC is scored directly because any monotonic sigmoid transform preserves ranking.
+
+Frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+Current 2-way champion OOF: 0.94632348
+Sergey raw-margin OOF: 0.94532931
+Rank corr vs 2-way: 0.995453
+Rank distance: 0.004547
+Raw-score corr vs 2-way: 0.989199
+Raw margin range: [-5.770137, 3.285437]
+
+FOLD RESULTS
+Fold 0: two-way=0.94537960, Sergey=0.94440929
+Fold 1: two-way=0.94602950, Sergey=0.94509596
+Fold 2: two-way=0.94724094, Sergey=0.94613646
+Fold 3: two-way=0.94661464, Sergey=0.94574231
+Fold 4: two-way=0.94635900, Sergey=0.94529866
+
+NEXT STEP
+Manual review: only if standalone strength and diversity are credible should Sergey receive one fixed-weight ensemble test.

@@ -1,0 +1,2 @@
+internal_auc,external_xgb10_auc,external_lgbmv5_auc,two_way_champion_auc,three_way_auc,delta_vs_two_way_champion,rank_corr_lgbmv5_vs_two_way,rank_corr_lgbmv5_vs_internal,rank_corr_lgbmv5_vs_xgb10,folds_improved,folds_worse,primitive
+0.9461125311063966,0.9462428307575335,0.9461696392679959,0.9463234791707303,0.9463297943412512,6.315170520854174e-06,0.9980876366937889,0.9958821934962869,0.9986774053025552,4,1,WEAK_OR_INCONSISTENT_THREE_WAY_SIGNAL

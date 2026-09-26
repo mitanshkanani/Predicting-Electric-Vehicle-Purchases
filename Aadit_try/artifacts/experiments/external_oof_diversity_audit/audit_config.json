@@ -1,0 +1,16 @@
+{
+  "expected_fold_sha256": "55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee",
+  "expected_champion_auc": 0.94611253,
+  "alpha_grid": [
+    0.0,
+    0.05,
+    0.1,
+    0.15,
+    0.2,
+    0.25,
+    0.3
+  ],
+  "method": "nested 4-fold selection / 1-fold held-out rank blend",
+  "negative_weights": false,
+  "fine_weight_search": false
+}

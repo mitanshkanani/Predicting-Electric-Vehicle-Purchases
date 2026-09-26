@@ -1,0 +1,52 @@
+EXPERIMENT: FINE-INCOME XGB + TRIPLE CATEGORICAL TARGET ENCODING
+============================================================================================
+
+TYPE
+Competition-target model experiment.
+
+HYPOTHESIS
+Can multi-smoothing categorical target encoding add useful signal beyond the current fine-income XGB representation?
+
+ONLY CHANGE
+Add 12 leakage-safe categorical target encodings: 4 columns x smoothing {1,5,20}.
+
+HELD FIXED
+- frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+- current fine-income XGB feature stack
+- learned logistic base margin
+- XGBoost configuration / seed / CUDA / early stopping
+- no dynamic pruning
+- no HPO
+- no leaderboard optimization
+
+RESULT
+Baseline OOF: 0.94606664
+Candidate OOF: 0.94607456
+Delta: +0.00000792
+Folds improved: 4/5
+Folds worse: 1/5
+Probability corr: 0.999848
+Rank corr: 0.999862
+Decision: KEEP_BUT_WEAK
+Runtime: 117.94s
+
+FOLD RESULTS
+Fold 0: baseline=0.94510032 -> candidate=0.94507057 (-0.00002974)
+Fold 1: baseline=0.94580127 -> candidate=0.94580404 (+0.00000278)
+Fold 2: baseline=0.94702068 -> candidate=0.94703660 (+0.00001592)
+Fold 3: baseline=0.94634732 -> candidate=0.94636895 (+0.00002162)
+Fold 4: baseline=0.94607535 -> candidate=0.94610838 (+0.00003302)
+
+TRIPLE-TE IMPORTANCE
+TTE__Range_Anxiety_Level__m5p0: 0.01250250
+TTE__Range_Anxiety_Level__m1p0: 0.01182381
+TTE__City_Type__m5p0: 0.00982220
+TTE__Range_Anxiety_Level__m20p0: 0.00929463
+TTE__City_Type__m1p0: 0.00902634
+TTE__Current_Car_Type__m1p0: 0.00901413
+TTE__Gender__m5p0: 0.00894162
+TTE__Current_Car_Type__m5p0: 0.00888107
+TTE__Current_Car_Type__m20p0: 0.00821126
+TTE__Gender__m1p0: 0.00807208
+TTE__Gender__m20p0: 0.00520670
+TTE__City_Type__m20p0: 0.00459967

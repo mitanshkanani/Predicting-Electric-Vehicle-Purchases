@@ -1,0 +1,55 @@
+EXPERIMENT: FIXED THREE-WAY RANK BLEND WITH EXTERNAL LGBM V6
+============================================================================================
+
+TYPE
+Competition-target ensemble audit.
+
+HYPOTHESIS
+Can the lower-correlation Pure LGBM V6 add useful diversity beyond the current internal+XGB10 champion?
+
+ONLY CHANGE
+Current 50/50 internal+XGB10 rank average -> fixed equal 1/3 internal + 1/3 XGB10 + 1/3 LGBM V6.
+
+NO WEIGHT SEARCH
+No alpha grid. No meta-model. No leaderboard optimization.
+
+VALIDATION
+Frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+
+INPUT COLUMNS
+Internal OOF: oof_prediction
+Internal test: Will_Buy_EV
+XGB10 OOF: OOF_Pred
+XGB10 test: Will_Buy_EV
+LGBM V6 OOF: OOF_Pred
+LGBM V6 test: Will_Buy_EV
+
+STANDALONE OOF
+Internal champion: 0.94611253
+External XGB10: 0.94624283
+External LGBM V6: 0.94606774
+
+ENSEMBLE RESULT
+Current 2-way champion: 0.94632348
+Fixed 3-way candidate: 0.94631119
+Delta: -0.00001229
+Folds improved: 1/5
+Folds worse: 4/5
+Rank corr LGBM V6 vs 2-way: 0.997671
+Rank corr LGBM V6 vs internal: 0.996105
+Rank corr LGBM V6 vs XGB10: 0.997625
+Primitive: NEGATIVE_LGBMV6_THREE_WAY_SIGNAL
+Runtime: 4.26s
+
+FOLD RESULTS
+Fold 0: two-way=0.94537960, LGBM V6=0.94512830, three-way=0.94536945, delta=-0.00001015
+Fold 1: two-way=0.94602950, LGBM V6=0.94573280, three-way=0.94600614, delta=-0.00002336
+Fold 2: two-way=0.94724094, LGBM V6=0.94694181, three-way=0.94721036, delta=-0.00003057
+Fold 3: two-way=0.94661464, LGBM V6=0.94639542, three-way=0.94661319, delta=-0.00000144
+Fold 4: two-way=0.94635900, LGBM V6=0.94616706, three-way=0.94636926, delta=+0.00001026
+
+DEPLOYMENT ARTIFACT
+candidate_submission.csv
+
+MANUAL REVIEW REQUIRED
+Do not submit automatically. Promote only if OOF magnitude and fold consistency are meaningful.

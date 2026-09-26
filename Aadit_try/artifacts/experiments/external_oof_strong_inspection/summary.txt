@@ -1,0 +1,27 @@
+EXPERIMENT: STRONG EXTERNAL OOF STRUCTURE / ALIGNMENT INSPECTION
+============================================================================================
+
+TYPE
+Diagnostic only. No blending, training or leaderboard optimization.
+
+Frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+OOF files inspected: 8
+Correct OOF row count: 8/8
+Exact/alias ID alignment: 8/8
+Files exposing an exact frozen-fold match column: 0/8
+
+SCORE TABLE
+XGBoost_Triple_TE_10folds_oof.csv: pred=OOF_Pred, AUC=0.94624283, id=EXACT, fold_match=NONE, test=XGBoost_Triple_TE_10folds_test.csv
+01_blend_oof.csv: pred=Will_Buy_EV, AUC=0.94618458, id=EXACT, fold_match=NONE, test=01_submission.csv
+Pure LGBM_V5_oof.csv: pred=OOF_Pred, AUC=0.94616964, id=EXACT, fold_match=NONE, test=Pure LGBM_V5_test.csv
+XGBoost_Triple_TE_5folds_oof.csv: pred=OOF_Pred, AUC=0.94614218, id=EXACT, fold_match=NONE, test=XGBoost_Triple_TE_5folds_test.csv
+Pure LGBM_V6_oof.csv: pred=OOF_Pred, AUC=0.94606774, id=EXACT, fold_match=NONE, test=Pure LGBM_V6_test.csv
+Pure LGBM_V3_oof.csv: pred=OOF_Pred, AUC=0.94606425, id=EXACT, fold_match=NONE, test=Pure LGBM_V3_test.csv
+Pure LGBM_V1_oof.csv: pred=OOF_Pred, AUC=0.94586602, id=EXACT, fold_match=NONE, test=Pure LGBM_V1_test.csv
+Sergey_LGBM_oof.csv: pred=None, AUC=N/A, id=EXACT, fold_match=NONE, test=Sergey_LGBM_submission.csv
+
+INTERPRETATION RULE
+Do not perform nested meta-blend selection on an external OOF whose generation folds cannot be shown to match our frozen outer folds. Different base folds can leak held-fold labels through base-model training into meta-fold selection.
+
+NEXT STEP
+Manual review of inspection.csv/schema_details.json before choosing a scientifically valid blend or standalone comparison.

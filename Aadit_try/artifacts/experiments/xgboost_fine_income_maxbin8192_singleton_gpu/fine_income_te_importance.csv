@@ -1,0 +1,3 @@
+feature,is_commute_hte,is_income_hte,is_fine_income_te,is_exact_te,is_income_digit,is_exact_frequency,mean_gain_importance,std_gain_importance
+HTE__income_50_bucket,False,False,True,False,False,False,0.08006286919116974,0.00985150807412289
+HTE__income_250_bucket,False,False,True,False,False,False,0.02342100664973259,0.0018293722062471649
