@@ -1,0 +1,43 @@
+EXPERIMENT: FIXED 50/50 PROBIT-RANK BLEND
+============================================================================================
+
+TYPE
+Competition-target ensemble audit.
+
+HYPOTHESIS
+Can Gaussianizing member ranks before fixed 50/50 averaging improve the current external-assisted champion?
+
+ONLY CHANGE
+Plain percentile ranks -> rank/(n+1) -> norm.ppf, with the same two members and same 50/50 weights.
+
+HELD FIXED
+- frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+- internal champion predictions
+- external XGB10 predictions
+- fixed 50/50 weights
+- no weight fitting
+- no model training
+- no leaderboard optimization
+
+RESULT
+Percentile-rank baseline: 0.94632348
+Probit-rank candidate: 0.94632462
+Delta: +0.00000115
+Folds improved: 4/5
+Folds worse: 1/5
+Rank corr candidate vs baseline: 0.999997
+Primitive: WEAK_OR_INCONSISTENT_PROBIT_BLEND_SIGNAL
+Runtime: 3.95s
+
+FOLD RESULTS
+Fold 0: percentile=0.94537960 -> probit=0.94538260 (+0.00000300)
+Fold 1: percentile=0.94602950 -> probit=0.94603112 (+0.00000162)
+Fold 2: percentile=0.94724094 -> probit=0.94724221 (+0.00000127)
+Fold 3: percentile=0.94661464 -> probit=0.94661493 (+0.00000029)
+Fold 4: percentile=0.94635900 -> probit=0.94635891 (-0.00000009)
+
+DEPLOYMENT ARTIFACT
+candidate_submission.csv
+
+MANUAL REVIEW REQUIRED
+Do not submit automatically.
