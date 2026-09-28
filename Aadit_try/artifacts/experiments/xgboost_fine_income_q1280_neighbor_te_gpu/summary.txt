@@ -1,0 +1,48 @@
+EXPERIMENT: FINE-INCOME XGB + Q1280 NEIGHBOR INCOME TE
+============================================================================================
+
+TYPE
+Competition-target model experiment.
+
+HYPOTHESIS
+Can adaptive equal-frequency income neighborhoods capture local purchase structure beyond the existing fixed-width income encodings?
+
+ONLY CHANGE
+Add q1280 position, central target encoding, and adjacent-bin Gaussian-smoothed target encoding for Annual_Income_USD.
+
+SOURCE-FIXED PARAMETERS
+- requested quantile bins: 1280
+- target smoothing: 10
+- kernel sigma: 0.8
+
+HELD FIXED
+- frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+- complete current fine-income XGB feature stack
+- learned logistic base margin
+- XGBoost configuration / seed / CUDA / early stopping
+- no HPO
+- no blending
+- no leaderboard optimization
+
+RESULT
+Baseline OOF: 0.94606664
+Candidate OOF: 0.94607038
+Delta: +0.00000374
+Folds improved: 2/5
+Folds worse: 3/5
+Probability corr: 0.999725
+Rank corr: 0.999732
+Decision: INCONCLUSIVE
+Runtime: 111.33s
+
+FOLD RESULTS
+Fold 0: baseline=0.94510032 -> candidate=0.94506476 (-0.00003556)
+Fold 1: baseline=0.94580127 -> candidate=0.94580087 (-0.00000040)
+Fold 2: baseline=0.94702068 -> candidate=0.94701862 (-0.00000206)
+Fold 3: baseline=0.94634732 -> candidate=0.94638749 (+0.00004017)
+Fold 4: baseline=0.94607535 -> candidate=0.94609159 (+0.00001624)
+
+NEIGHBOR-QTE IMPORTANCE
+NQTE__income_q1280_position: 0.08444144
+NQTE__income_q1280_center: 0.02384932
+NQTE__income_q1280_neighbor: 0.01318258
