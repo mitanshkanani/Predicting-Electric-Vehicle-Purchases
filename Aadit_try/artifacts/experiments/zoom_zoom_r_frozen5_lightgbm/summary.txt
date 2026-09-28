@@ -1,0 +1,65 @@
+EXPERIMENT: ZOOM ZOOM R EDITION — FROZEN 5-FOLD REPLICATION
+============================================================================================
+
+TYPE
+Competition-target external-recipe replication.
+
+HYPOTHESIS
+Does the complete 146-feature Zoom Zoom R LightGBM view remain strong under our full frozen 5-fold OOF validation?
+
+ONE MEANINGFUL CHANGE
+Introduce the uploaded Zoom Zoom R recipe as one new standalone model view. Existing champion predictions are unchanged.
+
+VALIDATION
+- frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+- 5 frozen outer folds
+- 3-fold leakage-safe inner target encodings
+- no public leaderboard information
+
+SOURCE RECIPE
+- 13 mapped raw features
+- 8 digit features per raw column
+- normalized frequency encoding per raw column
+- target encoding per raw column, smoothing=10
+- q1280 income position/center/neighbor target encoding
+- LightGBM depth=5, leaves=32, lr=0.02, max_bin=1024
+
+RESULT
+Internal champion reference OOF: 0.94611253
+Zoom Zoom frozen-5 OOF: 0.94586490
+Delta vs internal champion: -0.00024763
+Folds better than internal: 0/5
+Folds worse than internal: 5/5
+Probability corr vs internal: 0.808410
+Rank corr vs internal: 0.996746
+Ensemble priority: LOW_PRIORITY
+Runtime: 238.69s
+
+FOLD RESULTS
+Fold 0: internal=0.94515622, zoom=0.94487005, delta=-0.00028617, best_iter=1376
+Fold 1: internal=0.94580919, zoom=0.94551823, delta=-0.00029096, best_iter=1345
+Fold 2: internal=0.94708674, zoom=0.94686057, delta=-0.00022617, best_iter=1521
+Fold 3: internal=0.94638260, zoom=0.94621785, delta=-0.00016476, best_iter=1017
+Fold 4: internal=0.94612780, zoom=0.94589438, delta=-0.00023342, best_iter=1499
+
+TOP 20 FEATURES BY MEAN GAIN
+Environmental_Concern_Level: 858324.722817
+Environmental_Concern_Level_freq: 726931.830000
+Environmental_Concern_Level_digit0: 677534.720147
+Subsidy_Available: 677050.240164
+Subsidy_Available_digit0: 429040.880539
+Subsidy_Available_te: 367203.695354
+Annual_Income_USD_te: 336809.428323
+Environmental_Concern_Level_te: 297326.702752
+Subsidy_Available_freq: 287999.082132
+income_q1280_center: 187566.373608
+income_q1280_neighbor: 113824.301652
+income_q1280_pos: 70060.719380
+Annual_Income_USD: 67170.778990
+Range_Anxiety_Level_freq: 64525.588230
+Range_Anxiety_Level_te: 48368.269064
+Daily_Commute_km_te: 36728.750390
+Age_te: 25829.499880
+Annual_Income_USD_freq: 22429.218425
+Range_Anxiety_Level: 17158.231305
+Range_Anxiety_Level_digit0: 12709.878119

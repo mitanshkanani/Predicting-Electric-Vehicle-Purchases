@@ -1,0 +1,51 @@
+EXPERIMENT: FIXED 10% ZOOM ZOOM THREE-WAY RANK BLEND
+============================================================================================
+
+TYPE
+Competition-target ensemble audit.
+
+HYPOTHESIS
+Can a small fixed allocation to the weaker but structurally different Zoom Zoom model add marginal ensemble value?
+
+ONLY CHANGE
+50% internal + 50% XGB10 -> 45% internal + 45% XGB10 + 10% Zoom Zoom.
+
+NO WEIGHT SEARCH
+The 10% diversification allocation was declared before evaluation.
+
+HELD FIXED
+- frozen fold SHA256: 55223bc6f44db9b6292f91c3c11cdd7d75175a5e04774f7e0dd0ac512ec0e6ee
+- plain percentile-rank geometry
+- all existing predictions
+- no training
+- no meta-fitting
+- no leaderboard optimization
+
+STANDALONE OOF
+Internal: 0.94611253
+XGB10: 0.94624283
+Zoom Zoom: 0.94586490
+
+RESULT
+Baseline champion: 0.94632348
+10% Zoom candidate: 0.94632145
+Delta: -0.00000203
+Folds improved: 2/5
+Folds worse: 3/5
+Zoom rank corr vs baseline: 0.997281
+Candidate rank corr vs baseline: 0.999973
+Primitive: NEGATIVE_ZOOM10_THREEWAY_SIGNAL
+Runtime: 3.91s
+
+FOLD RESULTS
+Fold 0: baseline=0.94537960 -> candidate=0.94537099 (-0.00000862)
+Fold 1: baseline=0.94602950 -> candidate=0.94602359 (-0.00000590)
+Fold 2: baseline=0.94724094 -> candidate=0.94724672 (+0.00000578)
+Fold 3: baseline=0.94661464 -> candidate=0.94661840 (+0.00000376)
+Fold 4: baseline=0.94635900 -> candidate=0.94635593 (-0.00000307)
+
+DEPLOYMENT ARTIFACT
+candidate_submission.csv
+
+MANUAL REVIEW REQUIRED
+Do not submit automatically.

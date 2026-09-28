@@ -1,0 +1,2 @@
+internal_champion_auc,zoom_zoom_oof_auc,delta_vs_internal,folds_better,folds_worse,probability_corr_vs_internal,rank_corr_vs_internal,ensemble_priority,runtime_seconds
+0.9461125311063966,0.9458648961705463,-0.00024763493585033824,0,5,0.8084100978160708,0.9967458044298131,LOW_PRIORITY,238.6855549000029

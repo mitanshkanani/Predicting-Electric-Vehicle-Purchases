@@ -1,0 +1,2 @@
+internal_auc,xgb10_auc,zoom_auc,baseline_auc,candidate_auc,delta_vs_baseline,folds_improved,folds_worse,zoom_rank_corr_vs_baseline,candidate_rank_corr_vs_baseline,primitive
+0.9461125311063966,0.9462428307575335,0.9458648962558855,0.9463234791707303,0.9463214487882747,-2.0303824556089367e-06,2,3,0.9972806881177888,0.9999727378653206,NEGATIVE_ZOOM10_THREEWAY_SIGNAL
